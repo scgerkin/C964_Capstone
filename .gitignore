@@ -200,3 +200,8 @@ target/
 desktop.ini
 **/dataset/**
 .ipynb_checkpoints/
+
+# Microsoft Office temp files
+deliverables/*/~$*
+
+.vscode/
