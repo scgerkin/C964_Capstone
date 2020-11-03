@@ -6,7 +6,4 @@ The proposed client for this project is COMPANY, a fictional medical imaging com
 # 2. Project purpose/goal:
 The goal of the model will be to predict the presence of the aforementioned diagnostic markers in images to within a 90% likelihood of a correct classification. Each input scan will be output with a table of likely classification labels, the certainty to which these labels can be applied, and potentially highlight portions of the image that are indicative of the finding (i.e., by framing potential markers in a square, labelled box superimposed on the original image). The model will also be able to provide a highly accurate binary classification between FINDING and NOT FINDING to the end user, along with the probability that the classification is correct, so that those with a high degree of accuracy towards a FINDING can be further analyzed by both the model itself, and by trained radiologists.
 
-## Descriptive Method:
-
-
-## Non-descriptive Method:
+Initial supervised training of the model will be accomplished using the K-Nearest Neighbors (KNN) algorithm to classify each image to the provided diagnostic labels. The model will then be trained with a recurrent neural network to provide predictions and classification labelling on new input. The hyper-parameters of each model will be tuned and collected to provide additional classification information to the end user. This model will then be deployed as a web service API that will allow the user to upload a chest x-ray image and return the probabilities of each label classification.
