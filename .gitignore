@@ -205,3 +205,4 @@ desktop.ini
 deliverables/*/~$*
 
 .vscode/
+**/__pycache__/**
