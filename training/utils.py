@@ -37,5 +37,5 @@ def row_label(img_data):
 def load_dx_labels():
     path = PurePath(DATASET_DIR + "dx_labels.csv")
     with open(path, 'r') as f:
-        lines = f.readlines()[2:]
+        lines = f.readlines()[1:]
         return [line.strip() for line in lines]
