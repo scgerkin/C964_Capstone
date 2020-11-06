@@ -28,6 +28,7 @@ def main():
     save_labels_to_csv(finding_labels)
     img_metadata = remap_labels(img_metadata, finding_labels)
     img_metadata = drop_known_unusable(img_metadata, unusable_imgs)
+    img_metadata = add_dx_array(img_metadata, finding_labels)
     save_usable_to_csv(img_metadata)
     print("Finished.")
 
@@ -69,32 +70,22 @@ def remap_labels(img_metadata, finding_labels):
     return img_metadata
 
 
+def add_dx_array(img_metadata, finding_labels):
+    print("Adding dx array as col")
+    img_metadata["dx_labels"] = img_metadata \
+        .apply(lambda row: [row[finding_labels].values], 1) \
+        .map(lambda vals: vals[0])
+    return img_metadata
+
+
 def drop_known_unusable(img_metadata, unusable_images):
     print("Dropping unusable")
     to_drop = []
-    bad_files = 0
     unusable_list = unusable_images["File label"].tolist()
-    to_iterate = len(img_metadata)
     for index, row in img_metadata.iterrows():
-        if index % 100 == 0:
-            print(f"Checking index: {index}."
-                  f" {(index/to_iterate) * 100}% complete")
         if row["img_filename"] in unusable_list:
             to_drop.append(index)
-        else:
-            path = BASE_DIR + "images/" + row["img_filename"]
-            try:  # try loading the image
-                if os.path.isfile(path):
-                    with open(path, 'rb'):
-                        pass
-                else:
-                    raise FileNotFoundError
-            except OSError or FileNotFoundError:
-                print(f"Unusable file found: {path}")
-                bad_files += 1
-                to_drop.append(index)
 
-    print(f"Total bad files: {bad_files}")
     usable_imgs = img_metadata.drop(to_drop, axis=0)
     return usable_imgs[usable_imgs["pt_age"] < 100]
 
