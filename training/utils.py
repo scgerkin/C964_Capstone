@@ -3,7 +3,8 @@ import tensorflow as tf
 import pandas as pd
 
 DUMMY_IMG = "00000001_000.png"
-DATASET_DIR = "../dataset/"
+PROJECT_DIR = "W:/WGU/C964_Capstone/project/"
+DATASET_DIR = PROJECT_DIR + "dataset/"
 IMG_DIR = DATASET_DIR + "images/"
 
 
