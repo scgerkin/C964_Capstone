@@ -1,6 +1,7 @@
 from pathlib import PurePath
 import tensorflow as tf
-import tensorflow_hub as tf_hub
+from tensorflow import keras
+from tensorflow.keras import layers
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -8,11 +9,12 @@ DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/"
 DATASET_DIR = PROJECT_DIR + "dataset/"
 IMG_DIR = DATASET_DIR + "images/"
-IMG_SIZE = 224
+IMG_SIZE = 256
 TRAINING_SIZE = 100
 BATCH_SIZE = 32
 RND_SEED = 8
-IMG_CHANNEL = 3
+IMG_CHANNEL = 1
+TEST_SIZE = 0.2
 
 DX_LABELS = None  # cache diagnostic labels
 
@@ -59,19 +61,22 @@ def load_dx_labels():
 
 
 def get_training_and_validation_sets(img_data, num_images=TRAINING_SIZE):
-    filenames = img_data[:num_images]["img_filename"].to_numpy()
+    filenames = []
+    for filename in img_data[:num_images]["img_filename"]:
+        filenames.append(IMG_DIR + filename)
+
     dx_labels = load_dx_labels()
     labels = img_data[:num_images][dx_labels].to_numpy()
 
     x_train, x_val, y_train, y_val = train_test_split(filenames,
                                                       labels,
-                                                      test_size=0.2,
+                                                      test_size=TEST_SIZE,
                                                       random_state=RND_SEED)
 
     training_data = create_data_batches(filepaths=x_train,
                                         labels=y_train,
                                         test_data=False,
-                                        shuffle=True)
+                                        shuffle=False)
     validation_data = create_data_batches(filepaths=x_val,
                                           labels=y_val,
                                           test_data=False,
@@ -99,7 +104,7 @@ def create_data_batches(filepaths,
             .batch(BATCH_SIZE)
 
 
-MODEL_URL = "https://tfhub.dev/google/imagenet/mobilenet_v2_130_224/classification/4"
+MODEL_URL = "https://tfhub.dev/google/imagenet/inception_v3/classification/4"
 
 
 def create_model(model_url=None):
@@ -110,11 +115,12 @@ def create_model(model_url=None):
     if model_url is None:
         model_url = MODEL_URL
 
-    model = tf.keras.Sequential(
-            [tf_hub.KerasLayer(model_url),
-             tf.keras.layers.Dense(units=out_shape,
-                                   activation="softmax")
-             ])
+    model = keras.Sequential(
+            [
+                layers.Dense(2, activation="relu", name="layer1"),
+                layers.Dense(3, activation="relu", name="layer2"),
+                layers.Dense(4, name="layer3"),
+                ])
 
     model.compile(loss=tf.keras.losses.CategoricalCrossentropy(),
                   optimizer=tf.keras.optimizers.Adam(),
@@ -122,6 +128,6 @@ def create_model(model_url=None):
                   )
 
     # Build the model
-    model.build(input_shape=in_shape)
+    # model.build(input_shape=in_shape)
 
     return model
