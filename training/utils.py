@@ -24,7 +24,7 @@ def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))
     data["dx_labels"] = data["dx_labels"].map(
-            lambda val: np.fromstring(val[1:-1], dtype=int, sep=" "))
+            lambda val: np.fromstring(val[1:-1], dtype=int, sep=" ").tolist())
     return data
 
 
@@ -81,7 +81,10 @@ def get_data_batch(img_metadata,
     idg = init_image_data_generator(split=valid_subset)
 
     shuffle = subset == "training"
-    # TODO: Fix classes to have the actual labels instead of the raw input
+
+    # TODO: Classes are incorrect, it's detecting 2 from the y_col, but
+    #   it should be 15
+
     return idg.flow_from_dataframe(img_metadata,
                                    directory=str(PurePath(IMG_DIR)),
                                    x_col="img_filename",
