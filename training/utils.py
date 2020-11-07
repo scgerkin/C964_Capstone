@@ -17,6 +17,8 @@ TEST_SIZE = 0.2
 SPLIT_VALUE = 0.2
 IMG_GEN_WITH_SPLIT = None
 
+DX_LABELS = None    # cache dx labels
+
 
 def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
@@ -27,10 +29,14 @@ def get_img_metadata():
 
 
 def get_dx_labels():
+    global DX_LABELS
+    if DX_LABELS is not None:
+        return DX_LABELS
     path = PurePath(DATASET_DIR + "dx_labels.csv")
     with open(path, 'r') as f:
         lines = f.readlines()[1:]
-        return [line.strip() for line in lines]
+        DX_LABELS = [line.strip() for line in lines]
+        return DX_LABELS
 
 
 def get_training_and_validation_sets(img_data, num_images=TRAINING_SIZE):
@@ -83,7 +89,7 @@ def get_data_batch(img_metadata,
                                    target_size=(IMG_SIZE, IMG_SIZE),
                                    color_mode="grayscale",
                                    # classes=get_dx_labels(),
-                                   class_mode="raw",
+                                   class_mode="categorical",
                                    batch_size=batch_size,
                                    shuffle=shuffle,
                                    seed=rnd_seed,
@@ -93,17 +99,19 @@ def get_data_batch(img_metadata,
 def init_image_data_generator(split=False):
     split_value = SPLIT_VALUE if split else 0.0
 
-    return ImageDataGenerator(samplewise_center=True,
-                              samplewise_std_normalization=True,
-                              horizontal_flip=True,
-                              vertical_flip=False,
-                              height_shift_range=0.05,
-                              width_shift_range=0.1,
-                              rotation_range=5,
-                              shear_range=0.1,
-                              fill_mode='reflect',
-                              zoom_range=0.15,
-                              validation_split=split_value)
+    return ImageDataGenerator(
+            # samplewise_center=True,
+            # samplewise_std_normalization=True,
+            # horizontal_flip=True,
+            # vertical_flip=False,
+            # height_shift_range=0.05,
+            # width_shift_range=0.1,
+            # rotation_range=5,
+            # shear_range=0.1,
+            # fill_mode='reflect',
+            # zoom_range=0.15,
+            rescale=1. / 255,
+            validation_split=split_value)
 
 
 def create_model():
