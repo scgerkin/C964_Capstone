@@ -14,13 +14,11 @@ RND_SEED = 8
 IMG_CHANNELS = 1
 TEST_SIZE = 0.2
 
-DX_LABELS = None  # cache diagnostic labels
-IMG_GEN_NOT_SPLIT = None  # cache ImageDataGenerator
 SPLIT_VALUE = 0.2
 IMG_GEN_WITH_SPLIT = None
 
 
-def load_img_metadata():
+def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))
     data["dx_labels"] = data["dx_labels"].map(
@@ -29,8 +27,6 @@ def load_img_metadata():
 
 
 def get_dx_labels():
-    if DX_LABELS is not None:
-        return DX_LABELS
     path = PurePath(DATASET_DIR + "dx_labels.csv")
     with open(path, 'r') as f:
         lines = f.readlines()[1:]
@@ -95,11 +91,6 @@ def get_data_batch(img_metadata,
 
 
 def init_image_data_generator(split=False):
-    if split and IMG_GEN_WITH_SPLIT is not None:
-        return IMG_GEN_WITH_SPLIT
-    elif not split and IMG_GEN_NOT_SPLIT is not None:
-        return IMG_GEN_NOT_SPLIT
-
     split_value = SPLIT_VALUE if split else 0.0
 
     return ImageDataGenerator(samplewise_center=True,
@@ -117,9 +108,3 @@ def init_image_data_generator(split=False):
 
 def create_model():
     pass
-
-
-if __name__ == "__main__":
-    metadata = load_img_metadata()
-    t_data, v_data = get_training_and_validation_sets(metadata)
-    print("bp")
