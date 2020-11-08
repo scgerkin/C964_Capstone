@@ -15,7 +15,6 @@ IMG_CHANNELS = 1
 TEST_SIZE = 0.2
 
 SPLIT_VALUE = 0.2
-IMG_GEN_WITH_SPLIT = None
 
 DX_LABELS = None    # cache dx labels
 
@@ -23,7 +22,7 @@ DX_LABELS = None    # cache dx labels
 def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))
-    data["dx_labels"] = data["dx_labels"].map(
+    data["dx_labels"] = data["target"].map(
             lambda val: np.fromstring(val[1:-1], dtype=int, sep=" ").tolist())
     return data
 

@@ -72,7 +72,7 @@ def remap_labels(img_metadata, finding_labels):
 
 def add_dx_array(img_metadata, finding_labels):
     print("Adding dx array as col")
-    img_metadata["dx_labels"] = img_metadata \
+    img_metadata["target"] = img_metadata \
         .apply(lambda row: [row[finding_labels].values], 1) \
         .map(lambda vals: vals[0])
     return img_metadata
