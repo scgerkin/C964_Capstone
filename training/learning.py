@@ -21,7 +21,6 @@ print(f"Total usable images: {len(img_metadata)}")
 img_metadata.describe()
 
 training_data, validation_data = get_training_and_validation_sets(img_metadata)
-
 # %% This seems to be working if I can get the labels correct
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import (Dropout,
@@ -34,10 +33,8 @@ model.add(GlobalAveragePooling2D())
 model.add(Dropout(0.5))
 model.add(Dense(512))
 model.add(Dropout(0.5))
-# TODO Changing the first arg here to '2' the detected classes from the datagen
-#  allows the pipeline to run to completion, so need to fix the labels
-#  leaving as is with the len of the label list (15) and it's not shaped right
-model.add(Dense(len(dx_labels), activation='sigmoid'))
+
+model.add(Dense(len(training_data.class_indices), activation='sigmoid'))
 
 model.compile(optimizer="rmsprop",
               loss="categorical_crossentropy",

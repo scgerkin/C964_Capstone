@@ -1,12 +1,13 @@
 from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
-import numpy as np
 
 DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/"
 DATASET_DIR = PROJECT_DIR + "dataset/"
 IMG_DIR = DATASET_DIR + "images"
+
+Y_COL_NAME = "findings_list"
 IMG_SIZE = 256
 TRAINING_SIZE = 100
 BATCH_SIZE = 32
@@ -16,15 +17,24 @@ TEST_SIZE = 0.2
 
 SPLIT_VALUE = 0.2
 
-DX_LABELS = None    # cache dx labels
+DX_LABELS = None  # cache dx labels
 
 
 def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))
-    data["dx_labels"] = data["target"].map(
-            lambda val: np.fromstring(val[1:-1], dtype=int, sep=" ").tolist())
+    dx_labels = get_dx_labels()
+    data[Y_COL_NAME] = data[dx_labels].apply(create_classification_list,
+                                             axis=1)
     return data
+
+
+def create_classification_list(row):
+    findings = []
+    for label, value in row.items():
+        if value > 0.5:
+            findings.append(label)
+    return findings
 
 
 def get_dx_labels():
@@ -87,7 +97,7 @@ def get_data_batch(img_metadata,
     return idg.flow_from_dataframe(img_metadata,
                                    directory=str(PurePath(IMG_DIR)),
                                    x_col="img_filename",
-                                   y_col="dx_labels",
+                                   y_col=Y_COL_NAME,
                                    target_size=(IMG_SIZE, IMG_SIZE),
                                    color_mode="grayscale",
                                    # classes=get_dx_labels(),

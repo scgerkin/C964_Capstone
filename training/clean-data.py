@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 
 BASE_DIR = "W:/WGU/C964_Capstone/project/dataset/"
 img_metadata_loc = BASE_DIR + "Data_Entry_2017.csv"
@@ -28,7 +27,6 @@ def main():
     save_labels_to_csv(finding_labels)
     img_metadata = remap_labels(img_metadata, finding_labels)
     img_metadata = drop_known_unusable(img_metadata, unusable_imgs)
-    img_metadata = add_dx_array(img_metadata, finding_labels)
     save_usable_to_csv(img_metadata)
     print("Finished.")
 
@@ -67,14 +65,6 @@ def remap_labels(img_metadata, finding_labels):
                 lambda row: has_label(label, row), axis=1)
 
     img_metadata = img_metadata.drop(["Finding Labels", "Follow-up #"], axis=1)
-    return img_metadata
-
-
-def add_dx_array(img_metadata, finding_labels):
-    print("Adding dx array as col")
-    img_metadata["target"] = img_metadata \
-        .apply(lambda row: [row[finding_labels].values], 1) \
-        .map(lambda vals: vals[0])
     return img_metadata
 
 
