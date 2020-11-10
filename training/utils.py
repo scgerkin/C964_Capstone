@@ -9,7 +9,7 @@ IMG_DIR = DATASET_DIR + "images"
 
 Y_COL_NAME = "findings_list"
 IMG_SIZE = 256
-TRAINING_SIZE = 100
+TRAINING_SIZE = 500
 BATCH_SIZE = 32
 RND_SEED = 8
 IMG_CHANNELS = 1
@@ -91,9 +91,6 @@ def get_data_batch(img_metadata,
 
     shuffle = subset == "training"
 
-    # TODO: Classes are incorrect, it's detecting 2 from the y_col, but
-    #   it should be 15
-
     return idg.flow_from_dataframe(img_metadata,
                                    directory=str(PurePath(IMG_DIR)),
                                    x_col="img_filename",
@@ -128,3 +125,29 @@ def init_image_data_generator(split=False):
 
 def create_model():
     pass
+
+
+def filter_on_matching(data, labels, value=1):
+    """
+    Filters image metadata based on binary 0 or 1 labels (diagnostic labels).
+
+    Example:
+        edema_or_mass = filter_on_matching(img_metadata, ["edema", "mass"])
+
+        with_finding = filter_on_matching(img_metadata, ["no_finding"], value=0)
+
+    :param data: a DataFrame containing the image metadata
+    :param labels: a list of diagnostic labels to filter
+    :param value: the value to filter for (0 or 1).
+     Default is 1 (to include the image based on the presence
+      of this diagnostic label)
+    :return: a filtered DataFrame matching the given labels and value.
+    """
+    mask = data[labels[0]] == value
+    for label in labels[1:]:
+        mask = mask & (data[label] == value)
+    return data[mask]
+
+
+def save_to_json(dataframe, filepath, orient="index"):
+    dataframe.to_json(filepath, orient=orient)
