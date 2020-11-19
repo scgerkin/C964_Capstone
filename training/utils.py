@@ -1,5 +1,6 @@
 from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
 import pandas as pd
 
 DUMMY_IMG = "00000001_000.png"
@@ -48,18 +49,14 @@ def get_dx_labels():
         return DX_LABELS
 
 
-def get_training_and_validation_sets(img_data, num_images=TRAINING_SIZE):
-    """
-    TODO: Will need to shuffle DF before using methods below if I want to keep
-        this signature the same and use it without thinking about it by only
-        changing the global for training size
-    :param img_data:
-    :param num_images:
-    :return:
-    """
-    training_data = get_data_batch(img_data[:num_images], subset="training")
-    validation_data = get_data_batch(img_data[:num_images], subset="validation")
-    return training_data, validation_data
+def get_train_valid_test_split(img_data):
+    train_df, test_df = train_test_split(img_data, test_size=0.2,
+                                         random_state=42)
+
+    training_data = get_data_batch(train_df, subset="training")
+    validation_data = get_data_batch(train_df, subset="validation")
+    test_gen = get_data_batch(test_df, batch_size=1024, subset=None)
+    return training_data, validation_data, test_gen
 
 
 def get_data_batch(img_metadata,
@@ -109,17 +106,10 @@ def init_image_data_generator(split=False):
     split_value = SPLIT_VALUE if split else 0.0
 
     return ImageDataGenerator(
-            # samplewise_center=True,
-            # samplewise_std_normalization=True,
-            # horizontal_flip=True,
-            # vertical_flip=False,
-            # height_shift_range=0.05,
-            # width_shift_range=0.1,
-            # rotation_range=5,
-            # shear_range=0.1,
-            # fill_mode='reflect',
-            # zoom_range=0.15,
-            rescale=1. / 255,
+            samplewise_center=True,
+            samplewise_std_normalization=True,
+            fill_mode='constant',
+            cval=1.0,
             validation_split=split_value)
 
 
