@@ -207,3 +207,4 @@ deliverables/*/~$*
 .vscode/
 __pycache__/
 /training/samp.py
+*.h5

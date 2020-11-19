@@ -45,8 +45,7 @@ def create_model(in_shape, out_shape):
 
 
 # %% Fit model
-train_gen, valid_gen = get_training_and_validation_sets(
-    img_metadata)
+train_gen, valid_gen = get_training_and_validation_sets(img_metadata)
 
 model = create_model(train_gen.image_shape, len(train_gen.class_indices))
 STEP_SIZE_TRAIN = train_gen.n // train_gen.batch_size
@@ -61,3 +60,14 @@ model.fit_generator(generator=train_gen,
 preds = model.predict(valid_gen)
 for pred in preds[:5]:
     print(pred)
+
+
+# %%
+def save_model(model, base_model_name="InceptionV3"):
+    from datetime import datetime
+    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    path = f"./models/{date_time}_{base_model_name}.h5"
+    model.save(path)
+
+
+save_model(model)
