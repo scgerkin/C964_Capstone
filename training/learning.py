@@ -4,6 +4,15 @@ from training.utils import (get_dx_labels,
                             get_img_metadata,
                             get_training_and_validation_sets,
                             )
+from tensorflow.keras import Sequential
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras.layers import (Dropout,
+                                     Dense,
+                                     GlobalAveragePooling2D,
+                                     )
+
+from tensorflow.keras.callbacks import ModelCheckpoint
+from datetime import datetime
 
 print(f"TensorFlow version: {tf.__version__}")
 print(f"TensorFlow Hub version: {tf_hub.__version__}")
@@ -21,12 +30,6 @@ img_metadata.describe()
 
 
 def create_model(in_shape, out_shape):
-    from tensorflow.keras import Sequential
-    from tensorflow.keras.applications.inception_v3 import InceptionV3
-    from tensorflow.keras.layers import (Dropout,
-                                         Dense,
-                                         GlobalAveragePooling2D,
-                                         )
     model = Sequential()
     model.add(InceptionV3(input_shape=in_shape,
                           include_top=False,
@@ -44,17 +47,29 @@ def create_model(in_shape, out_shape):
     return model
 
 
+def get_date_time_str():
+    return datetime.now().strftime("%Y%m%d%H%M%S")
+
+
 # %% Fit model
 train_gen, valid_gen = get_training_and_validation_sets(img_metadata)
 
 model = create_model(train_gen.image_shape, len(train_gen.class_indices))
+
+checkpoint_fp = f"./checkpoints/{get_date_time_str()}.h5"
+checkpoint_cb = ModelCheckpoint(checkpoint_fp,
+                                save_best_only=True)
+
 STEP_SIZE_TRAIN = train_gen.n // train_gen.batch_size
 STEP_SIZE_VALID = valid_gen.n // valid_gen.batch_size
 model.fit_generator(generator=train_gen,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_gen,
                     validation_steps=STEP_SIZE_VALID,
-                    epochs=10)
+                    epochs=10,
+                    callbacks=[checkpoint_cb])
+
+model = tf.keras.models.load_model(checkpoint_fp)
 
 # %% Arbitrary test of prediction
 preds = model.predict(valid_gen)
@@ -64,8 +79,7 @@ for pred in preds[:5]:
 
 # %%
 def save_model(model, base_model_name="InceptionV3"):
-    from datetime import datetime
-    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    date_time = get_date_time_str()
     path = f"./models/{date_time}_{base_model_name}.h5"
     model.save(path)
 
