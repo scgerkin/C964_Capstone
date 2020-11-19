@@ -79,6 +79,7 @@ train_gen, valid_gen, test_gen = get_train_valid_test_split(img_metadata)
 
 # %%
 model = create_model(train_gen.image_shape, len(train_gen.class_indices))
+train_checkpoint_save(model, train_gen, valid_gen, num_epochs=1)
 
 # %% Arbitrary test of prediction
 preds = model.predict(valid_gen)
