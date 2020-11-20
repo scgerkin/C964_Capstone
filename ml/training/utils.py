@@ -2,6 +2,12 @@ from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 import pandas as pd
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import (Dense,
+                                     GlobalAveragePooling2D,
+                                     )
+from datetime import datetime
 
 DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
@@ -113,8 +119,29 @@ def init_image_data_generator(split=False):
             validation_split=split_value)
 
 
-def create_model():
-    pass
+def create_model(in_shape, out_shape):
+    model = Sequential()
+    model.add(InceptionV3(input_shape=in_shape,
+                          include_top=False,
+                          weights=None))
+    model.add(GlobalAveragePooling2D())
+
+    model.add(Dense(out_shape, activation='relu'))
+
+    model.compile(optimizer="nadam",
+                  loss="categorical_crossentropy",
+                  metrics=["accuracy"])
+    return model
+
+
+def get_date_time_str():
+    return datetime.now().strftime("%Y%m%d%H%M%S")
+
+
+def save_model(model, base_model_name):
+    date_time = get_date_time_str()
+    path = f"./models/{date_time}_{base_model_name}.h5"
+    model.save(path)
 
 
 def filter_on_matching(data, labels, value=1):
