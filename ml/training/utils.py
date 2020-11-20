@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 DUMMY_IMG = "00000001_000.png"
-PROJECT_DIR = "W:/WGU/C964_Capstone/project/"
+PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
 DATASET_DIR = PROJECT_DIR + "dataset/"
 IMG_DIR = DATASET_DIR + "images"
 
