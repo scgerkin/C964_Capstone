@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_hub as tf_hub
 from training.utils import (get_dx_labels,
                             get_img_metadata,
-                            get_train_valid_test_split
+                            get_train_valid_test_split,
                             )
 from tensorflow.keras import Sequential
 from tensorflow.keras.applications.inception_v3 import InceptionV3
@@ -10,7 +10,7 @@ from tensorflow.keras.layers import (Dropout,
                                      Dense,
                                      GlobalAveragePooling2D,
                                      )
-from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, EarlyStopping
 
 from datetime import datetime
 
@@ -34,13 +34,10 @@ def create_model(in_shape, out_shape):
                           include_top=False,
                           weights=None))
     model.add(GlobalAveragePooling2D())
-    model.add(Dropout(0.5))
-    model.add(Dense(512))
-    model.add(Dropout(0.5))
 
-    model.add(Dense(out_shape, activation='sigmoid'))
+    model.add(Dense(out_shape, activation='relu'))
 
-    model.compile(optimizer="rmsprop",
+    model.compile(optimizer="nadam",
                   loss="categorical_crossentropy",
                   metrics=["accuracy"])
     return model
@@ -57,9 +54,19 @@ def save_model(model, base_model_name="InceptionV3"):
 
 
 def train_checkpoint_save(model, train_gen, valid_gen, num_epochs=10):
-    checkpoint_fp = f"./checkpoints/{get_date_time_str()}.h5"
+    dt = get_date_time_str()
+    checkpoint_fp = f"./checkpoints/{dt}.h5"
     checkpoint_cb = ModelCheckpoint(checkpoint_fp,
+                                    save_freq="epoch",
+                                    monitor="val_loss",
                                     save_best_only=True)
+
+    csv_fp = f"./logs/{dt}.csv"
+    csv_cb = CSVLogger(csv_fp)
+
+    early_stop_cb = EarlyStopping(monitor="val_loss", patience=5, mode="min")
+
+    callbacks = [checkpoint_cb, csv_cb, early_stop_cb]
     STEP_SIZE_TRAIN = train_gen.n // train_gen.batch_size
     STEP_SIZE_VALID = valid_gen.n // valid_gen.batch_size
     model.fit_generator(generator=train_gen,
@@ -67,7 +74,7 @@ def train_checkpoint_save(model, train_gen, valid_gen, num_epochs=10):
                         validation_data=valid_gen,
                         validation_steps=STEP_SIZE_VALID,
                         epochs=num_epochs,
-                        callbacks=[checkpoint_cb])
+                        callbacks=callbacks)
 
     model = tf.keras.models.load_model(checkpoint_fp)
     save_model(model)
@@ -82,8 +89,6 @@ model = create_model(train_gen.image_shape, len(train_gen.class_indices))
 train_checkpoint_save(model, train_gen, valid_gen, num_epochs=100)
 
 # %% Arbitrary test of prediction
-preds = model.predict(valid_gen)
+preds = model.predict(test_gen)
 for pred in preds[:5]:
     print(pred)
-
-
