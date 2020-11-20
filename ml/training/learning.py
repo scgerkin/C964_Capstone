@@ -82,7 +82,9 @@ def train_checkpoint_save(model, train_gen, valid_gen, num_epochs=10):
 
 
 # %%
-train_gen, valid_gen, test_gen = get_train_valid_test_split(img_metadata)
+# only train on images with finding
+train_df = img_metadata[img_metadata['no_finding'] < 1.]
+train_gen, valid_gen, test_gen = get_train_valid_test_split(train_df)
 
 # %%
 model = create_model(train_gen.image_shape, len(train_gen.class_indices))

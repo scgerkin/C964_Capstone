@@ -16,7 +16,7 @@ RND_SEED = 8
 IMG_CHANNELS = 1
 TEST_SIZE = 0.2
 
-SPLIT_VALUE = 0.2
+SPLIT_VALUE = 0.15
 
 DX_LABELS = None  # cache dx labels
 
@@ -50,7 +50,7 @@ def get_dx_labels():
 
 
 def get_train_valid_test_split(img_data):
-    train_df, test_df = train_test_split(img_data, test_size=0.2,
+    train_df, test_df = train_test_split(img_data, test_size=0.10,
                                          random_state=42)
 
     training_data = get_data_batch(train_df, subset="training")
