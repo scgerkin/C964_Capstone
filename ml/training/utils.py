@@ -27,6 +27,16 @@ SPLIT_VALUE = 0.15
 DX_LABELS = None  # cache dx labels
 
 
+def print_gpu_status():
+    import tensorflow as tf
+    print(f"TensorFlow version: {tf.__version__}")
+    gpu_data = tf.config.list_physical_devices("GPU")
+    if gpu_data:
+        print(f"GPU is available for training.\nTotal GPUs: {len(gpu_data)}")
+    else:
+        print("WARNING: GPU is not available for training!")
+
+
 def get_img_metadata():
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))

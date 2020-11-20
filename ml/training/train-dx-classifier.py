@@ -1,21 +1,14 @@
 import tensorflow as tf
-import tensorflow_hub as tf_hub
 from training.utils import (get_dx_labels,
                             get_img_metadata,
                             get_train_valid_test_split,
                             create_model,
                             get_date_time_str,
-                            save_model,
+                            save_model, print_gpu_status,
                             )
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, EarlyStopping
 
-print(f"TensorFlow version: {tf.__version__}")
-print(f"TensorFlow Hub version: {tf_hub.__version__}")
-gpu_data = tf.config.list_physical_devices("GPU")
-if gpu_data:
-    print(f"GPU is available for training.\nTotal GPUs: {len(gpu_data)}")
-else:
-    print("WARNING: GPU is not available for training!")
+print_gpu_status()
 
 dx_labels = get_dx_labels()
 print(f"Total diagnostic labels imported: {len(dx_labels)}")
