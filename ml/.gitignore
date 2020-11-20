@@ -208,3 +208,4 @@ deliverables/*/~$*
 __pycache__/
 /training/samp.py
 *.h5
+/logs/
