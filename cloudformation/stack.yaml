@@ -26,7 +26,7 @@ Parameters:
     Type: String
 
 Resources:
-  ### NETWORK ###
+### NETWORK ###
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -46,7 +46,7 @@ Resources:
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
-  ### SUBNETS ###
+### SUBNETS ###
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -67,18 +67,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-PRI-SN
-  ### NAT ###
-  NatGatewayEIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-  NatGateway:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGatewayEIP.AllocationId
-      SubnetId: !Ref PublicSubnet
-  ### ROUTES ###
+### ROUTES ###
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -105,19 +94,13 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-PRIV-ROUTES
-  DefaultPrivateRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
   PrivateSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet
-  ### SEC GROUPS ###
-  SSHIngressSecGroup:
+### SEC GROUPS ###
+  EFSManagerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SSH Ingress into EFS management server
@@ -139,24 +122,42 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 10.0.0.0/24
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: !Ref EFSManagerSG
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 0
           ToPort: 65535
           CidrIp: 0.0.0.0/0
-  ### EC2 Instance for managing the EFS ###
+### EFS ###
+  EFSResource:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      BackupPolicy:
+        Status: DISABLED
+      PerformanceMode: generalPurpose
+      FileSystemTags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-EFSResource
+  EFSPrivateMountTarget:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSResource
+      SecurityGroups:
+        - Ref: EFSSecGroup
+      SubnetId: !Ref PrivateSubnet
+### EC2 Instance for managing the EFS ###
   EFSManager:
     Type: AWS::EC2::Instance
+    DependsOn: EFSPrivateMountTarget
     Properties:
       InstanceType: t2.small
       ImageId: !Ref AmiId
       KeyName: c964
       SubnetId: !Ref PublicSubnet
       SecurityGroupIds:
-        - Ref: SSHIngressSecGroup
+        - Ref: EFSManagerSG
         - Ref: EFSSecGroup
       Tags:
         - Key: Name
@@ -164,7 +165,43 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          sudo yum install python3 -y
+          yum install -y nfs-utils amazon-efs-utils python3
+          mkdir /home/ec2-user/efs
+          chown ec2-user /home/ec2-user/efs
+
+### VPC Endpoints for S3 and DynamoDB (future use) ###
+  S3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal: "*"
+          Action:
+            - "s3:*"
+          Resource:
+            - "*"
+      RouteTableIds:
+        - !Ref PrivateRouteTable
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      VpcId: !Ref VPC
+  DynamoDBEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal: "*"
+          Action:
+            - "dynamodb:*"
+          Resource:
+            - "*"
+      RouteTableIds:
+        - !Ref PrivateRouteTable
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.dynamodb
+      VpcId: !Ref VPC
 
 Outputs:
   VPC:
@@ -196,4 +233,9 @@ Outputs:
     Description: The EC2 instance for managing EFS
     Value: !Ref EFSManager
     Export:
-      Name: !Sub ${EnvironmentName}-PUB-EC2
+      Name: !Sub ${EnvironmentName}-EFSManager
+  EFSFileSystem:
+    Description: The EFS created
+    Value: !Ref EFSResource
+    Export:
+      Name: !Sub ${EnvironmentName}-EFS
