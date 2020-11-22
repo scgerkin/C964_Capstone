@@ -1,3 +1,4 @@
+import tensorflow as tf
 from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
@@ -7,6 +8,7 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import (Dense,
                                      GlobalAveragePooling2D,
                                      )
+from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger
 from datetime import datetime
 
 DUMMY_IMG = "00000001_000.png"
@@ -28,7 +30,6 @@ DX_LABELS = None  # cache dx labels
 
 
 def print_gpu_status():
-    import tensorflow as tf
     print(f"TensorFlow version: {tf.__version__}")
     gpu_data = tf.config.list_physical_devices("GPU")
     if gpu_data:
@@ -145,7 +146,7 @@ def create_model(in_shape, out_shape):
 
 
 def get_date_time_str():
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    return datetime.now().strftime("%Y%m%d-%H:%M:%S")
 
 
 def save_model(model, base_model_name):
@@ -178,3 +179,37 @@ def filter_on_matching(data, labels, value=1):
 
 def save_to_json(dataframe, filepath, orient="index"):
     dataframe.to_json(filepath, orient=orient)
+
+
+def train_checkpoint_save(model,
+                          train_gen,
+                          valid_gen,
+                          model_name,
+                          monitor="val_loss",
+                          num_epochs=10):
+    dt = get_date_time_str()
+    checkpoint_fp = f"./checkpoints/{dt}-{model_name}.h5"
+    checkpoint_cb = ModelCheckpoint(checkpoint_fp,
+                                    save_freq="epoch",
+                                    monitor=monitor,
+                                    save_best_only=True)
+
+    csv_fp = f"./logs/{dt}-{model_name}.csv"
+    csv_cb = CSVLogger(csv_fp)
+
+    callbacks = [checkpoint_cb, csv_cb]
+
+    STEP_SIZE_TRAIN = train_gen.n // train_gen.batch_size
+    STEP_SIZE_VALID = valid_gen.n // valid_gen.batch_size
+    model.fit_generator(generator=train_gen,
+                        steps_per_epoch=STEP_SIZE_TRAIN,
+                        validation_data=valid_gen,
+                        validation_steps=STEP_SIZE_VALID,
+                        epochs=num_epochs,
+                        callbacks=callbacks)
+
+    # Save the final trained model and the checkpoint with the best monitor
+    save_model(model, f'{model_name}-final')
+    early_stop_model = tf.keras.models.load_model(checkpoint_fp)
+    save_model(early_stop_model, f'{model_name}-bestcp')
+    return model
