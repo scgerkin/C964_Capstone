@@ -198,3 +198,4 @@ target/
 **/secrets
 
 desktop.ini
+/example/
