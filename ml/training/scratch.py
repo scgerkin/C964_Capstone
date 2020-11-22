@@ -1,8 +1,9 @@
 #%%
-from training.utils import get_img_metadata, get_train_valid_test_split
+import pandas as pd
 
-img_metadata = get_img_metadata()
+epoch_data = pd.read_csv("./logs/20201121230921.csv")
 
-train, valid, test = get_train_valid_test_split(img_metadata)
-
-print(train.image_shape)
+epoch_data.set_index("epoch", inplace=True)
+epoch_data.describe()
+#%%
+print(epoch_data[epoch_data["val_loss"] < 6.34])
