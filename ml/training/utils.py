@@ -136,17 +136,18 @@ def create_model(in_shape, out_shape):
                           include_top=False,
                           weights=None))
     model.add(GlobalAveragePooling2D())
+    model.add(Dense(512))
+    model.add(Dense(out_shape, activation='sigmoid'))
 
-    model.add(Dense(out_shape, activation='relu'))
-
-    model.compile(optimizer="nadam",
+    optimizer = tf.keras.optimizers.Nadam(learning_rate=0.01, )
+    model.compile(optimizer=optimizer,
                   loss="categorical_crossentropy",
-                  metrics=["accuracy"])
+                  metrics=["accuracy", "mae"])
     return model
 
 
 def get_date_time_str():
-    return datetime.now().strftime("%Y%m%d-%H:%M:%S")
+    return datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 def save_model(model, base_model_name):
