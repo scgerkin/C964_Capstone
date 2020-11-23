@@ -10,6 +10,7 @@ from tensorflow.keras.layers import (Dense,
                                      )
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger
 from datetime import datetime
+import pickle
 
 DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
@@ -214,3 +215,25 @@ def train_checkpoint_save(model,
     early_stop_model = tf.keras.models.load_model(checkpoint_fp)
     save_model(early_stop_model, f'{model_name}-bestcp')
     return model
+
+
+def pickle_model(model, name, x, y):
+    data_info = pd.DataFrame()
+    data_info["x"] = x
+    data_info["y"] = y
+
+    date_time = get_date_time_str()
+    n_samp = len(data_info)
+
+    base_filename = f"./models/{date_time}-{n_samp}-{name}"
+
+    pkl_filename = base_filename + ".pkl"
+    csv_filename = base_filename + ".csv"
+
+    print(f"Saving model to {base_filename}")
+
+    with open(pkl_filename, 'wb') as f:
+        pickle.dump(model, f)
+
+    data_info.to_csv(csv_filename)
+    print("Model saved.")
