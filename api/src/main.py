@@ -1,4 +1,6 @@
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from numpy import expand_dims
 from flask import Flask
 from flask_restful import Api, Resource, abort
 import boto3
@@ -38,15 +40,23 @@ class Bucket(Resource):
 
 
 def load_img_as_tensor(filename):
+    # TODO: This will (probably?) not work without making the bucket public
+    #  Lazy solution is to make gets public.
+    #  Easy/inefficient is to get presigned url
+    #  Correct is to use the s3 client, download it locally (if unable to load
+    #   directly from memory), then load from the saved file
     filepath = f"https://s3.amazonaws.com/{BUCKET_NAME}/{filename}"
-    # load image as tensor and return it
-    raise NotImplemented("load image")
+    img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
+    img = img_to_array(img)
+    img = expand_dims(img, axis=0)
+    return img
 
 
 def make_predictions(tensor):
-    # is this right?
-    # predictions = self.model.predict_proba(tensor)
-    return {"a": "b"}
+    finding_prediction = finding_predictor.predict(tensor)
+    label_prediction = label_classifier.predict(tensor)
+    # TODO: Need to figure out the labels associated with each array index
+    return {"Finding": finding_prediction, "Label": label_prediction}
     # raise NotImplemented("make predictions")
 
 
