@@ -217,13 +217,17 @@ def train_checkpoint_save(model,
     return model
 
 
-def pickle_model(model, name, x, y):
-    data_info = pd.DataFrame()
-    data_info["x"] = x
-    data_info["y"] = y
+def pickle_model(model, name, x, y_expected, y_prediction):
+    df = pd.DataFrame()
+    df["x"] = x
+    df["y_expected"] = y_expected
+    df["y_prediction"] = y_prediction
+    df['confusion'] = df.apply(
+            lambda s: determine_confusion(s['y_expected'], s['y_prediction']),
+            axis=1)
 
     date_time = get_date_time_str()
-    n_samp = len(data_info)
+    n_samp = len(df)
 
     base_filename = f"./models/{date_time}-{n_samp}-{name}"
 
@@ -235,5 +239,18 @@ def pickle_model(model, name, x, y):
     with open(pkl_filename, 'wb') as f:
         pickle.dump(model, f)
 
-    data_info.to_csv(csv_filename)
+    df.to_csv(csv_filename, index=False)
     print("Model saved.")
+
+
+def determine_confusion(expected, actual):
+    if expected == 1:
+        if expected == actual:
+            return "TP"
+        else:
+            return "FN"
+    else:
+        if expected == actual:
+            return "TN"
+        else:
+            return "FP"

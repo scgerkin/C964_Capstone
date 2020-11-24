@@ -22,7 +22,6 @@ train_df, test_df = train_test_split(img_metadata,
                                      test_size=0.2,
                                      random_state=RANDOM_SEED)
 
-# %%
 x_train_paths = train_df['img_filename']
 y_train_labels = train_df['no_finding']
 x_test_paths = test_df['img_filename']
@@ -44,17 +43,15 @@ def load_imgs(filenames):
     return np.array(arr)
 
 
-# %%
 num_samples = 5000
 x_train = load_imgs(x_train_paths[:num_samples])
 print("Fitting model...")
 kmeans_model = kmeans.fit(x_train)
-print("Done fitting model.")
+print("Making predictions...")
+preds = kmeans.predict(x_train)
 pickle_model(model=kmeans_model,
              name='binary-kmeans',
-             x=x_test_paths[:num_samples],
-             y=y_train_labels[:num_samples])
-
-# %%
-y_preds = kmeans_model.predict(x_train)
+             x=x_train_paths[:num_samples],
+             y_expected=y_train_labels[:num_samples],
+             y_prediction=preds)
 # %%
