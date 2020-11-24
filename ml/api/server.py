@@ -1,3 +1,4 @@
+import os
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
@@ -7,7 +8,6 @@ import boto3
 from botocore.exceptions import ClientError
 import uuid
 import pickle
-import sklearn
 
 app = Flask(__name__)
 api = Api(app)
@@ -17,8 +17,13 @@ api = Api(app)
 BUCKET_NAME = "xray.scgrk.com"
 
 # TODO: set model path. Keep in container or get from s3?
-finding_predictor_path = "./models/20201124-155102-100-binary-kmeans.pkl"
-label_classifier_path = "./models/20201123-120422_dx-classifier-final.h5"
+PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
+
+finding_predictor_path = "models/20201124-155102-100-binary-kmeans.pkl"
+finding_predictor_path = os.path.join(PROJECT_DIR, finding_predictor_path)
+
+label_classifier_path = "models/20201123-120422_dx-classifier-final.h5"
+label_classifier_path = os.path.join(PROJECT_DIR, label_classifier_path)
 
 labels = ["atelectasis", "cardiomegaly", "consolidation", "edema", "effusion",
           "emphysema", "fibrosis", "hernia", "infiltration", "mass", "nodule",
@@ -92,4 +97,4 @@ api.add_resource(Bucket, "/upload")
 api.add_resource(Predictor, "/predict/<filename>")
 
 if __name__ == "__main__":
-    a, b = load_models()
+    app.run(debug=True)
