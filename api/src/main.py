@@ -68,8 +68,15 @@ def make_predictions(img):
     finding_prediction = finding_predictor.predict(img.flatten())
     tensor = expand_dims(img, axis=0)
     label_prediction = label_classifier.predict(tensor)
-    # TODO: Need to figure out the labels associated with each array index
-    return {"Finding": finding_prediction, "Label": label_prediction}
+
+    # if prediction is 0, then there is a finding
+    finding_label = True if finding_prediction < 0.5 else False
+
+    label_probs = {}
+    for i in range(len(label_prediction)):
+        label_probs[labels[i]] = label_prediction[i]
+
+    return {"Finding": finding_label, "Label": label_probs}
 
 
 class Predictor(Resource):
