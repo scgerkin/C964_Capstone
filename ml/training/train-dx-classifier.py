@@ -19,8 +19,8 @@ print(f"Total usable images: {len(img_metadata)}")
 train_df = img_metadata[img_metadata['no_finding'] < 1.]
 train_gen, valid_gen, test_gen = get_train_valid_test_split(train_df)
 # %%
-
-# model = tf.keras.models.load_model("./models/20201121102739_dx-classifier.h5")
+# model_path = "./models/20201123-120422_dx-classifier-final.h5"
+# model = load_model(model_path)
 
 # %%
 model = create_model(train_gen.image_shape, len(train_gen.class_indices))
