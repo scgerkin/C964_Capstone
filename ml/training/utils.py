@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -11,6 +12,13 @@ from tensorflow.keras.layers import (Dense,
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger
 from datetime import datetime
 import pickle
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from numpy import expand_dims
+from sklearn.metrics import (confusion_matrix,
+                             precision_score,
+                             recall_score,
+                             f1_score,
+                             )
 
 DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
@@ -217,7 +225,7 @@ def train_checkpoint_save(model,
     return model
 
 
-def pickle_model(model, name, x, y_expected, y_prediction):
+def create_binary_results_df(x, y_expected, y_prediction):
     df = pd.DataFrame()
     df["x"] = x
     df["y_expected"] = y_expected
@@ -226,8 +234,12 @@ def pickle_model(model, name, x, y_expected, y_prediction):
             lambda s: determine_confusion(s['y_expected'], s['y_prediction']),
             axis=1)
 
+    return df
+
+
+def pickle_model(model, name, results_df):
     date_time = get_date_time_str()
-    n_samp = len(df)
+    n_samp = len(results_df)
 
     base_filename = f"./models/{date_time}-{n_samp}-{name}"
 
@@ -239,7 +251,7 @@ def pickle_model(model, name, x, y_expected, y_prediction):
     with open(pkl_filename, 'wb') as f:
         pickle.dump(model, f)
 
-    df.to_csv(csv_filename, index=False)
+    results_df.to_csv(csv_filename, index=False)
     print("Model saved.")
 
 
@@ -254,3 +266,36 @@ def determine_confusion(expected, actual):
             return "TN"
         else:
             return "FP"
+
+
+def load_img_as_array(filename):
+    filepath = os.path.join(IMG_DIR, filename)
+    img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
+    img = img_to_array(img)
+    return img
+
+
+def load_img_as_flat_array(filename):
+    img = load_img_as_array(filename)
+    img = img.flatten()
+    return img
+
+
+def load_img_as_tensor(filename):
+    img = load_img_as_array(filename)
+    img = expand_dims(img, axis=0)
+    return img
+
+
+def print_metrics(results):
+    exp, act = results["y_expected"], results["y_prediction"]
+
+    precision = round(precision_score(exp, act) * 100, 2)
+    recall = round(recall_score(exp, act) * 100, 2)
+    f1 = round(f1_score(exp, act) * 100, 2)
+    cf = confusion_matrix(exp, act)
+
+    print(f"Precision: {precision}\tRecall: {recall}\tF1: {f1}")
+    print("Confusion Matrix:")
+    print(f"TN: {cf[0][0]}\tFP: {cf[0][1]}")
+    print(f"FN: {cf[1][0]}\tTP: {cf[1][1]}")

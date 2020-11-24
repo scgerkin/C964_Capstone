@@ -6,6 +6,7 @@ from flask_restful import Api, Resource, abort
 import boto3
 from botocore.exceptions import ClientError
 import uuid
+import pickle
 
 app = Flask(__name__)
 api = Api(app)
@@ -17,8 +18,16 @@ BUCKET_NAME = "xray.scgrk.com"
 # TODO: set model path. Keep in container or get from s3?
 finding_predictor_path = "..."
 label_classifier_path = "..."
-finding_predictor = load_model(finding_predictor_path)
-label_classifier = load_model(label_classifier_path)
+
+
+def load_models():
+    with open(finding_predictor_path, 'rb') as f:
+        f_predictor = pickle.load(f)
+    l_classifier = load_model(label_classifier_path)
+    return f_predictor, l_classifier
+
+
+finding_predictor, label_classifier = load_models()
 
 
 class Bucket(Resource):
@@ -39,7 +48,7 @@ class Bucket(Resource):
             abort(500, message=ex.response)
 
 
-def load_img_as_tensor(filename):
+def load_img_as_array(filename):
     # TODO: This will (probably?) not work without making the bucket public
     #  Lazy solution is to make gets public.
     #  Easy/inefficient is to get presigned url
@@ -48,23 +57,22 @@ def load_img_as_tensor(filename):
     filepath = f"https://s3.amazonaws.com/{BUCKET_NAME}/{filename}"
     img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
     img = img_to_array(img)
-    img = expand_dims(img, axis=0)
     return img
 
 
-def make_predictions(tensor):
-    finding_prediction = finding_predictor.predict(tensor)
+def make_predictions(img):
+    finding_prediction = finding_predictor.predict(img.flatten())
+    tensor = expand_dims(img, axis=0)
     label_prediction = label_classifier.predict(tensor)
     # TODO: Need to figure out the labels associated with each array index
     return {"Finding": finding_prediction, "Label": label_prediction}
-    # raise NotImplemented("make predictions")
 
 
 class Predictor(Resource):
 
     def get(self, filename):
-        tensor = load_img_as_tensor(filename)
-        predictions = make_predictions(tensor)
+        img = load_img_as_array(filename)
+        predictions = make_predictions(img)
         return predictions
 
 

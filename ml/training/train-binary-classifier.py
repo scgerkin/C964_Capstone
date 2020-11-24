@@ -1,14 +1,14 @@
+# %%
 from training.utils import (get_dx_labels,
                             get_img_metadata,
-                            IMG_DIR,
                             pickle_model,
+                            create_binary_results_df,
+                            print_metrics,
+                            load_img_as_flat_array,
                             )
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
-from skimage.transform import resize
-import os
 import numpy as np
-from skimage import io
 
 RANDOM_SEED = 42
 
@@ -34,24 +34,23 @@ def load_imgs(filenames):
     for index, filename in enumerate(filenames):
         if index % 100 == 0:
             print(f"{round(float(index) / len(filenames) * 100., 2)}% complete")
-        path = os.path.join(IMG_DIR, filename)
-        img = io.imread(path, as_gray=True)
-        img = resize(img, output_shape=(256, 256))
-        img = img.flatten()
+        img = load_img_as_flat_array(filename)
         arr.append(img)
     print("Finished loading.")
     return np.array(arr)
 
 
-num_samples = 5000
+num_samples = 100
 x_train = load_imgs(x_train_paths[:num_samples])
 print("Fitting model...")
 kmeans_model = kmeans.fit(x_train)
 print("Making predictions...")
-preds = kmeans.predict(x_train)
+preds = kmeans_model.predict(x_train)
+results_df = create_binary_results_df(x=x_train_paths[:num_samples],
+                                      y_expected=y_train_labels[:num_samples],
+                                      y_prediction=preds)
 pickle_model(model=kmeans_model,
              name='binary-kmeans',
-             x=x_train_paths[:num_samples],
-             y_expected=y_train_labels[:num_samples],
-             y_prediction=preds)
-# %%
+             results_df=results_df)
+
+print_metrics(results_df)
