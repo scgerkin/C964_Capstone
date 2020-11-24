@@ -19,6 +19,10 @@ BUCKET_NAME = "xray.scgrk.com"
 finding_predictor_path = "..."
 label_classifier_path = "..."
 
+labels = ["atelectasis", "cardiomegaly", "consolidation", "edema", "effusion",
+          "emphysema", "fibrosis", "hernia", "infiltration", "mass", "nodule",
+          "pleural_thickening", "pneumonia", "pneumothorax"]
+
 
 def load_models():
     with open(finding_predictor_path, 'rb') as f:
