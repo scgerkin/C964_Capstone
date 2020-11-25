@@ -1,11 +1,7 @@
 version: "3.8"
 services:
-  tfserve:
-    image: tensorflow/serving
+  dx-classifier:
+    image: c964
     ports:
       - "8500:8500"
       - "8501:8501"
-    environment:
-      - MODEL_NAME=dx-classifier
-    volumes:
-      - ~/ml/dx-classifier:/models/dx-classifier
