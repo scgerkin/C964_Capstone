@@ -4,29 +4,31 @@ import os
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from numpy import expand_dims
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, abort
-import boto3
-from botocore.exceptions import ClientError
-import uuid
 import pickle
+
+# TODO: set model path. Keep in container or get from s3?
+PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml"
+
+UPLOAD_FOLDER = f"{PROJECT_DIR}/api/tmp"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[
+        1].lower() in ALLOWED_EXTENSIONS
+
 
 app = Flask(__name__)
 api = Api(app)
-
-# todo: get bucket name from environ or config file
-# todo: add bucket policy to automatically delete after set time
-BUCKET_NAME = "scgrk.com"
-
-# TODO: set model path. Keep in container or get from s3?
-PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
 
 finding_predictor_path = "models/20201124-155102-100-binary-kmeans.pkl"
 finding_predictor_path = os.path.join(PROJECT_DIR, finding_predictor_path)
 
 
 def load_finding_model():
-    with open(finding_predictor_path, 'rb') as f:
+    with open(finding_predictor_path, "rb") as f:
         f_predictor = pickle.load(f)
     return f_predictor
 
@@ -34,36 +36,8 @@ def load_finding_model():
 finding_predictor = load_finding_model()
 
 
-class Bucket(Resource):
-    """
-    FIXME: I think I might replace this with just posting the image directly
-        to the server, saving it in a temp folder, and processing it from
-        that rather than deal with S3. Since `load_img` can't load from a web
-        URL file path, putting it onto S3 is just an extra step that adds no
-        benefit.
-    """
-    s3 = boto3.client("s3")
-
-    expiration = 600  # 10 minutes
-
-    def get(self):
-        key_name = str(uuid.uuid4())
-        try:
-            res = self.s3.generate_presigned_post(BUCKET_NAME,
-                                                  key_name,
-                                                  ExpiresIn=self.expiration)
-            return res, 200
-        except ClientError as ex:
-            # todo: log exception, don't return the exception code
-            print(ex)
-            abort(500, message=ex.response)
-
-
-def load_img_as_array(filename):
-    # FIXME: Apparently load_img can't take a web URL
-    # filepath = f"https://s3.amazonaws.com/{BUCKET_NAME}/{filename}"
-    filepath = "W:/WGU/C964_Capstone/project/ml/dataset/images/00000001_000.png"
-    img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
+def load_img_as_array(filepath):
+    img = load_img(filepath, target_size=(256, 256), color_mode="grayscale")
     img = img_to_array(img)
     return img
 
@@ -76,13 +50,15 @@ def make_predictions(img):
 
 def get_finding_prediction(img):
     img = img.flatten()
-    # FIXME: above is not flattening from 2d to 1d array, so predictor
-    #  has a fit
-    # finding_prediction = finding_predictor.predict(img)
+    img = img.reshape(1, -1)
 
-    finding_prediction = 1
+    finding_prediction = finding_predictor.predict(img)
+    finding_prediction = finding_prediction[0]
+
     # if prediction is 0, then there is a finding
-    return finding_prediction < 0.5
+    # this also converts the numpy object into a Python boolean which can be
+    # serialized
+    return True if finding_prediction < 0.5 else False
 
 
 def get_label_prediction(img):
@@ -115,17 +91,27 @@ def get_label_prediction(img):
 
 class Predictor(Resource):
 
-    def get(self, filename):
-        img = load_img_as_array(filename)
-        predictions = make_predictions(img)
-        return predictions
-
     def post(self):
-        pass
+        if "image" not in request.files:
+            abort(400, message="No file present.")
+
+        image = request.files["image"]
+        if image and allowed_file(image.filename):
+            image.save(os.path.join(UPLOAD_FOLDER, image.filename))
+        else:
+            abort(400,
+                  message=f"Image filetype must be in {ALLOWED_EXTENSIONS}")
+
+        filepath = f"{UPLOAD_FOLDER}/{image.filename}"
+        image = load_img_as_array(filepath)
+        predictions = make_predictions(image)
+
+        os.remove(filepath)
+
+        return predictions, 200
 
 
-api.add_resource(Bucket, "/upload")
-api.add_resource(Predictor, "/predict/<filename>")
+api.add_resource(Predictor, "/predict")
 
 if __name__ == "__main__":
     app.run(debug=True)
