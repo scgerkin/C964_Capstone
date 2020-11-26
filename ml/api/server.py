@@ -12,6 +12,7 @@ UPLOAD_PATH = os.getenv("UPLOAD_PATH")
 MODEL_PATH = os.getenv("MODEL_PATH")
 TF_SERVE_URL = os.getenv("TF_SERVE_URL")
 HOST_IP = "127.0.0.1" if os.getenv("LOCAL_HOST") else "0.0.0.0"
+DEBUG_MODE = os.getenv("DEBUG_MODE")
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
@@ -114,4 +115,4 @@ class Predictor(Resource):
 api.add_resource(Predictor, "/predict")
 
 if __name__ == "__main__":
-    app.run(debug=True, host=HOST_IP)
+    app.run(debug=DEBUG_MODE, host=HOST_IP)
