@@ -1,10 +1,8 @@
 FROM continuumio/anaconda3
-# TODO: Download server/model from S3 or github so that the image doesn't need to be rebuilt everytime a change is made
-ADD server.py /svr/server.py
+RUN mkdir /svr
+RUN curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/ml/api/start.sh > /svr/start.sh
+RUN chmod +x /svr/start.sh
 ADD server-environment.yaml /svr/server-environment.yaml
-ADD finding_predictor.pkl /svr/finding_predictor.pkl
-ENV UPLOAD_PATH=/tmp
-ENV MODEL_PATH=/svr/finding_predictor.pkl
 RUN conda env create -f /svr/server-environment.yaml
 RUN conda init bash
-CMD /opt/conda/envs/server-env/bin/python /svr/server.py
+CMD /bin/bash /svr/start.sh
