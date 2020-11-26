@@ -1,7 +1,13 @@
 version: "3.8"
 services:
   dx-classifier:
-    image: c964
+    image: c964/dx
     ports:
       - "8500:8500"
       - "8501:8501"
+  server:
+    image: c964/svr
+    ports:
+      - "5000:5000"
+    environment:
+      - TF_SERVE_URL=http://dx-classifier:8501/v1/models/dx-classifier:predict
