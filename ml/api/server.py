@@ -11,13 +11,14 @@ import pickle
 UPLOAD_PATH = os.getenv("UPLOAD_PATH")
 MODEL_PATH = os.getenv("MODEL_PATH")
 TF_SERVE_URL = os.getenv("TF_SERVE_URL")
+HOST_IP = "127.0.0.1" if os.getenv("LOCAL_HOST") else "0.0.0.0"
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[
-        1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename \
+           and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 app = Flask(__name__)
@@ -113,4 +114,4 @@ class Predictor(Resource):
 api.add_resource(Predictor, "/predict")
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host=HOST_IP)

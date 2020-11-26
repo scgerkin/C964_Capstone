@@ -7,6 +7,7 @@ curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/ml/api/findin
 # set env vars
 export UPLOAD_PATH=/tmp
 export MODEL_PATH=/svr/finding_predictor.pkl
+export LOCAL_HOST=false
 
 # start the server
 /opt/conda/envs/server-env/bin/python /svr/server.py
