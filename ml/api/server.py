@@ -8,10 +8,10 @@ from flask import Flask, request
 from flask_restful import Api, Resource, abort
 import pickle
 
-# TODO: set model path. Keep in container or get from s3?
-PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml"
+UPLOAD_FOLDER = os.getenv("UPLOAD_PATH")
+MODEL_PATH = os.getenv("MODEL_PATH")
+TF_SERVE_URL = os.getenv("TF_SERVE_URL")
 
-UPLOAD_FOLDER = f"{PROJECT_DIR}/api/tmp"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 
@@ -23,12 +23,9 @@ def allowed_file(filename):
 app = Flask(__name__)
 api = Api(app)
 
-finding_predictor_path = "models/20201124-155102-100-binary-kmeans.pkl"
-finding_predictor_path = os.path.join(PROJECT_DIR, finding_predictor_path)
-
 
 def load_finding_model():
-    with open(finding_predictor_path, "rb") as f:
+    with open(MODEL_PATH, "rb") as f:
         f_predictor = pickle.load(f)
     return f_predictor
 
@@ -69,8 +66,7 @@ def get_label_prediction(img):
         "instances"     : tensor.tolist()
         })
 
-    server_url = "http://localhost:8501/v1/models/dx-classifier:predict"
-    response = requests.post(server_url, data=classifier_request)
+    response = requests.post(TF_SERVE_URL, data=classifier_request)
     response = response.json()
 
     predictions = np.array(response["predictions"][0])
@@ -90,6 +86,9 @@ def get_label_prediction(img):
 
 
 class Predictor(Resource):
+    def  get(self):
+        # Used for testing server is up and responding.
+        return "Use POST for predictions.", 200
 
     def post(self):
         if "image" not in request.files:
@@ -114,4 +113,4 @@ class Predictor(Resource):
 api.add_resource(Predictor, "/predict")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
