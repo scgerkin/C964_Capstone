@@ -8,7 +8,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource, abort
 import pickle
 
-UPLOAD_FOLDER = os.getenv("UPLOAD_PATH")
+UPLOAD_PATH = os.getenv("UPLOAD_PATH")
 MODEL_PATH = os.getenv("MODEL_PATH")
 TF_SERVE_URL = os.getenv("TF_SERVE_URL")
 
@@ -96,12 +96,12 @@ class Predictor(Resource):
 
         image = request.files["image"]
         if image and allowed_file(image.filename):
-            image.save(os.path.join(UPLOAD_FOLDER, image.filename))
+            image.save(os.path.join(UPLOAD_PATH, image.filename))
         else:
             abort(400,
                   message=f"Image filetype must be in {ALLOWED_EXTENSIONS}")
 
-        filepath = f"{UPLOAD_FOLDER}/{image.filename}"
+        filepath = f"{UPLOAD_PATH}/{image.filename}"
         image = load_img_as_array(filepath)
         predictions = make_predictions(image)
 
