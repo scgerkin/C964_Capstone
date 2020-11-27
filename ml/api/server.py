@@ -4,8 +4,9 @@ import os
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from numpy import expand_dims
-from flask import Flask, request
+from flask import Flask, request, make_response
 from flask_restful import Api, Resource, abort
+from flask_cors import CORS
 import pickle
 
 UPLOAD_PATH = os.getenv("UPLOAD_PATH")
@@ -23,6 +24,7 @@ def allowed_file(filename):
 
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 
@@ -88,11 +90,21 @@ def get_label_prediction(img):
 
 
 class Predictor(Resource):
-    def  get(self):
+
+    def options(self):
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add('Access-Control-Allow-Headers', "*")
+        response.headers.add('Access-Control-Allow-Methods', "*")
+        return response
+
+    def get(self):
         # Used for testing server is up and responding.
         return "Use POST for predictions.", 200
 
     def post(self):
+        rec = request
+        print(rec)
         if "image" not in request.files:
             abort(400, message="No file present.")
 
