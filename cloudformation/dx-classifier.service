@@ -1,0 +1,9 @@
+[Unit]
+Description=Restarts the dx classifier docker containers
+After=default.target
+
+[Service]
+ExecStart=/home/ec2-user/start-dx-classifier.sh
+
+[Install]
+WantedBy=default.target
