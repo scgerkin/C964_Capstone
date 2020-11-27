@@ -1,8 +1,8 @@
 import React from "react"
-import XrayUpload from "../components/xray-upload"
+import Navbar from "../components/navbar"
 
 export default function Home() {
   return <div>
-    <XrayUpload/>
+    <Navbar/>
   </div>
 }

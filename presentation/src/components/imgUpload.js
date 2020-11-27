@@ -7,7 +7,7 @@ const ANALYZING_XRAY = "ANALYZING_XRAY"
 
 const DEFAULT_SELECTION_TEXT = "Select an X-ray to analyze."
 
-class XrayUpload extends Component {
+class ImgUpload extends Component {
   state = {
     image: undefined,
     uploadState: NO_FILE_SELECTION,
@@ -88,4 +88,4 @@ async function analyzeXray(image) {
   return await Axios.post("http://localhost:5000", request)
 }
 
-export default XrayUpload
+export default ImgUpload
