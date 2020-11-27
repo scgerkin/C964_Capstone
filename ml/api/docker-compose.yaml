@@ -8,6 +8,6 @@ services:
   server:
     image: c964/svr
     ports:
-      - "5000:5000"
+      - "80:5000"
     environment:
       - TF_SERVE_URL=http://dx-classifier:8501/v1/models/dx-classifier:predict
