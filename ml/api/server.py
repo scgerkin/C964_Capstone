@@ -112,7 +112,7 @@ class Predictor(Resource):
         return predictions, 200
 
 
-api.add_resource(Predictor, "/predict")
+api.add_resource(Predictor, "/")
 
 if __name__ == "__main__":
     app.run(debug=DEBUG_MODE, host=HOST_IP)
