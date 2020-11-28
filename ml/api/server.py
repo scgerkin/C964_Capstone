@@ -43,7 +43,7 @@ def load_img_as_array(filepath):
 def make_predictions(img):
     finding_label = get_finding_prediction(img)
     labelled_predictions = get_label_prediction(img)
-    return {"Finding": finding_label, "Label": labelled_predictions}
+    return {"finding": finding_label, "labels": labelled_predictions}
 
 
 def get_finding_prediction(img):

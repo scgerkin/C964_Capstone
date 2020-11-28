@@ -1,12 +1,12 @@
 import React from "react"
-import ImgUpload from "../components/imgUpload"
+import XrayAnalysis from "../components/analysis/xrayAnalysis"
 import Layout from "../components/layout/layout"
 
-export default function predict() {
+export default function analyze() {
   return (
     <Layout>
       <h1>Analyze an X-ray</h1>
-      <ImgUpload/>
+      <XrayAnalysis/>
     </Layout>
   )
 }
