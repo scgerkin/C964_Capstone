@@ -1,9 +1,12 @@
 import React from "react"
 
-function AnalysisResultsDisplay(props) {
+export default function resultsDisplay(props) {
   const { predictions } = props
+
+  if (!predictions) return null
+
   return (
-    <div>
+    <>
       <h2>Finding: {predictions.finding ? "True" : "False"}</h2>
       <h3>Label probabilities</h3>
       <ul>
@@ -12,8 +15,6 @@ function AnalysisResultsDisplay(props) {
             {label + ": " + predictions.labels[label]}
           </li>)}
       </ul>
-    </div>
+    </>
   )
 }
-
-export default AnalysisResultsDisplay
