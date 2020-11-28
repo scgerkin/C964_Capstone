@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import Axios from "axios"
-import FormData from "form-data"
+import { analyzeXray } from "../api/prediction"
 
 const NO_FILE_SELECTION = "NO_FILE_SELECTION"
 const ANALYZING_XRAY = "ANALYZING_XRAY"
@@ -80,12 +79,6 @@ class ImgUpload extends Component {
       </div>
     )
   }
-}
-
-async function analyzeXray(image) {
-  const request = new FormData()
-  request.append("image", image, image.fileName)
-  return await Axios.post("http://localhost:5000", request)
 }
 
 export default ImgUpload

@@ -5,6 +5,11 @@
  */
 
 module.exports = {
-  /* Your site config here */
+  //todo metadata
+  siteMetadata: {
+    title: "C964 - CXR Prediction",
+    description: "An ML app that predicts CXR diagnoses",
+    author: "Stephen Gerkin",
+  },
   plugins: [],
 }
