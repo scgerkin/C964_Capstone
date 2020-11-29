@@ -1,9 +1,9 @@
 import * as d3 from "d3"
 
-const MARGIN = { TOP: 10, BOTTOM: 50, LEFT: 70, RIGHT: 10 }
-const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
+const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 120, RIGHT: 10 }
+const WIDTH = 560 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
-const TRANSITION_DURATION = 500 // ms
+const TRANSITION_DURATION = 1000 // ms
 
 class ResultsChart {
   constructor(element, data) {
@@ -25,53 +25,68 @@ class ResultsChart {
   initXYLabels() {
     this.xLabel = this.svg.append("text")
                       .attr("x", WIDTH / 2)
-                      .attr("y", HEIGHT + 50)
-                      .attr("text-anchor", "middle")
-                      .text("Diagnostic Labels")
-
-    this.yLabel = this.svg.append("text")
-                      .attr("x", HEIGHT / -2)
-                      .attr("y", -50)
+                      .attr("y", -30)
                       .attr("text-anchor", "middle")
                       .text("Probability %")
+    this.yLabel = this.svg.append("text")
+                      .attr("x", HEIGHT / -2)
+                      .attr("y", -100)
+                      .attr("text-anchor", "middle")
+                      .text("Finding")
                       .attr("transform", "rotate(-90)")
-
   }
 
   initAxesGroups() {
     this.xAxisGroup = this.svg.append("g")
-                          .attr("transform", `translate(0, ${HEIGHT})`)
+    // .attr("transform", `translate(0, ${HEIGHT})`)
 
     this.yAxisGroup = this.svg.append("g")
   }
 
   update(data) {
-    this.data = data
+    this.cleanAndSetData(data)
     this.setXY()
     this.setAxes()
     this.joinData()
     this.removeStaleRects()
-    this.updateExistingRects()
     this.addNewRects()
   }
 
-  setXY() {
-    this.y = d3.scaleLinear()
-               .domain([0, 1])
-               .range([HEIGHT, 0])
+  cleanAndSetData(data) {
+    // sort descending
+    data = data.sort(
+      (a, b) => parseFloat(b.probability) - parseFloat(a.probability))
+    // clean labels
+    data = data.map(d => {
+      return {
+        label: pascalCaseLabel(d.label),
+        probability: decimalToPercent(d.probability),
+      }
+    })
 
-    this.x = d3.scaleBand()
-               .domain(this.data.labels.map(i => i.label))
+    this.data = data
+  }
+
+  setXY() {
+    this.x = d3.scaleLinear()
+               .domain([0, 100])
                .range([0, WIDTH])
-               .padding(0.4)
+
+    this.y = d3.scaleBand()
+               .domain(this.data.map(d => d.label))
+               .range([0, HEIGHT])
+               .padding(0.1)
 
   }
 
   setAxes() {
-    const xAxisCall = d3.axisBottom(this.x)
+    const xAxisCall = d3.axisTop(this.x)
     this.xAxisGroup.transition()
         .duration(TRANSITION_DURATION)
         .call(xAxisCall)
+        .selectAll("text")
+        .attr("transform", `translate(15,-10)rotate(-45)`)
+        .style("text-anchor", "end")
 
     const yAxisCall = d3.axisLeft(this.y)
     this.yAxisGroup.transition()
@@ -81,7 +96,7 @@ class ResultsChart {
 
   joinData() {
     this.rects = this.svg.selectAll("rect")
-                     .data(this.data.labels)
+                     .data(this.data)
   }
 
   removeStaleRects() {
@@ -93,32 +108,29 @@ class ResultsChart {
         .remove()
   }
 
-  updateExistingRects() {
-    this.rects.transition()
-        .duration(TRANSITION_DURATION)
-        .attr("x", d => this.x(d.label))
-        .attr("y", d => this.y(d.probability))
-        .attr("width", this.x.bandwidth)
-        .attr("height", d => HEIGHT - this.y(d.height))
-  }
-
   addNewRects() {
     this.rects.enter()
         .append("rect")
-        .attr("x", d => this.x(d.label))
-        .attr("width", this.x.bandwidth())
-        .attr("fill", d => {
-          if (d.probability > 0.5) {
-            return "red"
-          }
-          return "grey"
-        })
-        .attr("y", HEIGHT)
+        .attr("x", this.x(0))
+        .attr("y", d => this.y(d.label))
+        .attr("fill", d => d.probability > 50 ? "red" : "grey")
+        .attr("height", this.y.bandwidth())
         .transition()
         .duration(TRANSITION_DURATION)
-        .attr("height", d => HEIGHT - this.y(d.probability))
-        .attr("y", d => this.y(d.probability))
+        .attr("width", d => this.x(d.probability))
   }
+}
+
+function pascalCaseLabel(label) {
+  return label.split("_")
+              .map(word => word.charAt(0)
+                               .toUpperCase() + word.slice(1))
+              .join(" ")
+}
+
+function decimalToPercent(value) {
+  const precision = Math.pow(10, 2)
+  return Math.ceil(parseFloat(value) * 100 * precision) / precision
 }
 
 export default ResultsChart
