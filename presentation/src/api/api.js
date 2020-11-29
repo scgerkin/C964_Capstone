@@ -30,7 +30,7 @@ async function analyzeStub(image) {
       }
       const data = { "data": response }
       res(data)
-    }, 2500)
+    }, 500)
   })
 }
 

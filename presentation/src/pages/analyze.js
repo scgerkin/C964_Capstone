@@ -65,7 +65,7 @@ class Analyze extends Component {
 
         <StatusDisplay status={status}/>
 
-        <ResultsDisplay predictions={predictions}/>
+        {!!predictions && (<ResultsDisplay predictions={predictions}/>)}
       </Layout>
     )
   }

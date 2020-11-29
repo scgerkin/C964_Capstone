@@ -1,20 +1,25 @@
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
+import ResultsChart from "./resultsChart"
 
-export default function resultsDisplay(props) {
-  const { predictions } = props
+const ResultsDisplay = ({ predictions }) => {
+  const chartArea = useRef(null)
+  const [chart, setChart] = useState(null)
 
-  if (!predictions) return null
+  useEffect(() => {
+    if (!chart) {
+      setChart(new ResultsChart(chartArea.current, predictions))
+    } else if (chart.menData) {
+      chart.update(predictions)
+    }
+  }, [chart, predictions])
 
   return (
     <>
+      {!!predictions}
       <h2>Finding: {predictions.finding ? "True" : "False"}</h2>
-      <h3>Label probabilities</h3>
-      <ul>
-        {Object.keys(predictions.labels).map(label =>
-          <li key={label}>
-            {label + ": " + predictions.labels[label]}
-          </li>)}
-      </ul>
+      <div className="chart-area" ref={chartArea}/>
     </>
   )
 }
+
+export default ResultsDisplay
