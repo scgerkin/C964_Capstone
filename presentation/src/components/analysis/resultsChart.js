@@ -1,4 +1,5 @@
 import * as d3 from "d3"
+import { decimalToPercent, toPascal } from "../../utils/utils"
 
 const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 100, RIGHT: 50 }
 const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
@@ -53,7 +54,7 @@ class ResultsChart {
     // clean labels
     data = data.map(d => {
       return {
-        label: pascalCaseLabel(d.label),
+        label: toPascal(d.label, "_"),
         probability: decimalToPercent(d.probability),
       }
     })
@@ -130,24 +131,11 @@ class ResultsChart {
 
 function fillColor(data) {
   const p = data.probability
-  const red = 255 * (p/100)
+  const red = 255 * (p / 100)
   const green = 255 - red
-  const blue = 255/10
+  const blue = 255 / 10
 
   return `rgb(${red}, ${green}, ${blue})`
-}
-
-
-function pascalCaseLabel(label) {
-  return label.split("_")
-              .map(word => word.charAt(0)
-                               .toUpperCase() + word.slice(1))
-              .join(" ")
-}
-
-function decimalToPercent(value) {
-  const precision = Math.pow(10, 2)
-  return Math.ceil(parseFloat(value) * 100 * precision) / precision
 }
 
 export default ResultsChart
