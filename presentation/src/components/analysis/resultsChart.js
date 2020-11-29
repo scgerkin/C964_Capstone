@@ -1,14 +1,14 @@
 import * as d3 from "d3"
 
-const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 120, RIGHT: 10 }
-const WIDTH = 560 - MARGIN.LEFT - MARGIN.RIGHT
+const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 100, RIGHT: 50 }
+const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 1000 // ms
 
 class ResultsChart {
   constructor(element, data) {
     this.initSVG(element)
-    this.initXYLabels()
+    this.initXLabel()
     this.initAxesGroups()
     this.update(data)
   }
@@ -22,18 +22,12 @@ class ResultsChart {
                  .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
   }
 
-  initXYLabels() {
+  initXLabel() {
     this.xLabel = this.svg.append("text")
                       .attr("x", WIDTH / 2)
                       .attr("y", -30)
                       .attr("text-anchor", "middle")
                       .text("Probability %")
-    this.yLabel = this.svg.append("text")
-                      .attr("x", HEIGHT / -2)
-                      .attr("y", -100)
-                      .attr("text-anchor", "middle")
-                      .text("Finding")
-                      .attr("transform", "rotate(-90)")
   }
 
   initAxesGroups() {
@@ -113,13 +107,36 @@ class ResultsChart {
         .append("rect")
         .attr("x", this.x(0))
         .attr("y", d => this.y(d.label))
-        .attr("fill", d => d.probability > 50 ? "red" : "grey")
+        .attr("fill", fillColor)
         .attr("height", this.y.bandwidth())
         .transition()
         .duration(TRANSITION_DURATION)
         .attr("width", d => this.x(d.probability))
+
+    this.rects.enter()
+        .append("text")
+        .attr("x", d => this.x(d.probability))
+        .attr("y", d => this.y(d.label))
+        .attr("transform", "translate(0, 20)")
+        .text(d => `${d.probability}%`)
+        .attr("fill-opacity", 0)
+        .transition()
+        .delay(TRANSITION_DURATION)
+        .duration(TRANSITION_DURATION)
+        .attr("fill-opacity", 1)
+
   }
 }
+
+function fillColor(data) {
+  const p = data.probability
+  const red = 255 * (p/100)
+  const green = 255 - red
+  const blue = 255/10
+
+  return `rgb(${red}, ${green}, ${blue})`
+}
+
 
 function pascalCaseLabel(label) {
   return label.split("_")
