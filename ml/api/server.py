@@ -79,9 +79,9 @@ def get_label_prediction(img):
               "mass", "nodule", "pleural_thickening", "pneumonia",
               "pneumothorax"]
 
-    labelled_predictions = {}
-    for i in range(len(predictions)):
-        labelled_predictions[labels[i]] = predictions[i]
+    labelled_predictions = []
+    for label, prediction in zip(labels, predictions):
+        labelled_predictions.append({"label": label, "probability": prediction})
 
     return labelled_predictions
 

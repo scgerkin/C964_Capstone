@@ -2,7 +2,8 @@ import FormData from "form-data"
 import Axios from "axios"
 
 export async function analyzeXray(image) {
-  return await analyzeStub(null);
+  return await analyzeStub(null)
+  // return analyzeActual(image)
 }
 
 async function analyzeStub(image) {
@@ -10,24 +11,24 @@ async function analyzeStub(image) {
     setTimeout(() => {
       const response = {
         "finding": Math.random() >= 0.5,
-        "labels": {
-          "atelectasis": Math.random(),
-          "cardiomegaly": Math.random(),
-          "consolidation": Math.random(),
-          "edema": Math.random(),
-          "effusion": Math.random(),
-          "emphysema": Math.random(),
-          "fibrosis": Math.random(),
-          "hernia": Math.random(),
-          "infiltration": Math.random(),
-          "mass": Math.random(),
-          "nodule": Math.random(),
-          "pleural_thickening": Math.random(),
-          "pneumonia": Math.random(),
-          "pneumothorax": Math.random(),
-        },
+        "labels": [
+          { label: "atelectasis", probability: Math.random() },
+          { label: "cardiomegaly", probability: Math.random() },
+          { label: "consolidation", probability: Math.random() },
+          { label: "edema", probability: Math.random() },
+          { label: "effusion", probability: Math.random() },
+          { label: "emphysema", probability: Math.random() },
+          { label: "fibrosis", probability: Math.random() },
+          { label: "hernia", probability: Math.random() },
+          { label: "infiltration", probability: Math.random() },
+          { label: "mass", probability: Math.random() },
+          { label: "nodule", probability: Math.random() },
+          { label: "pleural_thickening", probability: Math.random() },
+          { label: "pneumonia", probability: Math.random() },
+          { label: "pneumothorax", probability: Math.random() },
+        ],
       }
-      const data = {"data": response}
+      const data = { "data": response }
       res(data)
     }, 2500)
   })
