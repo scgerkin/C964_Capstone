@@ -2,8 +2,8 @@ import FormData from "form-data"
 import Axios from "axios"
 
 export async function analyzeXray(image) {
-  return await analyzeGradient(null)
-  // return await analyzeRandom(null)
+  // return await analyzeGradient(null)
+  return await analyzeRandom(null)
   // return analyzeActual(image)
 }
 

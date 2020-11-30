@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import { decimalToPercent, toPascal } from "../../utils/utils"
 
-const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 100, RIGHT: 50 }
+const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 90, RIGHT: 70 }
 const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 2000 // ms
