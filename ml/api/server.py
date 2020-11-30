@@ -2,6 +2,7 @@ import json
 import requests
 import os
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from numpy import expand_dims
 from flask import Flask, request, make_response
@@ -13,6 +14,12 @@ UPLOAD_PATH = os.getenv("UPLOAD_PATH")
 MODEL_PATH = os.getenv("MODEL_PATH")
 TF_SERVE_URL = os.getenv("TF_SERVE_URL")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+image_data_generator = idg = ImageDataGenerator(
+        samplewise_center=True,
+        samplewise_std_normalization=True,
+        fill_mode='constant',
+        cval=1.0)
 
 
 def allowed_file(filename):
@@ -35,7 +42,7 @@ finding_predictor = load_finding_model()
 
 
 def load_img_as_array(filepath):
-    img = load_img(filepath, target_size=(256, 256), color_mode="grayscale")
+    img = load_img(filepath, target_size=(256, 256), color_mode="rgb")
     img = img_to_array(img)
     return img
 
@@ -61,6 +68,7 @@ def get_finding_prediction(img):
 
 def get_label_prediction(img):
     tensor = expand_dims(img, axis=0)
+    tensor = image_data_generator.flow(tensor)
 
     classifier_request = json.dumps({
         "signature_name": "serving_default",
@@ -74,6 +82,8 @@ def get_label_prediction(img):
     predictions.round(2)
     predictions = predictions.tolist()
 
+    # FIXME: labels are no longer correct for the new model that will
+    #  be deployed
     labels = ["atelectasis", "cardiomegaly", "consolidation", "edema",
               "effusion", "emphysema", "fibrosis", "hernia", "infiltration",
               "mass", "nodule", "pleural_thickening", "pneumonia",

@@ -1,5 +1,9 @@
 # %%
+from tensorflow.keras.models import load_model
+from pathlib import PurePath
 from training.utils import *
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from numpy import expand_dims
 
 img_metadata = get_img_metadata()
 single_finding_records = img_metadata[
@@ -65,10 +69,11 @@ print(target.describe())
 print(f"Total labels: {len(sample_counts)}\n{sample_counts}")
 
 print_gpu_status()
-# %%
+
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
 
+# %%
 def init_model():
     m = Sequential()
     m.add(InceptionV3(input_shape=train_gen.image_shape,
@@ -85,6 +90,47 @@ def init_model():
 
 
 model = init_model()
-num_epochs = 10
+num_epochs = 30
+model_name = "dx-weighted-inception"
 model = train_checkpoint_save(model, train_gen, valid_gen,
-                              "dx-weighted-inception", num_epochs=num_epochs)
+                              model_name, num_epochs=num_epochs)
+
+
+# %%
+def load_and_do_test_predictions():
+    """
+    Requires reloading environment/model and refreshing generators to
+    clear GPU memory from training, run all cells except training.
+    """
+    mpath = PurePath(f"{PROJECT_DIR}models/save/dx-weighted-inception/01")
+    m = load_model(str(mpath))
+    p = m.predict(test_gen)
+    return m, p
+
+
+def load_single_image(filename):
+    img_path = PurePath(f"{IMG_DIR}/{filename}")
+    img = load_img(str(img_path), target_size=(256, 256), color_mode="rgb")
+    idg = ImageDataGenerator(
+            samplewise_center=True,
+            samplewise_std_normalization=True,
+            fill_mode='constant',
+            cval=1.0)
+    img = img_to_array(img)
+    img = expand_dims(img, axis=0)
+    img = idg.flow(img)
+    return img
+
+
+def test_single_img_prediction(m, filename):
+    img = load_single_image(filename)
+    prediction = m.predict(img)
+    return prediction
+
+
+loaded_model, preds = load_and_do_test_predictions()
+for i in range(10):
+    print("From test gen:")
+    print(preds[i])
+    print("From single image:")
+    print(test_single_img_prediction(loaded_model, test_gen.filenames[i]))
