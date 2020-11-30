@@ -1,17 +1,16 @@
 # %%
 from tensorflow.keras.models import load_model
-from pathlib import PurePath
 from training.utils import *
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
-
+# Load only records with a single finding
 img_metadata = get_img_metadata()
 single_finding_records = img_metadata[
     img_metadata["findings_list"].apply(lambda val: len(val) == 1)]
 
 df = single_finding_records
 dx_labels = get_dx_labels()
-
+# Get counts of images per label
 pre_drop_counts = {}
 for label in dx_labels:
     pre_drop_counts[label] = len(df[df[label] > 0.5].index)
@@ -20,7 +19,8 @@ pre_drop_rows = len(df.index)
 print(f"Before:\n{df.describe()}")
 
 SAMPLE_THRESHOLD = 500
-
+# Remove any records with a finding below the threshold
+# also remove the column for that label
 removed_labels = set()
 for label, count in pre_drop_counts.items():
     if count < SAMPLE_THRESHOLD:
@@ -32,6 +32,7 @@ for label, count in pre_drop_counts.items():
 post_drop_rows = len(df.index)
 print(f"after:\n{df.describe()}")
 
+# Get the counts per label again
 post_drop_counts = {}
 sample_labels = set()
 for label in dx_labels:
@@ -48,6 +49,7 @@ print_vals("Pre drop", pre_drop_rows, pre_drop_counts)
 print_vals("Post drop", post_drop_rows, post_drop_counts)
 print(f"Removed labels: {', '.join(removed_labels)}")
 
+# Get equal number of samples of each finding label
 RANDOM_SEED = 42
 
 only_finding_labels = sample_labels.copy()
@@ -68,8 +70,9 @@ target = target.sample(frac=1, random_state=RANDOM_SEED)
 print(target.describe())
 print(f"Total labels: {len(sample_counts)}\n{sample_counts}")
 
+# TODO: consider saving this as an csv for data discussion
+# Prepare for training
 print_gpu_status()
-
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
 
