@@ -124,6 +124,6 @@ class Predictor(Resource):
 api.add_resource(Predictor, "/")
 
 if __name__ == "__main__":
-    HOST_IP = "127.0.0.1" if os.getenv("LOCAL_HOST") == "truee" else "0.0.0.0"
+    HOST_IP = "127.0.0.1" if os.getenv("LOCAL_HOST") == "true" else "0.0.0.0"
     DEBUG_MODE = os.getenv("DEBUG_MODE") == "true"
     app.run(debug=DEBUG_MODE, host=HOST_IP)
