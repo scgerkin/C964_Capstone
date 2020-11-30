@@ -81,7 +81,7 @@ def get_train_valid_test_split(img_data):
 
     training_data = get_data_batch(train_df, subset="training")
     validation_data = get_data_batch(train_df, subset="validation")
-    test_gen = get_data_batch(test_df, batch_size=1024, subset=None)
+    test_gen = get_data_batch(test_df, subset=None)
     return training_data, validation_data, test_gen
 
 
@@ -119,7 +119,7 @@ def get_data_batch(img_metadata,
                                    x_col="img_filename",
                                    y_col=Y_COL_NAME,
                                    target_size=(IMG_SIZE, IMG_SIZE),
-                                   color_mode="grayscale",
+                                   color_mode="rgb",
                                    # classes=get_dx_labels(),
                                    class_mode="categorical",
                                    batch_size=batch_size,
@@ -196,7 +196,7 @@ def train_checkpoint_save(model,
                           valid_gen,
                           model_name,
                           monitor="val_loss",
-                          num_epochs=10):
+                          num_epochs=10, version="01"):
     dt = get_date_time_str()
     checkpoint_fp = f"./checkpoints/{dt}-{model_name}.h5"
     checkpoint_cb = ModelCheckpoint(checkpoint_fp,
@@ -222,6 +222,8 @@ def train_checkpoint_save(model,
     save_model(model, f'{model_name}-final')
     early_stop_model = tf.keras.models.load_model(checkpoint_fp)
     save_model(early_stop_model, f'{model_name}-bestcp')
+    weights_path = f"{PROJECT_DIR}models/save/{model_name}/{version}"
+    tf.saved_model.save(model, weights_path)
     return model
 
 
