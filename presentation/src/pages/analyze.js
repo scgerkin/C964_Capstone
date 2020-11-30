@@ -88,20 +88,14 @@ class Analyze extends Component {
         <Container>
           <Row>
             <Col>
-              <Row>
-                {!!preview && (
-                  <Image className={"m-3"} alt={this.state.fileWindowText}
-                         src={preview}
-                         width={450} height={450}/>)}
-              </Row>
-
               <Form onChange={this.onSelectFile} as={"div"} className={"mb-3"}>
                 <Form.File id={"xray-image-selector"}
-                           accept={".png,.jpg,.jpeg"}
+
                            custom
                 >
                   <Form.File.Input
                     isInvalid={status === NO_FILE_SELECTION && touched}
+                    accept={".png,.jpg,.jpeg"}
                   />
                   <Form.File.Label data-browse={"Select X-Ray Image"}>
                     {this.state.fileWindowText}
@@ -111,6 +105,12 @@ class Analyze extends Component {
                   </Form.Control.Feedback>
                 </Form.File>
               </Form>
+              <Row>
+                {!!preview && (
+                  <Image className={"m-3"} alt={this.state.fileWindowText}
+                         src={preview}
+                         width={450} height={450}/>)}
+              </Row>
             </Col>
             <Col>
               {status === ANALYZING_XRAY ? <p>Performing analysis...</p> : null}

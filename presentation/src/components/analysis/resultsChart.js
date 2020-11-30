@@ -4,7 +4,7 @@ import { decimalToPercent, toPascal } from "../../utils/utils"
 const MARGIN = { TOP: 80, BOTTOM: 10, LEFT: 100, RIGHT: 50 }
 const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
-const TRANSITION_DURATION = 1000 // ms
+const TRANSITION_DURATION = 2000 // ms
 
 class ResultsChart {
   constructor(element, data) {
@@ -42,9 +42,7 @@ class ResultsChart {
     this.cleanAndSetData(data)
     this.setXY()
     this.setAxes()
-    this.joinData()
-    this.removeStaleRects()
-    this.addNewRects()
+    this.drawData()
   }
 
   cleanAndSetData(data) {
@@ -89,42 +87,49 @@ class ResultsChart {
         .call(yAxisCall)
   }
 
-  joinData() {
-    this.rects = this.svg.selectAll("rect")
-                     .data(this.data)
-  }
+  drawData() {
+    const lines = this.svg.selectAll("data-line")
+                      .data(this.data)
 
-  removeStaleRects() {
-    this.rects.exit()
+    lines.enter()
+         .append("line")
+         .attr("x2", this.x(0))
+         .attr("y1", d => this.y(d.label))
+         .attr("y2", d => this.y(d.label))
+         .attr("transform", "translate(0,13)")
+         .attr("stroke", "grey")
+         .transition()
+         .duration(TRANSITION_DURATION)
+         .attr("x1", d => this.x(d.probability))
+
+    this.svg.selectAll("data-point")
+        .data(this.data)
+        .enter()
+        .append("circle")
+        .attr("cx", this.x(0))
+        .attr("cy", d => this.y(d.label))
+        .attr("r", "6")
+        .style("fill", fillColor)
+        .attr("stroke", "black")
+        .attr("transform", "translate(0,13)")
         .transition()
         .duration(TRANSITION_DURATION)
-        .attr("height", 0)
-        .attr("y", HEIGHT)
-        .remove()
-  }
+        .attr("cx", d => this.x(d.probability))
+        .attr("cy", d => this.y(d.label))
 
-  addNewRects() {
-    this.rects.enter()
-        .append("rect")
-        .attr("x", this.x(0))
-        .attr("y", d => this.y(d.label))
-        .attr("fill", fillColor)
-        .attr("height", this.y.bandwidth())
-        .transition()
-        .duration(TRANSITION_DURATION)
-        .attr("width", d => this.x(d.probability))
 
-    this.rects.enter()
-        .append("text")
-        .attr("x", d => this.x(d.probability))
-        .attr("y", d => this.y(d.label))
-        .attr("transform", "translate(0, 20)")
-        .text(d => `${d.probability}%`)
-        .attr("fill-opacity", 0)
-        .transition()
-        .delay(TRANSITION_DURATION)
-        .duration(TRANSITION_DURATION)
-        .attr("fill-opacity", 1)
+
+    lines.enter()
+         .append("text")
+         .attr("x", d => this.x(d.probability))
+         .attr("y", d => this.y(d.label))
+         .attr("transform", "translate(10, 20)")
+         .text(d => `${d.probability}%`)
+         .attr("fill-opacity", 0)
+         .transition()
+         .delay(TRANSITION_DURATION)
+         .duration(TRANSITION_DURATION)
+         .attr("fill-opacity", 1)
 
   }
 }
