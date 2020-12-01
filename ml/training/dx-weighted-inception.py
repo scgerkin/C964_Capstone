@@ -3,6 +3,7 @@ from tensorflow.keras.models import load_model
 from training.utils import *
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
+
 # Load only records with a single finding
 img_metadata = get_img_metadata()
 single_finding_records = img_metadata[
@@ -93,10 +94,11 @@ def init_model():
 
 
 model = init_model()
+# %%
 num_epochs = 30
 model_name = "dx-weighted-inception"
 model = train_checkpoint_save(model, train_gen, valid_gen,
-                              model_name, num_epochs=num_epochs)
+                              model_name, num_epochs=num_epochs, version="00")
 
 
 # %%

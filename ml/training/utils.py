@@ -204,7 +204,7 @@ def train_checkpoint_save(model,
                                     monitor=monitor,
                                     save_best_only=True)
 
-    csv_fp = f"./logs/{dt}-{model_name}.csv"
+    csv_fp = f"./logs/{dt}-{version}-{model_name}.csv"
     csv_cb = CSVLogger(csv_fp)
 
     callbacks = [checkpoint_cb, csv_cb]
