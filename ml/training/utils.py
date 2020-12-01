@@ -89,20 +89,6 @@ def get_data_batch(img_metadata,
                    batch_size=None,
                    rnd_seed=None,
                    subset=None):
-    """
-    TODO: This will use the entire directory, but that's a ton of files
-        Will need to send in a subset of the DF, but that won't perform
-        a full shuffle on the entire dataset, just the given subset
-        For now, with testing, this is fine, but will need to either
-        shuffle the dataframe, pass a subset, then create a batch from
-        that, or something...
-    :param img_metadata:
-    :param batch_size:
-    :param rnd_seed:
-    :param subset:
-    :return:
-    """
-
     if batch_size is None:
         batch_size = BATCH_SIZE
 
@@ -130,27 +116,27 @@ def get_data_batch(img_metadata,
 
 def init_image_data_generator(split=False, augment=False):
     split_value = SPLIT_VALUE if split else 0.0
-    if not augment:
-        return ImageDataGenerator(
-                samplewise_center=True,
-                samplewise_std_normalization=True,
-                fill_mode='constant',
-                cval=1.0,
-                validation_split=split_value)
-
+    # if not augment:
     return ImageDataGenerator(
             samplewise_center=True,
             samplewise_std_normalization=True,
-            horizontal_flip=True,
-            vertical_flip=False,
-            height_shift_range=0.05,
-            width_shift_range=0.1,
-            rotation_range=5,
-            shear_range=0.1,
             fill_mode='constant',
-            zoom_range=0.15,
             cval=1.0,
             validation_split=split_value)
+    #
+    # return ImageDataGenerator(
+    #         samplewise_center=True,
+    #         samplewise_std_normalization=True,
+    #         horizontal_flip=True,
+    #         vertical_flip=False,
+    #         height_shift_range=0.05,
+    #         width_shift_range=0.1,
+    #         rotation_range=5,
+    #         shear_range=0.1,
+    #         fill_mode='constant',
+    #         zoom_range=0.15,
+    #         cval=1.0,
+    #         validation_split=split_value)
 
 
 def create_model(in_shape, out_shape):

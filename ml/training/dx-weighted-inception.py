@@ -1,6 +1,18 @@
 # %%
+from pathlib import PurePath
+
+from keras_preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
-from training.utils import *
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras import Sequential
+from training.utils import (get_dx_labels,
+                            get_img_metadata,
+                            print_gpu_status,
+                            get_train_valid_test_split,
+                            train_checkpoint_save, PROJECT_DIR, IMG_DIR,
+                            )
+import pandas as pd
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
 from tensorflow.keras.layers import (Dense,
@@ -57,12 +69,9 @@ print(f"Removed labels: {', '.join(removed_labels)}")
 # Get equal number of samples of each finding label
 RANDOM_SEED = 42
 
-only_finding_labels = sample_labels.copy()
-only_finding_labels.remove("no_finding")
-
 target = pd.DataFrame()
 sample_counts = {}
-for label in only_finding_labels:
+for label in sample_labels:
     sample = df[df[label] > 0.5].sample(n=SAMPLE_THRESHOLD,
                                         replace=False,
                                         random_state=RANDOM_SEED,
@@ -81,22 +90,21 @@ print_gpu_status()
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
 
-# %%
+#
 def init_model():
-    m = Sequential()
-    m.add(InceptionV3(input_shape=train_gen.image_shape,
-                      include_top=False,
-                      weights="imagenet"))
-    m.add(GlobalAveragePooling2D())
-    m.add(Dropout(0.5))
-    m.add(Dense(512))
-    m.add(Dropout(0.5))
-    m.add(Dense(len(only_finding_labels), activation='sigmoid'))
-    optimizer = tf.keras.optimizers.Nadam()
-    m.compile(optimizer=optimizer,
-              loss="categorical_crossentropy",
-              metrics=["accuracy", "mae"])
-    return m
+    base = Sequential()
+    base.add(InceptionV3(input_shape=train_gen.image_shape,
+                         include_top=False,
+                         weights="imagenet"))
+    base.add(GlobalAveragePooling2D())
+    base.add(Dense(512))
+    # base.add(Dropout(0.3))
+    base.add(Dense(len(sample_labels), activation='sigmoid'))
+    optimizer = tf.keras.optimizers.Nadam(learning_rate=0.001)
+    base.compile(optimizer=optimizer,
+                 loss="categorical_crossentropy",
+                 metrics=["accuracy", "mae"])
+    return base
 
 
 model = init_model()
@@ -113,7 +121,7 @@ def load_and_do_test_predictions():
     Requires reloading environment/model and refreshing generators to
     clear GPU memory from training, run all cells except training.
     """
-    mpath = PurePath(f"{PROJECT_DIR}models/save/dx-weighted-inception/01")
+    mpath = PurePath(f"{PROJECT_DIR}models/save/wincep_train-overfit_s500/01")
     m = load_model(str(mpath))
     p = m.predict(test_gen)
     return m, p
