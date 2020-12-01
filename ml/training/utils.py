@@ -110,9 +110,9 @@ def get_data_batch(img_metadata,
     if subset is not None and not valid_subset:
         raise ValueError(f"Invalid subset value: {subset}")
 
-    idg = init_image_data_generator(split=valid_subset)
-
     shuffle = subset == "training"
+
+    idg = init_image_data_generator(split=valid_subset, augment=shuffle)
 
     return idg.flow_from_dataframe(img_metadata,
                                    directory=str(PurePath(IMG_DIR)),
@@ -128,13 +128,27 @@ def get_data_batch(img_metadata,
                                    subset=subset)
 
 
-def init_image_data_generator(split=False):
+def init_image_data_generator(split=False, augment=False):
     split_value = SPLIT_VALUE if split else 0.0
+    if not augment:
+        return ImageDataGenerator(
+                samplewise_center=True,
+                samplewise_std_normalization=True,
+                fill_mode='constant',
+                cval=1.0,
+                validation_split=split_value)
 
     return ImageDataGenerator(
             samplewise_center=True,
             samplewise_std_normalization=True,
+            horizontal_flip=True,
+            vertical_flip=False,
+            height_shift_range=0.05,
+            width_shift_range=0.1,
+            rotation_range=5,
+            shear_range=0.1,
             fill_mode='constant',
+            zoom_range=0.15,
             cval=1.0,
             validation_split=split_value)
 

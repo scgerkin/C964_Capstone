@@ -3,6 +3,10 @@ from tensorflow.keras.models import load_model
 from training.utils import *
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
+from tensorflow.keras.layers import (Dense,
+                                     GlobalAveragePooling2D,
+                                     Dropout,
+                                     )
 
 # Load only records with a single finding
 img_metadata = get_img_metadata()
@@ -84,7 +88,9 @@ def init_model():
                       include_top=False,
                       weights="imagenet"))
     m.add(GlobalAveragePooling2D())
+    m.add(Dropout(0.5))
     m.add(Dense(512))
+    m.add(Dropout(0.5))
     m.add(Dense(len(only_finding_labels), activation='sigmoid'))
     optimizer = tf.keras.optimizers.Nadam()
     m.compile(optimizer=optimizer,
