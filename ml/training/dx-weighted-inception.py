@@ -90,7 +90,7 @@ print_gpu_status()
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
 
-#
+# %%
 def init_model():
     base = Sequential()
     base.add(InceptionV3(input_shape=train_gen.image_shape,
@@ -121,7 +121,7 @@ def load_and_do_test_predictions():
     Requires reloading environment/model and refreshing generators to
     clear GPU memory from training, run all cells except training.
     """
-    mpath = PurePath(f"{PROJECT_DIR}models/save/wincep_train-overfit_s500/01")
+    mpath = PurePath(f"{PROJECT_DIR}models/save/wincep_train-overfit_s500/04")
     m = load_model(str(mpath))
     p = m.predict(test_gen)
     return m, p
@@ -147,9 +147,30 @@ def test_single_img_prediction(m, filename):
     return prediction
 
 
-loaded_model, preds = load_and_do_test_predictions()
-for i in range(10):
-    print("From test gen:")
-    print(preds[i])
-    print("From single image:")
-    print(test_single_img_prediction(loaded_model, test_gen.filenames[i]))
+def preds_to_df(preds, filenames):
+    pdf = pd.DataFrame()
+    pdf["filename"] = filenames
+    lbls = list(sample_labels)
+    lbls.sort()
+    for i, lbl in enumerate(lbls):
+        pdf[lbl] = preds[:, i]
+    return pdf.round(4)
+
+
+def save_preds_to_file(name, preds, filenames):
+    pdf = preds_to_df(preds, filenames)
+    pdf.to_csv(f"{name}.csv", index=False)
+
+
+def load_model_make_and_save_preds():
+    loaded_model, test_preds = load_and_do_test_predictions()
+
+    train_preds = loaded_model.predict(train_gen)
+    valid_preds = loaded_model.predict(valid_gen)
+    save_preds_to_file("test_preds", test_preds, test_gen.filenames)
+    save_preds_to_file("train_preds", train_preds, train_gen.filenames)
+    save_preds_to_file("valid_preds", valid_preds, valid_gen.filenames)
+
+
+# %%
+load_model_make_and_save_preds()
