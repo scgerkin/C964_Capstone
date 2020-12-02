@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from "react"
 import RocChart from "./rocChart"
 
-const RocDisplay = () => {
+const RocDisplay = ({data}) => {
   const chartArea = useRef(null)
   const [chart, setChart] = useState(null)
 
   useEffect(() => {
     if (!chart) {
-      setChart(new RocChart(chartArea.current, null))
+      setChart(new RocChart(chartArea.current, data))
+    } else{
+      // chart.update(data)
     }
-  }, [chart, null])
+  }, [chart, data])
 
   return (
     <>
