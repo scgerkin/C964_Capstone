@@ -15,7 +15,7 @@ const Navbar = () => {
           <Link to={"/data-prediction/"}>Data Analysis</Link>
         </li>
         <li><
-          Link to={"/training-prediction/"}>Training Analysis</Link>
+          Link to={"/training-analysis/"}>Training Analysis</Link>
         </li>
         <li>
           <Link to={"/analyze/"}>Analyze X-ray</Link>

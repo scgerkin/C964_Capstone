@@ -33,8 +33,6 @@ class ResultsChart {
 
   initAxesGroups() {
     this.xAxisGroup = this.svg.append("g")
-    // .attr("transform", `translate(0, ${HEIGHT})`)
-
     this.yAxisGroup = this.svg.append("g")
   }
 
