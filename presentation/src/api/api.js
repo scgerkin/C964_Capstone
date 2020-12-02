@@ -9,8 +9,8 @@ export async function analyzeXray(image) {
 
 export async function rocCurve(setType) {
   return new Promise((res, rej) => {
-    const response =
-      {
+    setTimeout(() => {
+      const response = {
         "atelectasis": {
           "fpr": [
             0.0,
@@ -763,7 +763,9 @@ export async function rocCurve(setType) {
           "auc": 0.752388164026095,
         },
       }
-
+      const data = { "data": response }
+      res(data)
+    }, 500)
   })
 }
 
