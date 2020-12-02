@@ -32,7 +32,10 @@ for file in files:
     for label in expect.columns:
         fpr, tpr, _ = roc_curve(y_score=actual[label], y_true=expect[label])
         area = auc(fpr, tpr)
-        results[label] = {"fpr": fpr.tolist(), "tpr": tpr.tolist(), "auc": area}
+        points = []
+        for i in range(len(fpr)):
+            points.append({"fpr": fpr[i], "tpr": tpr[i]})
+        results[label] = {"points": points, "auc": area}
 
         c_ax.plot(fpr, tpr, label="%s (AUC:%0.2f)" % (label, area))
     c_ax.legend()
