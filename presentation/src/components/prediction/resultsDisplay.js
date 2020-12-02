@@ -8,8 +8,6 @@ const ResultsDisplay = ({ predictions }) => {
   useEffect(() => {
     if (!chart) {
       setChart(new ResultsChart(chartArea.current, predictions.labels))
-    } else if (chart.menData) {
-      chart.update(predictions)
     }
   }, [chart, predictions])
 
