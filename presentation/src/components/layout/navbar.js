@@ -12,10 +12,10 @@ const Navbar = () => {
           <Link to={"/about/"}>About</Link>
         </li>
         <li>
-          <Link to={"/data-analysis/"}>Data Analysis</Link>
+          <Link to={"/data-prediction/"}>Data Analysis</Link>
         </li>
         <li><
-          Link to={"/training-analysis/"}>Training Analysis</Link>
+          Link to={"/training-prediction/"}>Training Analysis</Link>
         </li>
         <li>
           <Link to={"/analyze/"}>Analyze X-ray</Link>

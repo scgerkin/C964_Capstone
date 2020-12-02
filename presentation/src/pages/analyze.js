@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import Layout from "../components/layout/layout"
 import { analyzeXray } from "../api/api"
-import ResultsDisplay from "../components/analysis/resultsDisplay"
+import ResultsDisplay from "../components/prediction/resultsDisplay"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Form from "react-bootstrap/Form"
