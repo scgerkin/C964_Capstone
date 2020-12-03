@@ -1,10 +1,10 @@
 import React, { Component } from "react"
 import Layout from "../components/layout/layout"
-import RocDisplay from "../components/analysis/rocDisplay"
+import RocDisplay from "../components/training/rocDisplay"
 import { rocCurve } from "../api/api"
 import Container from "react-bootstrap/Container"
 
-class TrainingAnalysis extends Component {
+class Training extends Component {
   state = { data: undefined }
 
   componentDidMount() {
@@ -22,4 +22,4 @@ class TrainingAnalysis extends Component {
   }
 }
 
-export default TrainingAnalysis
+export default Training

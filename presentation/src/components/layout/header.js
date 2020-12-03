@@ -16,8 +16,8 @@ const Header = () => {
       <Nav className={"mr-auto"} onSelect={onNavSelect}>
         <Nav.Link eventKey={"/"}>Home</Nav.Link>
         <Nav.Link eventKey={"/about/"}>About</Nav.Link>
-        <Nav.Link eventKey={"/data-analysis/"}>Data Analysis</Nav.Link>
-        <Nav.Link eventKey={"/training-analysis/"}>Training Analysis</Nav.Link>
+        <Nav.Link eventKey={"/data/"}>Data Analysis</Nav.Link>
+        <Nav.Link eventKey={"/training/"}>Training Analysis</Nav.Link>
         <Nav.Link eventKey={"/analyze"}>Analyze X-ray</Nav.Link>
       </Nav>
     </Navbar>

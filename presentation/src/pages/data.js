@@ -1,12 +1,12 @@
 import React, { Component } from "react"
 import Layout from "../components/layout/layout"
-import ChartWrapper from "../components/dataviz/chartWrapper"
+import ChartWrapper from "../components/data/chartWrapper"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Dropdown from "react-bootstrap/Dropdown"
 
-class DataAnalysis extends Component {
+class Data extends Component {
   state = { gender: "men" }
 
   genderSelected = (gender) => this.setState({ gender })
@@ -43,4 +43,4 @@ function genderDropdown(genderSelected) {
   )
 }
 
-export default DataAnalysis
+export default Data
