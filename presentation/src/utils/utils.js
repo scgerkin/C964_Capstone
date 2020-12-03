@@ -11,3 +11,8 @@ export function decimalToPercent(value, precision) {
   precision = !!precision ? precision : Math.pow(10, 2)
   return Math.ceil(parseFloat(value) * 100 * precision) / precision
 }
+
+export function round(value, precision) {
+  precision = !!precision? precision : Math.pow(10, 4)
+  return Math.ceil(parseFloat(value) * precision) / precision
+}

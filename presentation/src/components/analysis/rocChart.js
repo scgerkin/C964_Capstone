@@ -1,8 +1,9 @@
 import * as d3 from "d3"
+import { round, toPascal } from "../../utils/utils"
 
 const MARGIN = { TOP: 80, BOTTOM: 60, LEFT: 90, RIGHT: 70 }
-const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
-const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
+const WIDTH = 900 - MARGIN.LEFT - MARGIN.RIGHT
+const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 0 // ms
 
 class RocChart {
@@ -27,7 +28,7 @@ class RocChart {
                       .attr("x", WIDTH / 2)
                       .attr("y", HEIGHT + 50)
                       .attr("text-anchor", "middle")
-                      .text("True False Rate")
+                      .text("False Positive Rate")
     this.yLabel = this.svg.append("text")
                       .attr("x", HEIGHT / -2)
                       .attr("y", -50)
@@ -46,11 +47,10 @@ class RocChart {
     this.setData(data)
     this.setXY()
     this.setAxes()
-    this.drawData()
+    this.drawGraph()
   }
 
   setData(data) {
-    console.log(Object.keys(data))
     this.data = data
   }
 
@@ -75,28 +75,62 @@ class RocChart {
         .call(yAxisCall)
   }
 
-  drawData() {
-
-
+  drawGraph() {
+    const line = d3.line()
+                   .x(d => this.x(d.fpr))
+                   .y(d => this.y(d.tpr))
 
     Object.keys(this.data)
-          .forEach(label => {
-            const line = d3.line()
-                           .x(d => this.x(d.fpr))
-                           .y(d => this.y(d.tpr))
-
-
+          .forEach((label, i) => {
             this.svg.append("path")
                 .datum(this.data[label].points)
                 .attr("fill", "none")
-                .attr("stroke", "red")
+                .attr("stroke", colors[i])
                 .attr("stroke-width", 2)
                 .attr("d", line)
+                .append("text")
+                .attr("x", 200)
+                .attr("y", 100 * i)
+                .text(label)
+                .attr("fill-opacity", 1)
 
+            const legendXPos = WIDTH * 0.75
+            const legendYPos = HEIGHT * 0.6 + (i * 20)
 
+            this.svg.append("circle")
+                .attr("cx", legendXPos)
+                .attr("cy", legendYPos)
+                .attr("r", 7)
+                .style("fill", colors[i])
+                .attr("stroke", "black")
+
+            const auc = round(this.data[label].auc)
+            const dispLabel = toPascal(label, "_")
+
+            this.svg.append("text")
+                .attr("x", legendXPos + 10)
+                .attr("y", legendYPos + 5)
+                .text(`${dispLabel}: ${auc}`)
           })
-
   }
 }
+
+const colors = [
+  "#e6194B",
+  "#3cb44b",
+  "#ffe119",
+  "#4363d8",
+  "#f58231",
+  "#911eb4",
+  "#42d4f4",
+  "#f032e6",
+  "#bfef45",
+  "#000075",
+  "#808000",
+  "#dcbeff",
+  "#469990",
+  "#9A6324",
+  "#fabed4",
+]
 
 export default RocChart

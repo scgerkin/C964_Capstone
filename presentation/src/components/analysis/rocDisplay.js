@@ -5,6 +5,7 @@ const RocDisplay = ({data}) => {
   const chartArea = useRef(null)
   const [chart, setChart] = useState(null)
 
+
   useEffect(() => {
     if (!chart) {
       setChart(new RocChart(chartArea.current, data))
