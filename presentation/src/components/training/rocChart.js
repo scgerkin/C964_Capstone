@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import { round, toPascal } from "../../utils/utils"
 
-const MARGIN = { TOP: 80, BOTTOM: 60, LEFT: 90, RIGHT: 70 }
+const MARGIN = { TOP: 10, BOTTOM: 60, LEFT: 70, RIGHT: 10 }
 const WIDTH = 900 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 0 // ms
@@ -14,7 +14,9 @@ class RocChart {
   }
 
   initSVG() {
-    d3.select(this.element).selectAll("*").remove()
+    d3.select(this.element)
+      .selectAll("*")
+      .remove()
     this.svg = d3.select(this.element)
                  .append("svg")
                  .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
@@ -81,62 +83,44 @@ class RocChart {
 
   drawGraph() {
     this.selections
-          .forEach((label, i) => {
+        .forEach((selection, i) => {
 
-            const lineData = (item) =>
-              d3.line()
-                .x(d => this.x(d.fpr))
-                .y(d => this.y(d.tpr))(item[label].points)
+          const lineData = (item) =>
+            d3.line()
+              .x(d => this.x(d.fpr))
+              .y(d => this.y(d.tpr))(item[selection.label].points)
 
-            this.svg.append("path")
-                .datum(this.data)
-                .attr("fill", "none")
-                .attr("stroke", colors[i])
-                .attr("stroke-width", 2)
-                .attr("d", lineData)
-                .append("text")
-                .attr("x", 200)
-                .attr("y", 100 * i)
-                .text(label)
-                .attr("fill-opacity", 1)
+          this.svg.append("path")
+              .datum(this.data)
+              .attr("fill", "none")
+              .attr("stroke", selection.color)
+              .attr("stroke-width", 2)
+              .attr("d", lineData)
+              .append("text")
+              .attr("x", 200)
+              .attr("y", 100 * i)
+              .text(selection)
+              .attr("fill-opacity", 1)
 
-            const legendXPos = WIDTH * 0.75
-            const legendYPos = HEIGHT * 0.6 + (i * 20)
+          const legendXPos = WIDTH * 0.75
+          const legendYPos = HEIGHT * 0.6 + (i * 20)
 
-            this.svg.append("circle")
-                .attr("cx", legendXPos)
-                .attr("cy", legendYPos)
-                .attr("r", 7)
-                .style("fill", colors[i])
-                .attr("stroke", "black")
+          this.svg.append("circle")
+              .attr("cx", legendXPos)
+              .attr("cy", legendYPos)
+              .attr("r", 7)
+              .style("fill", selection.color)
+              .attr("stroke", "black")
 
-            const auc = round(this.data[label].auc)
-            const dispLabel = toPascal(label, "_")
+          const auc = round(this.data[selection.label].auc)
+          const dispLabel = toPascal(selection.label, "_")
 
-            this.svg.append("text")
-                .attr("x", legendXPos + 10)
-                .attr("y", legendYPos + 5)
-                .text(`${dispLabel}: ${auc}`)
-          })
+          this.svg.append("text")
+              .attr("x", legendXPos + 10)
+              .attr("y", legendYPos + 5)
+              .text(`${dispLabel}: ${auc}`)
+        })
   }
 }
-
-const colors = [
-  "#e6194B",
-  "#3cb44b",
-  "#ffe119",
-  "#4363d8",
-  "#f58231",
-  "#911eb4",
-  "#42d4f4",
-  "#f032e6",
-  "#bfef45",
-  "#000075",
-  "#808000",
-  "#dcbeff",
-  "#469990",
-  "#9A6324",
-  "#fabed4",
-]
 
 export default RocChart

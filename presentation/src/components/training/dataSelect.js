@@ -20,7 +20,7 @@ const DataSelect = ({
       <Row>
         <Col>
           <Dropdown>
-            <Dropdown.Toggle variant={"outline-primary"} id={"data-type"}>
+            <Dropdown.Toggle variant={"outline-dark"} id={"data-type"}>
               Select Data Type
             </Dropdown.Toggle>
             <Dropdown.Menu>
@@ -34,7 +34,7 @@ const DataSelect = ({
         </Col>
         <Col>
           <Dropdown>
-            <Dropdown.Toggle variant={"outline-primary"} id={"labels"}>
+            <Dropdown.Toggle variant={"outline-dark"} id={"labels"}>
               Select Diagnostic Labels
             </Dropdown.Toggle>
             <Dropdown.Menu>

@@ -13,12 +13,16 @@ class Training extends Component {
       .then(data => {
         const dataTypes = Object.keys(data)
                                 .map((label, i) => {
-                                  return { label: label, selected: i === 0 }
+                                  return { label: label, selected: i === 2 }
                                 })
 
         const labels = Object.keys(data[Object.keys(data)[0]])
-                             .map(label => {
-                               return { label: label, selected: true }
+                             .map((label, i) => {
+                               return {
+                                 label: label,
+                                 selected: true,
+                                 color: colors[i],
+                               }
                              })
 
         this.setState({ data: data, dataTypes: dataTypes, labels: labels })
@@ -35,7 +39,7 @@ class Training extends Component {
   onLabelSelect = (label) => {
     const updated = this.state.labels.map(item => {
       if (item.label === label) {
-        return { label: label, selected: !item.selected }
+        return { ...item, selected: !item.selected }
       } else {
         return item
       }
@@ -50,7 +54,20 @@ class Training extends Component {
 
       return <Layout>
         <Container>
-          {!!data && (<RocDisplay data={data[selection.label]} selections={labels.filter(label => label.selected).map(label => label.label)}/>)}
+          <h1>ROC Curves</h1>
+
+          {!!data && (<RocDisplay data={data[selection.label]}
+                                  selections={labels
+                                    .filter(label => label.selected)
+                                    .map(
+                                      label => {
+                                        return {
+                                          label: label.label,
+                                          color: label.color,
+                                        }
+                                      })}
+
+          />)}
           <DataSelect dataSelections={dataTypes}
                       labelSelections={labels}
                       onDataTypeSelect={this.onDataTypeSelect}
@@ -61,5 +78,23 @@ class Training extends Component {
     return <Layout/>
   }
 }
+
+const colors = [
+  "#e6194B",
+  "#3cb44b",
+  "#ffe119",
+  "#4363d8",
+  "#f58231",
+  "#911eb4",
+  "#42d4f4",
+  "#f032e6",
+  "#bfef45",
+  "#000075",
+  "#808000",
+  "#dcbeff",
+  "#469990",
+  "#9A6324",
+  "#fabed4",
+]
 
 export default Training
