@@ -37,13 +37,30 @@ class Training extends Component {
   }
 
   onLabelSelect = (label) => {
-    const updated = this.state.labels.map(item => {
-      if (item.label === label) {
-        return { ...item, selected: !item.selected }
-      } else {
-        return item
-      }
-    })
+    let updated
+    if (label === "select-all") {
+      updated = this.state.labels.map(item => {
+        return {
+          ...item,
+          selected: true,
+        }
+      })
+    } else if (label === "select-none") {
+      updated = this.state.labels.map(item => {
+        return {
+          ...item,
+          selected: false,
+        }
+      })
+    } else {
+      updated = this.state.labels.map(item => {
+        if (item.label === label) {
+          return { ...item, selected: !item.selected }
+        } else {
+          return item
+        }
+      })
+    }
     this.setState({ labels: updated })
   }
 

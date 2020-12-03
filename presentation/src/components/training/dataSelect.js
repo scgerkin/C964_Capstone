@@ -14,7 +14,7 @@ const DataSelect = ({
   if (!dataSelections || !labelSelections) {
     return <></>
   }
-
+  const activeCount = labelSelections.filter(item => item.selected).length
   return (
     <Container>
       <Row>
@@ -43,6 +43,13 @@ const DataSelect = ({
                                onClick={() => onLabelSelect(item.label)}>
                   {toPascal(item.label, "_")}
                 </Dropdown.Item>)}
+              <Dropdown.Item key={"select-none"} active={activeCount === 0}
+                             onClick={() => onLabelSelect("select-none")}>Select
+                None</Dropdown.Item>
+              <Dropdown.Item key={"select-all"}
+                             active={activeCount === labelSelections.length}
+                             onClick={() => onLabelSelect("select-all")}>Select
+                All</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </Col>
