@@ -1,0 +1,28 @@
+import React from "react"
+import Navbar from "react-bootstrap/Navbar"
+import Nav from "react-bootstrap/Nav"
+import {navigate} from "gatsby"
+
+const Header = () => {
+
+  const onNavSelect = (key) => {
+    console.log(key)
+    navigate(key)
+  }
+
+  return (
+    <Navbar bg={"light"} expand={"lg"}>
+      <Navbar.Brand>TODO: HEADER</Navbar.Brand>
+      <Nav className={"mr-auto"} onSelect={onNavSelect}>
+        <Nav.Link eventKey={"/"}>Home</Nav.Link>
+        <Nav.Link eventKey={"/about/"}>About</Nav.Link>
+        <Nav.Link eventKey={"/data-analysis/"}>Data Analysis</Nav.Link>
+        <Nav.Link eventKey={"/training-analysis/"}>Training Analysis</Nav.Link>
+        <Nav.Link eventKey={"/analyze"}>Analyze X-ray</Nav.Link>
+      </Nav>
+    </Navbar>
+  )
+}
+
+
+export default Header
