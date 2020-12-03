@@ -8,9 +8,10 @@ const Footer = () => {
 }
 
 const style = {
-  position: "fixed",
-  bottom: "0",
-  width: "100%"
+  // position: "fixed",
+  // bottom: "0",
+  marginTop: "50px",
+  width: "99%"
 }
 
 export default Footer
