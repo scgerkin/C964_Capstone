@@ -46,9 +46,11 @@ class Training extends Component {
   render() {
     const { data, dataTypes, labels } = this.state
     if (!!data) {
+      const selection = dataTypes.find(item => item.selected)
+
       return <Layout>
         <Container>
-          {!!data && (<RocDisplay data={data[Object.keys(data)[0]]}/>)}
+          {!!data && (<RocDisplay data={data[selection.label]} selections={labels.filter(label => label.selected).map(label => label.label)}/>)}
           <DataSelect dataSelections={dataTypes}
                       labelSelections={labels}
                       onDataTypeSelect={this.onDataTypeSelect}

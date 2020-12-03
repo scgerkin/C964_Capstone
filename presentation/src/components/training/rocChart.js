@@ -7,15 +7,15 @@ const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 0 // ms
 
 class RocChart {
-  constructor(element, data) {
-    this.initSVG(element)
-    this.initXYLabels()
-    this.initAxesGroup()
-    this.update(data)
+  constructor(element, data, selections) {
+    this.element = element
+    this.selections = selections
+    this.update(data, selections)
   }
 
-  initSVG(element) {
-    this.svg = d3.select(element)
+  initSVG() {
+    d3.select(this.element).selectAll("*").remove()
+    this.svg = d3.select(this.element)
                  .append("svg")
                  .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
                  .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
@@ -43,11 +43,15 @@ class RocChart {
     this.yAxisGroup = this.svg.append("g")
   }
 
-  update(data) {
+  update(data, selections) {
+    this.selections = selections
+    this.initSVG()
+    this.initXYLabels()
+    this.initAxesGroup()
     this.setData(data)
     this.setXY()
     this.setAxes()
-    this.drawGraph()
+    this.drawGraph(selections)
   }
 
   setData(data) {
@@ -76,18 +80,20 @@ class RocChart {
   }
 
   drawGraph() {
-    const line = d3.line()
-                   .x(d => this.x(d.fpr))
-                   .y(d => this.y(d.tpr))
-
-    Object.keys(this.data)
+    this.selections
           .forEach((label, i) => {
+
+            const lineData = (item) =>
+              d3.line()
+                .x(d => this.x(d.fpr))
+                .y(d => this.y(d.tpr))(item[label].points)
+
             this.svg.append("path")
-                .datum(this.data[label].points)
+                .datum(this.data)
                 .attr("fill", "none")
                 .attr("stroke", colors[i])
                 .attr("stroke-width", 2)
-                .attr("d", line)
+                .attr("d", lineData)
                 .append("text")
                 .attr("x", 200)
                 .attr("y", 100 * i)
