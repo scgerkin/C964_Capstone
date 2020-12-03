@@ -37,31 +37,25 @@ class Training extends Component {
   }
 
   onLabelSelect = (label) => {
-    let updated
-    if (label === "select-all") {
-      updated = this.state.labels.map(item => {
-        return {
-          ...item,
-          selected: true,
-        }
-      })
-    } else if (label === "select-none") {
-      updated = this.state.labels.map(item => {
-        return {
-          ...item,
-          selected: false,
-        }
-      })
-    } else {
-      updated = this.state.labels.map(item => {
-        if (item.label === label) {
-          return { ...item, selected: !item.selected }
-        } else {
-          return item
-        }
-      })
-    }
+    const updated = this.state.labels.map(item => {
+      return {
+        ...item,
+        selected: this.determineSelection(label, item.label, item.selected),
+      }
+    })
     this.setState({ labels: updated })
+  }
+
+  determineSelection = (newLabel, oldLabel, oldSelected) => {
+    switch (newLabel) {
+      case "select-all":  // fallthrough
+      case "select-none":
+        return newLabel === "select-all"
+      case oldLabel:
+        return !oldSelected
+      default:
+        return oldSelected
+    }
   }
 
   render() {
@@ -73,22 +67,15 @@ class Training extends Component {
         <Container>
           <h1>ROC Curves</h1>
 
-          {!!data && (<RocDisplay data={data[selection.label]}
-                                  selections={labels
-                                    .filter(label => label.selected)
-                                    .map(
-                                      label => {
-                                        return {
-                                          label: label.label,
-                                          color: label.color,
-                                        }
-                                      })}
-
-          />)}
+          {!!data && (
+            <RocDisplay data={data[selection.label]}
+                        selections={labels.filter(label => label.selected)}
+            />)}
           <DataSelect dataSelections={dataTypes}
                       labelSelections={labels}
                       onDataTypeSelect={this.onDataTypeSelect}
-                      onLabelSelect={this.onLabelSelect}/>
+                      onLabelSelect={this.onLabelSelect}
+          />
         </Container>
       </Layout>
     }
