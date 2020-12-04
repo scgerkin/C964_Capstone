@@ -9,6 +9,7 @@ class Training extends Component {
   state = { data: undefined, dataTypes: undefined, labels: undefined }
 
   componentDidMount() {
+    //todo loading spinner
     rocCurve(null)
       .then(data => {
         const dataTypes = Object.keys(data)
