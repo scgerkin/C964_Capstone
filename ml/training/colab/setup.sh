@@ -6,8 +6,14 @@ export TARGET=/content/dataset
 mkdir $TARGET
 mkdir $TARGET/images
 
+mkdir /content/logs
+mkdir /content/checkpoints
+mkdir /content/models
+mkdir /content/models/save
+
 cp $GDRIVE/images/mltrain.zip /content/images.zip
-unzip /content/mltrain.zip -d $TARGET/images/
+unzip /content/images.zip -d $TARGET/images/
+mv $TARGET/images/mltrain/* $TARGET/images/
 
 cp $GDRIVE/cxr14_bad_labels.csv $TARGET/cxr14_bad_labels.csv
 cp $GDRIVE/Data_Entry_2017.csv $TARGET/Data_Entry_2017.csv
