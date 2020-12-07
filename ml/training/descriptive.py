@@ -1,62 +1,74 @@
 # %%
-from sklearn.cluster import KMeans
+from training.utils import RND_SEED, IMG_DIR, PROJECT_DIR
+import os
+import pickle
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from numpy import expand_dims
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
-import numpy as np
 
-from training.utils import get_img_metadata, get_dx_labels
-
-img_metadata = get_img_metadata()
-dx_lbls = get_dx_labels()
-
-x = img_metadata[dx_lbls]
-
-k = 15
-kmeans = KMeans(n_clusters=k)
+score_fp = PROJECT_DIR + f"models/kmeans/silhouette_score.csv"
+with open(score_fp, "w") as f:
+    f.write("n_clusters,inertia,silhouette_score\n")
 
 
-# %%
-def plot_data(X):
-    plt.plot(X[:, 0], X[:, 1], 'k.', markersize=2)
+def pickle_model(model, n_clusters, s_score):
+    fp = PROJECT_DIR + f"models/kmeans/{n_clusters}.pkl"
+    with open(fp, "wb") as file:
+        pickle.dump(model, file)
+    with open(score_fp, "a") as file:
+        file.write(f"{n_clusters},{model.inertia_},{s_score}\n")
 
 
-def plot_centroids(centroids, weights=None, circle_color='w', cross_color='k'):
-    if weights is not None:
-        centroids = centroids[weights > weights.max() / 10]
-    plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='o', s=30, linewidths=8,
-                color=circle_color, zorder=10, alpha=0.9)
-    plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='x', s=50, linewidths=50,
-                color=cross_color, zorder=11, alpha=1)
+idg = ImageDataGenerator(
+        samplewise_center=True,
+        samplewise_std_normalization=True,
+        fill_mode='constant',
+        cval=1.0)
 
+imgs = []
+with open("trainfiles.txt", "r") as f:
+    for i, filename in enumerate(f.read().split("\n")):
+        if i % 100 == 0:
+            print(f"{i}")
+        filepath = os.path.join(IMG_DIR, filename)
+        img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
+        img = img_to_array(img)
+        img = expand_dims(img, axis=0)
+        img = idg.flow(img)
+        img = next(img)
+        img = img.flatten()
+        imgs.append(img)
 
-def plot_decision_boundaries(clusterer, X, resolution=1000, show_centroids=True,
-                             show_xlabels=True, show_ylabels=True):
-    mins = X.min(axis=0) - 0.1
-    maxs = X.max(axis=0) + 0.1
-    xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], resolution),
-                         np.linspace(mins[1], maxs[1], resolution))
-    Z = clusterer.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
+models = []
+inertias = []
+scores = []
 
-    plt.contourf(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
-                 cmap="Pastel2")
-    plt.contour(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
-                linewidths=1, colors='k')
-    plot_data(X)
-    if show_centroids:
-        plot_centroids(clusterer.cluster_centers_)
-
-    if show_xlabels:
-        plt.xlabel("$x_1$", fontsize=14)
-    else:
-        plt.tick_params(labelbottom=False)
-    if show_ylabels:
-        plt.ylabel("$x_2$", fontsize=14, rotation=0)
-    else:
-        plt.tick_params(labelleft=False)
-
+for k in range(2, 101):
+    print(f"Creating KMeans for {k} clusters")
+    kmeans = MiniBatchKMeans(n_clusters=k, random_state=RND_SEED).fit(imgs)
+    models.append(kmeans)
+    score = silhouette_score(imgs, kmeans.labels_)
+    scores.append(score)
+    inertias.append(kmeans.inertia_)
+    pickle_model(kmeans, k, score)
 
 # %%
-kmeans.fit(x)
-plot_decision_boundaries(kmeans, x)
+plt.figure(figsize=(8, 6))
+plt.plot(range(2, 101), inertias, "bo-")
+plt.xlabel("$k$", fontsize=14)
+plt.ylabel("Inertia", fontsize=14)
+
+plt.axis([1, 101, min(inertias), max(inertias)])
+plt.show()
+
+# %%
+plt.figure(figsize=(8, 3))
+plt.plot(range(2, 101), scores, "bo-")
+plt.xlabel("$k$", fontsize=14)
+plt.ylabel("Silhouette score", fontsize=14)
+plt.axis([1, 101, min(scores), max(scores)])
+plt.show()
+
