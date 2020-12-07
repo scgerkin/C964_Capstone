@@ -112,25 +112,54 @@ The developer has 8 years of experience in software engineering, specializing in
 
 ## Customer Summary
 
-## Existing System Analysis
+## System Analysis
+This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
+
+The deployed web service will exist as two applications on a single server: a REST endpoint for receiving images and converting them to data that can be used by the prediction model and the prediction model itself. The forward endpoint will be served as a Flask[^Flask] RESTful service contained in a Docker image. This application will then communicate directly with the REST endpoint created by TensorFlow Serving[^TFServing] Docker container, receive the results, and then return them to the originating end-user. Both containers will be run in tandem using Docker Compose[^DockerCompose] on a single server.
+![Prediction Server Diagram](./assets/prediction-server.png)
+
+The servers will be deployed in an auto-scaling group to maintain high availability of the application, with a network load balancer to direct traffic between the servers. Two instances will be online at all times with each living in a separate availability zone. During peak traffic, additional servers will be provisioned automatically to adjust for this increase in traffic. When traffic begins to taper out, these servers will be automatically terminated to save on costs.
+![Systems Architecture Diagram](./assets/systems-arch01.png)
+
+[^Flask]: https://flask.palletsprojects.com/en/1.1.x/
+[^TFServing]: https://www.tensorflow.org/tfx/serving/docker
+[^DockerCompose]: https://docs.docker.com/compose/
 
 ## Data Analysis
 
 ## Project Methodology
 
 ## Project Outcomes
+//TODO finish listing deliverables
+List deliverables
+- Model Pipeline
+- Docker container with REST API for converting images to tensors
+- Docker container of TensorFlow/Serving with the trained model
+- Docker Compose file for provisioning the containers
+- React.js frontend
 
 ## Implementation Plan
 
 ## Evaluation Plan
 
 ## Resources and Costs
+//TODO evaluate cost modelling
 
 ### Programming Environment
+//TODO finish programming environment
+- Python 3.7.9
+- Anaconda 4.9.1
+- Docker 19.03.13
 
 ### Environment Costs
+Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding an additional \$160 to \$480 year.
+
+This makes the combined environment cost for maintenance approximately \$2,000 to $2,300 per year.
 
 ### Human Resource Requirements
+Total upfront development for the project is estimated at 4 weeks at 40 hours per week. The contracted cost of the project developer is \$62/hr. This comes to a total of \$9,920 total cost for development.
+
+Ongoing maintenance of the project is expected to take an average of 1 hour per week, assuming no additional development is required. This cost is prorated to \$55/hr, totalling \$2,860/yr.
 
 ## Timeline and Milestones
 
