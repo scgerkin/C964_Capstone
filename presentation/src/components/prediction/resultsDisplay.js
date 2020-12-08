@@ -13,8 +13,7 @@ const ResultsDisplay = ({ predictions }) => {
 
   return (
     <>
-      {!!predictions}
-      <h2>Finding: {predictions.finding ? "True" : "False"}</h2>
+      <h2>Diagnostic Classification</h2>
       <div className="chart-area" ref={chartArea}/>
     </>
   )

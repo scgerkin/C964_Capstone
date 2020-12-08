@@ -37,12 +37,11 @@ async function analyzeRandom(image) {
           { label: "effusion", probability: Math.random() },
           { label: "emphysema", probability: Math.random() },
           { label: "fibrosis", probability: Math.random() },
-          { label: "hernia", probability: Math.random() },
           { label: "infiltration", probability: Math.random() },
           { label: "mass", probability: Math.random() },
+          { label: "no_finding", probability: Math.random() },
           { label: "nodule", probability: Math.random() },
           { label: "pleural_thickening", probability: Math.random() },
-          { label: "pneumonia", probability: Math.random() },
           { label: "pneumothorax", probability: Math.random() },
         ],
       }
