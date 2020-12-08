@@ -6,14 +6,14 @@ export async function analyzeXray(image) {
   // return analyzeActual(image)
 }
 
-export async function epochTraining() {
-  return new Promise(res => {
-    setTimeout(() => {
-      const data = require("../../static/dx-weighted-inception.json")
-      res(data)
-    }, 0)
-  })
-}
+// export async function epochTraining() {
+//   return new Promise(res => {
+//     setTimeout(() => {
+//       const data = require("../../static/dx-weighted-inception.json")
+//       res(data)
+//     }, 0)
+//   })
+// }
 
 export async function rocCurve(setType) {
   return new Promise((res, rej) => {
