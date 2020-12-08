@@ -112,7 +112,7 @@ Three broad objectives have been identified to designate this project as a succe
 Through the use of a KMeans Clustering model, Convolutional Neural Network, or a combination of both, a predictive model can be trained and generalized to provide an accurate diagnostic classification system per the objective listed above. This model will be able to be deployed as a standalone web service and receive new imaging data and return the predicted label classifications.
 
 ## Methodology
-With the initial prototype development consisting of a single developer, the waterfall methodology will be used for the development process. Additionally, the requirements are well understood for this project making this development lifecycle a prime candidate for use during development. The overall development will be broken down into the following phases and executed in order:
+With the initial prototype development consisting of a single developer, the Sashimi Waterfall methodology will be used for the development process. Additionally, the requirements are well understood for this project making this development lifecycle a prime candidate for use during development. The overall development will be broken down into the following phases and executed in order, with feedback and fine-tuning of each stage as necessary:
 
 1. __Requirements gathering and analysis.__ The requirements have been well defined throughout this document and are unlikely to change during development.
 2. __Data collection.__ As discussed previously, data for training the application prediction model has been gathered and will be further analyzed during the lifecycle of the project.
@@ -123,7 +123,7 @@ With the initial prototype development consisting of a single developer, the wat
 7. __Maintenance.__ At this time, the application will enter the maintenance phase of development. The predictive model will be fully modular and can be replaced by a new model that has been trained on new data points. Different versions of the model will be maintained and version-controlled to allow for gradual roll-outs to improvements to the overall system. At this time, the project will be handed over to the client.
 
 ## Funding Requirements
-Total funding for project development and implementation is estimated at \$9,920 with an ongoing maintenance cost of approximately \$4,800 to \$5,100 for maintaining the cloud server environment on which the component services will live. A full cost breakdown of these costs is provided in the [Resources and Costs](#resources-and-costs) section.
+Total funding for project development and implementation is estimated at \$9,920 with an ongoing, yearly maintenance cost of approximately \$4,800 to \$5,100 for maintaining the cloud server environment on which the component services will live. A full cost breakdown of these costs is provided in the [Resources and Costs](#resources-and-costs) section.
 
 ## Stakeholders Impact
 The stakeholders for this project include `COMPANY_NAME` and their clients. The predictive model created will enable `COMPANY_NAME` to provide greater efficiency in evaluating chest X-ray images for diagnostic classification and can potentially be offered as an additional service to its clients that require immediate diagnostic classification of chest X-rays but do not require the full usage of services from `COMPANY_NAME` radiology specialists.
@@ -139,18 +139,20 @@ The developer has 8 years of experience in software engineering, specializing in
 # Section B - Business Requirements and Technical Summary
 
 ## Problem Statement
-//TODO
+//TODO problem statement
 
 ## Customer Summary
-//TODO
+//TODO customer summary
 
 ## System Analysis
 This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
 
 The deployed web service will exist as two applications on a single server: a REST endpoint for receiving images and converting them to data that can be used by the prediction model and the prediction model itself. The forward endpoint will be served as a Flask[^Flask] RESTful service contained in a Docker image. This application will then communicate directly with the REST endpoint created by TensorFlow Serving[^TFServing] Docker container, receive the results, and then return them to the originating end-user. Both containers will be run in tandem using Docker Compose[^DockerCompose] on a single server.
+
 ![Prediction Server Diagram](./assets/prediction-server.png)
 
 The servers will be deployed in an auto-scaling group to maintain high availability of the application, with a network load balancer to direct traffic between the servers. Two instances will be online at all times with each living in a separate availability zone. During peak traffic, additional servers will be provisioned automatically to adjust for this increase in traffic. When traffic begins to taper out, these servers will be automatically terminated to save on costs.
+
 ![Systems Architecture Diagram](./assets/systems-arch01.png)
 
 [^Flask]: [https://flask.palletsprojects.com/en/1.1.x/](https://flask.palletsprojects.com/en/1.1.x/)
@@ -163,6 +165,39 @@ The data used for training the predictive model has been published for use on Ka
 This data will be analyzed for outliers, incomplete data, and otherwise unusable data. Any data that is determined to be unusable will be excluded from the overall process. Metadata will be reformatted and/or reshaped to provide ease of usability. Lastly, training a model on image data will require that images are converted to raw number values that can be fed into the model for training.
 
 ## Project Methodology
+This project will use the Sashimi Waterfall methodology for project development. Requirements are well understood and discussed throughout this document in detail. These factors make this project a prime candidate for the Waterfall methodology of project development. However, as development progresses and constraints are identified, feedback may require revisiting previous stages of development. The adoption of the Sashimi variation of Waterfall is therefore prudent during the development of this project. Further discussion regarding the individual stages of development follow.
+
+### Requirements Analysis
+The full requirements of this document will be analyzed for accuracy and understanding prior to any development of the project. This document will be modified or appended as necessary during this stage of development.
+
+### Systems Design
+The full system will undergo a complete design of broad functionality and individual parts and their interactions will be identified. Some basic systems design has been undertaken to better understand the requirements and is illustrated in the [Systems Analysis](#systems-analysis) portion of this document. This model will undergo refinement during the following phase as necessary.
+
+### Coding and Implementation
+This phase of development will be broken down into three distinct pieces, each contingent on the previous. During this phase, each individual piece will be evaluated and tested independent of the full project. Unit testing will be conducted at a granular level of each component.
+
+#### Data Analysis
+A complete understanding of the given data will be performed. During this time, any augmentation, additional collection, trimming of outliers, and collating into manageable chunks will result in visualizations for use describing the data. This is key to creating the predictive model.
+
+#### Predictive Modeling
+The keystone of the overall application, the predictive model, will be created, tested, and evaluated. As this is the most important part of the project, the majority of time spent will be during this development phase.
+
+#### API Development
+The completed (or prototypical) predictive model will be containerized. Following this, the middleware server API will be created to allow interaction with the predictive model.
+
+#### Front-end Application Development
+A front-end, single-page web application will be created, built, and deployed to cloud storage for demonstrating the predictive model to prospective clients and further evaluation.
+
+### Systems Testing
+Upon completion of each individual item above, the full environment will be evaluated for accuracy and integration.
+
+### Deployment to Cloud Environment
+Upon successful integration testing of the environment, the full project will be deployed to a prototyping cloud environment that will mirror the final specifications of the overall environment. During this time, further integration testing and acceptance testing will be undertaken. Should acceptance testing result in a successful outcome, the environment will be moved to a full production environment and transitioned to maintenance.
+
+### Maintenance
+The full project will undergo routine health checks, monitored via log output to AWS CloudWatch[^cloudWatchCite]. These logs will monitor individual server health metrics and activity. A full maintenance pipeline will be created to allow retraining and deployment of the predictive model to the production environment.
+
+[^cloudWatchCite]: [https://aws.amazon.com/cloudwatch/](https://aws.amazon.com/cloudwatch/)
 
 ## Project Deliverables
 Project success is dependent on the following deliverables:
@@ -181,10 +216,10 @@ Project success is dependent on the following deliverables:
 In addition to the above, the project will undergo full version-controlling using Git during development. This repository will be made available at [https://github.com/scgerkin/C964_Capstone](https://github.com/scgerkin/C964_Capstone).
 
 ## Implementation Plan
-//TODO
+//TODO impl plan
 
 ## Evaluation Plan
-//TODO
+//TODO eval plan
 
 ## Resources and Costs
 
@@ -206,14 +241,17 @@ Total upfront development for the project is estimated at 4 weeks at 40 hours pe
 Ongoing maintenance of the project is expected to take an average of 1 hour per week, assuming no additional development is required. This cost is prorated to \$55/hr, totalling \$2,860/yr.
 
 ## Timeline and Milestones
+//TODO timeline
 
 # Section C - Application Design and Development
 
 ## Data Methodologies
 
 ### Descriptive
+//TODO descriptive discussion
 
 ### Prescriptive (NN)
+//TODO prescriptive discussion
 
 ## Datasets Discussion
 As noted in the paper[^nihPaperCitation] about the data, provided by the NIH, the diagnostic findings for each image are gathered by an NLP program, parsing from the original radiology reports. Unfortunately, these reports are not available, and there are some noted errors found in some of the diagnostic labels, as referenced in the provided table from the paper. A selection of these scans has been reviewed for accuracy by a third party radiologist[^Oakden-RaynerCite] and his findings indicate the labels may have significant accuracies, although he notes that the original diagnostic labels by the originating radiologists most likely had additional clinical information to assist them in determining a diagnosis.
@@ -225,7 +263,11 @@ Unfortunately, without a complete review of each scan by a trained radiologist, 
 
 Lastly, the metadata about each image possibly contains several errors in reporting. For instance, the "age" column for images range from 1 to 414 with no associated units. As such, it is impossible to use this information for any significant information when analyzing or using for predictive modeling. The assumption has been made that this column is meant to indicate years. As such, any image with an age of greater than or equal to 100 has been trimmed from the prospective data.
 
-The methodology behind this and the results is demonstrated with the following code snippets, using the Pandas[^pandasCite] data analysis tool for Python:
+## Analytics and Decision Making
+The application has the ability to assist clinicians in the diagnosis of patients via chest X-ray. As a demonstration of the ability, the web application can be used to interact with the prediction API with a few simple clicks. The results of the analysis give probabilistic classification labels and are displayed to the end-user. A demonstration of this in action can be viewed in the [Real-Time Query](#real-time-query) section below.
+
+## Data Cleaning
+As discussed previously regarding the age column of the data, results with an age greater than or equal to 100 have been removed. The methodology behind this and the results is demonstrated with the following code snippets, using the Pandas[^pandasCite] data analysis tool for Python:
 
 [^pandasCite]: [https://pandas.pydata.org/](https://pandas.pydata.org/)
 
@@ -282,44 +324,67 @@ save_usable_to_csv(img_metadata)
 ```
 
 [^cleanDataFileLoc]: The full code for this cleaning can be found in `clean-data.py`.
-## Analytics and Decision Making
-
-## Data Cleaning
 
 ## Data Visualization
+//TODO davaviz
 
-## Real-Time Queries
+## Real-Time Query
+The front-end application allows a user to upload a chest X-ray image directly to the prediction model through their browser with a simple form element:
+![Upload Image Button](./assets/analyze-xray/0.png)
+
+Clicking on this form element will bring up a File Selector:
+![File Selection](./assets/analyze-xray/1.png)
+
+During analysis, the original image will be displayed on screen. Once analysis is complete, a graph will display the indicated classification probabilities:
+![Diagnostic Classification Results](./assets/analyze-xray/5.png)
+
+This portion of the web application functionality can be accessed at `//TODO: X-RAY_ANALYSIS_URL`.
 
 ## Adaptive Element
+//TODO adaptive element? what is this
 
 ## Outcome Accuracy
+//TODO outcome accuracy discussionn
 
 ## Security Measures
+//TODO security measures
 
 ## Product Health Monitoring
+//TODO product health monitoring
 
 ## Dashboard
+//TODO dashboard
 
 # Section D - Implementation Review Analysis
 
 ## Project Purpose
+//TODO project purpose? what is this
 
 ## Datasets
+//TODO datasets discussion?
 
 ## Data Product Code
+//TODO data product code discussion
 
 ## Hypothesis Verification
+//TODO hypothesis verification
 
 ## Visualizations and Reporting
+//TODO visualisations and reporting
 
 ## Accuracy Analysis
+//TODO accuracy analysis
 
 ## Application Testing
+//TODO application testing???
 
 ## Application Files
+//TODO list files
 
 ## User's Guide
+//TODO installation guide?
 
 ## Summation of Learning Experience
+//TODO summation of learning
 
 # References
