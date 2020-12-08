@@ -25,7 +25,35 @@ references:
     publisher: National Institutes of Health
     issued:
       year: 2018
-
+  - id: nihPaper
+    title: "ChestX-ray8: Hospital-scale Chest X-ray Database and Benchmarks on Weakly-Supervised Classification and Localization of Common Thorax Diseases"
+    author:
+      - family: Wang
+        given: Xiaosong
+      - family: Peng
+        given: Yifan
+      - family: Lu
+        given: Zhiyong
+      - family: Bagheri
+        given: Mohammadhadi
+      - family: Summers
+        given: Ronald
+    container-title: Computer Vision Foundation
+    URL: https://openaccess.thecvf.com/content_cvpr_2017/papers/Wang_ChestX-ray8_Hospital-Scale_Chest_CVPR_2017_paper.pdf
+    publisher: National Institutes of Health
+    issued:
+      year: 2017
+  - id: oakdenRayner
+    title: "Exploring the ChestXray14 dataset: problems"
+    author:
+      - family: Oakden-Rayner
+        given: Luke
+    container-title: Luke Oakden-Rayner
+    URL: https://lukeoakdenrayner.wordpress.com/2017/12/18/the-chestxray14-dataset-problems/
+    issued:
+      year: 2017
+      month: 12
+      day: 18
 ---
 
 # Section A - Project Proposal/Recommendation
@@ -50,7 +78,9 @@ The application will be segmented into four distinct parts:
 [^API]: [Application Programming Interface](https://en.wikipedia.org/wiki/API)
 
 ## Data Description
-The data [@nihDataset] to be used for training and creating a model to assist radiologists and physicians in the diagnostic process has been collected by the National Institutes of Health data made public for data exploration and machine learning modeling. The data includes over 100,000 chest X-ray images collected from a little more than 30,000 unique individuals. Additionally, a comma-separated value file accompanies the data listing the diagnostic labels applied to each image as well as patient age and sex, view position, and image dimensions.
+The data [^nihDatasetCite] to be used for training and creating a model to assist radiologists and physicians in the diagnostic process has been collected by the National Institutes of Health data made public for data exploration and machine learning modeling. The data includes over 100,000 chest X-ray images collected from a little more than 30,000 unique individuals. Additionally, a comma-separated value file accompanies the data listing the diagnostic labels applied to each image as well as patient age and sex, view position, and image dimensions.
+
+[^nihDatasetCite]: @nihDataset
 
 The finding labels consist of 15 different potential labels, 14 of which indicate a cause for follow-up and 1 label indicating none of the 14 labels could be applied to the individual image. Each X-ray can be assigned any combination of these labels (excluding "No Finding" which is always a unique label for an image). The diagnostic labels include:
 
@@ -93,7 +123,7 @@ With the initial prototype development consisting of a single developer, the wat
 7. __Maintenance.__ At this time, the application will enter the maintenance phase of development. The predictive model will be fully modular and can be replaced by a new model that has been trained on new data points. Different versions of the model will be maintained and version-controlled to allow for gradual roll-outs to improvements to the overall system. At this time, the project will be handed over to the client.
 
 ## Funding Requirements
-Total funding for project development and implementation is estimated at `DEVELOPMENT_FUNDING` with an ongoing maintenance cost of `MAINTENANCE_COST` for maintaining the cloud server environment on which the component services will live. A full cost breakdown of these costs is provided in the [Resources and Costs](#resources-and-costs) section.
+Total funding for project development and implementation is estimated at \$9,920 with an ongoing maintenance cost of approximately \$4,800 to \$5,100 for maintaining the cloud server environment on which the component services will live. A full cost breakdown of these costs is provided in the [Resources and Costs](#resources-and-costs) section.
 
 ## Stakeholders Impact
 The stakeholders for this project include `COMPANY_NAME` and their clients. The predictive model created will enable `COMPANY_NAME` to provide greater efficiency in evaluating chest X-ray images for diagnostic classification and can potentially be offered as an additional service to its clients that require immediate diagnostic classification of chest X-rays but do not require the full usage of services from `COMPANY_NAME` radiology specialists.
@@ -109,8 +139,10 @@ The developer has 8 years of experience in software engineering, specializing in
 # Section B - Business Requirements and Technical Summary
 
 ## Problem Statement
+//TODO
 
 ## Customer Summary
+//TODO
 
 ## System Analysis
 This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
@@ -121,35 +153,47 @@ The deployed web service will exist as two applications on a single server: a RE
 The servers will be deployed in an auto-scaling group to maintain high availability of the application, with a network load balancer to direct traffic between the servers. Two instances will be online at all times with each living in a separate availability zone. During peak traffic, additional servers will be provisioned automatically to adjust for this increase in traffic. When traffic begins to taper out, these servers will be automatically terminated to save on costs.
 ![Systems Architecture Diagram](./assets/systems-arch01.png)
 
-[^Flask]: https://flask.palletsprojects.com/en/1.1.x/
-[^TFServing]: https://www.tensorflow.org/tfx/serving/docker
-[^DockerCompose]: https://docs.docker.com/compose/
+[^Flask]: [https://flask.palletsprojects.com/en/1.1.x/](https://flask.palletsprojects.com/en/1.1.x/)
+[^TFServing]: [https://www.tensorflow.org/tfx/serving/docker](https://www.tensorflow.org/tfx/serving/docker)
+[^DockerCompose]: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
 
 ## Data Analysis
+The data used for training the predictive model has been published for use on Kaggle.com and can be located at https://www.kaggle.com/nih-chest-xrays/data. It consists of 112,120 distinct chest X-ray images taken both posterior-to-anterior (PA) and anterior-to-posterior (AP). Accompanying the images are comma-separated value files containing image metadata, patient diagnostic findings, follow-up information, and non-identifying patient ID numbers.
+
+This data will be analyzed for outliers, incomplete data, and otherwise unusable data. Any data that is determined to be unusable will be excluded from the overall process. Metadata will be reformatted and/or reshaped to provide ease of usability. Lastly, training a model on image data will require that images are converted to raw number values that can be fed into the model for training.
 
 ## Project Methodology
 
-## Project Outcomes
-//TODO finish listing deliverables
-List deliverables
-- Model Pipeline
-- Docker container with REST API for converting images to tensors
-- Docker container of TensorFlow/Serving with the trained model
-- Docker Compose file for provisioning the containers
-- React.js frontend
+## Project Deliverables
+Project success is dependent on the following deliverables:
+- Python script for instantiating, training, and saving a predictive model.
+- Dockerfile for building a trained and saved model within a Docker container.
+- Python Flask middleware server script for converting image data and interacting with the aforementioned container.
+- Dockerfile for building the middleware server within a Docker container.
+- Docker Compose file for initiating and linking these containers.
+- Source code for the front-end, single-page web application build with the React[^reactCite] and Gatsby[^gatsbyCite] Javascript framework libraries.
+- A complete analysis of the data used for training, as well as the results of the trained model.
+- A zip file containing the subset of images used for training, validation, and testing.
+
+[^reactCite]: [https://reactjs.org/](https://reactjs.org/)
+[^gatsbyCite]: [https://www.gatsbyjs.com/](https://www.gatsbyjs.com/)
+
+In addition to the above, the project will undergo full version-controlling using Git during development. This repository will be made available at [https://github.com/scgerkin/C964_Capstone](https://github.com/scgerkin/C964_Capstone).
 
 ## Implementation Plan
+//TODO
 
 ## Evaluation Plan
+//TODO
 
 ## Resources and Costs
-//TODO evaluate cost modelling
 
 ### Programming Environment
-//TODO finish programming environment
+The following environments are to be used for development and deployment of the final project. This is not meant to be a complete list and a full environment list will be available in the final source code. All tools listed below are open-source software. Licensing fees may apply, but are the responsibility of `COMPANY_NAME`.
 - Python 3.7.9
 - Anaconda 4.9.1
 - Docker 19.03.13
+- Node.js 12.16.3
 
 ### Environment Costs
 Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding an additional \$160 to \$480 year.
@@ -172,7 +216,72 @@ Ongoing maintenance of the project is expected to take an average of 1 hour per 
 ### Prescriptive (NN)
 
 ## Datasets Discussion
+As noted in the paper[^nihPaperCitation] about the data, provided by the NIH, the diagnostic findings for each image are gathered by an NLP program, parsing from the original radiology reports. Unfortunately, these reports are not available, and there are some noted errors found in some of the diagnostic labels, as referenced in the provided table from the paper. A selection of these scans has been reviewed for accuracy by a third party radiologist[^Oakden-RaynerCite] and his findings indicate the labels may have significant accuracies, although he notes that the original diagnostic labels by the originating radiologists most likely had additional clinical information to assist them in determining a diagnosis.
 
+[^nihPaperCitation]: @nihPaper
+[^Oakden-RayerCite]: @oakdenRayner
+
+Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by `COMPANY_NAME` for the purposes of creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
+
+Lastly, the metadata about each image possibly contains several errors in reporting. For instance, the "age" column for images range from 1 to 414 with no associated units. As such, it is impossible to use this information for any significant information when analyzing or using for predictive modeling. The assumption has been made that this column is meant to indicate years. As such, any image with an age of greater than or equal to 100 has been trimmed from the prospective data.
+
+The methodology behind this and the results is demonstrated with the following code snippets, using the Pandas[^pandasCite] data analysis tool for Python:
+
+[^pandasCite]: [https://pandas.pydata.org/](https://pandas.pydata.org/)
+
+```python
+import pandas as pd
+df = pandas.read_csv("..")
+df["Patient Age"].describe()
+```
+```
+count    112120.000000
+mean         46.901463
+std          16.839923
+min           1.000000
+25%          35.000000
+50%          49.000000
+75%          59.000000
+max         414.000000
+```
+```python
+df["Patient Age"][df["Patient Age"] < 100].describe()
+```
+```
+count    112104.000000
+mean         46.872574
+std          16.598152
+min           1.000000
+25%          35.000000
+50%          49.000000
+75%          59.000000
+max          95.000000
+```
+
+Additional modifications to the image metadata file have been made to allow for easier use with analysis and modeling. This includes normalizing the column names to remove spaces, splitting the diagnostic findings by label and creating a one-hot encoded array for each image, and removing additionally identified unusable images (either from poor image quality, sizing constraints, or others) in the `cxr14_bad_labels.csv` file.
+
+The following code snippet illustrates a broad overview of how data cleaning was accomplished[^cleanDataFileLoc]. After cleaning, the resultant DataFrame was saved to a new CSV for future usage.
+```python
+img_metadata = pd.read_csv(img_metadata_loc)
+img_metadata.rename(columns={
+    "Image Index"   : "img_filename",
+    "Patient ID"    : "pt_id",
+    "Patient Age"   : "pt_age",
+    "Patient Gender": "pt_sex",
+    "View Position" : "view_position",
+    "Image Width"   : "img_width",
+    "Image Height"  : "img_height",
+    "Spacing X"     : "x_spacing",
+    "Spacing Y"     : "y_spacing"}, inplace=True)
+unusable_imgs = pd.read_csv(unusable_img_loc)
+finding_labels = get_finding_labels(img_metadata)
+save_labels_to_csv(finding_labels)
+img_metadata = remap_labels(img_metadata, finding_labels)
+img_metadata = drop_known_unusable(img_metadata, unusable_imgs)
+save_usable_to_csv(img_metadata)
+```
+
+[^cleanDataFileLoc]: The full code for this cleaning can be found in `clean-data.py`.
 ## Analytics and Decision Making
 
 ## Data Cleaning
