@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import { round, toPascal } from "../../utils/utils"
 
-const MARGIN = { TOP: 10, BOTTOM: 60, LEFT: 70, RIGHT: 10 }
+const MARGIN = { TOP: 10, BOTTOM: 60, LEFT: 70, RIGHT: 15 }
 const WIDTH = 900 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM
 const TRANSITION_DURATION = 0 // ms
@@ -118,7 +118,7 @@ class RocChart {
           this.svg.append("text")
               .attr("x", legendXPos + 10)
               .attr("y", legendYPos + 5)
-              .text(`${dispLabel}: ${auc}`)
+              .text(`${dispLabel} AUC: ${auc}`)
         })
   }
 }

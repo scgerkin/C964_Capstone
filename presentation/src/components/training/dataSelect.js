@@ -15,20 +15,21 @@ const DataSelect = ({
     return <></>
   }
   const activeCount = labelSelections.filter(item => item.selected).length
+  const dataTypeDisplay = toPascal(dataSelections.filter(item => item.selected)[0].label) + " data"
   return (
     <Container>
       <Row>
         <Col>
           <Dropdown>
             <Dropdown.Toggle variant={"outline-dark"} id={"data-type"}>
-              Select Data Type
+              {dataTypeDisplay}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {dataSelections.map(item =>
                 <Dropdown.Item key={item.label}
                                onClick={() => onDataTypeSelect(item.label)}
                                active={item.selected}>{toPascal(
-                  item.label)}</Dropdown.Item>)}
+                  item.label) + " data"}</Dropdown.Item>)}
             </Dropdown.Menu>
           </Dropdown>
         </Col>
