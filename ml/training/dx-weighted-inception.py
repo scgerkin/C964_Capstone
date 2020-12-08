@@ -9,7 +9,9 @@ from training.utils import (get_dx_labels,
                             get_img_metadata,
                             print_gpu_status,
                             get_train_valid_test_split,
-                            train_checkpoint_save, PROJECT_DIR, IMG_DIR,
+                            train_checkpoint_save,
+                            PROJECT_DIR,
+                            IMG_DIR,
                             )
 import pandas as pd
 import tensorflow as tf
@@ -17,7 +19,6 @@ from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from numpy import expand_dims
 from tensorflow.keras.layers import (Dense,
                                      GlobalAveragePooling2D,
-                                     Dropout,
                                      )
 
 # Load only records with a single finding
@@ -84,11 +85,23 @@ target = target.sample(frac=1, random_state=RANDOM_SEED)
 print(target.describe())
 print(f"Total labels: {len(sample_counts)}\n{sample_counts}")
 
-# TODO: consider saving this as an csv for data discussion
 # Prepare for training
 print_gpu_status()
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
+
+def map_set(row):
+    fname = row["img_filename"]
+    if fname in train_gen.filenames:
+        return "training"
+    elif fname in valid_gen.filenames:
+        return "validation"
+    return "testing"
+
+
+target["split_set"] = target.apply(map_set, axis=1)
+tpath = f"{PROJECT_DIR}training/train_data.csv"
+target.drop(["findings_list"], axis=1).to_csv(tpath, index=False)
 
 # %%
 def init_model():
