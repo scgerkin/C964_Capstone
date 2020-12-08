@@ -103,6 +103,7 @@ target["split_set"] = target.apply(map_set, axis=1)
 tpath = f"{PROJECT_DIR}training/train_data.csv"
 target.drop(["findings_list"], axis=1).to_csv(tpath, index=False)
 
+
 # %%
 def init_model():
     base = Sequential()
@@ -172,7 +173,7 @@ def preds_to_df(preds, filenames):
 
 def save_preds_to_file(name, preds, filenames):
     pdf = preds_to_df(preds, filenames)
-    pdf.to_csv(f"{name}.csv", index=False)
+    pdf.to_csv(f"{PROJECT_DIR}analysis/{name}.csv", index=False)
 
 
 def load_model_make_and_save_preds():
@@ -185,5 +186,4 @@ def load_model_make_and_save_preds():
     save_preds_to_file("valid_preds", valid_preds, valid_gen.filenames)
 
 
-# %%
 load_model_make_and_save_preds()
