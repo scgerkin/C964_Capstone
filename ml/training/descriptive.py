@@ -56,15 +56,15 @@ for k in range(2, 101):
     pickle_model(kmeans, k, score)
 
 
-def plot_and_save(y, y_label, fig_size):
+def plot_and_save(x, y, y_label, fig_size):
     plt.figure(figsize=fig_size)
-    plt.plot(range(2, 101), y, "bo-")
+    plt.plot(x, y, "bo-")
     plt.xlabel("$k$", fontsize=14)
     plt.ylabel(y_label, fontsize=14)
-    plt.axis([1, 101, min(y), max(y)])
+    plt.axis([1, max(x), min(y), max(y)])
     plt.savefig(f"analysis/KMeans-{y_label}.png")
     plt.show()
 
 
-plot_and_save(inertias, "Inertia", fig_size=(8, 6))
-plot_and_save(scores, "Silhouette score", fig_size=(8, 3))
+plot_and_save(range(2, 101), inertias, "Inertia", fig_size=(12, 6))
+plot_and_save(range(2, 101), scores, "Silhouette score", fig_size=(12, 6))
