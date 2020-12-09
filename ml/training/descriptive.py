@@ -29,7 +29,7 @@ idg = ImageDataGenerator(
         cval=1.0)
 
 imgs = []
-with open("trainfiles.txt", "r") as f:
+with open("analysis/trainfiles.txt", "r") as f:
     for i, filename in enumerate(f.read().split("\n")):
         if i % 100 == 0:
             print(f"{i}")
@@ -55,20 +55,16 @@ for k in range(2, 101):
     inertias.append(kmeans.inertia_)
     pickle_model(kmeans, k, score)
 
-# %%
-plt.figure(figsize=(8, 6))
-plt.plot(range(2, 101), inertias, "bo-")
-plt.xlabel("$k$", fontsize=14)
-plt.ylabel("Inertia", fontsize=14)
 
-plt.axis([1, 101, min(inertias), max(inertias)])
-plt.show()
+def plot_and_save(y, y_label, fig_size):
+    plt.figure(figsize=fig_size)
+    plt.plot(range(2, 101), y, "bo-")
+    plt.xlabel("$k$", fontsize=14)
+    plt.ylabel(y_label, fontsize=14)
+    plt.axis([1, 101, min(y), max(y)])
+    plt.savefig(f"analysis/KMeans-{y_label}.png")
+    plt.show()
 
-# %%
-plt.figure(figsize=(8, 3))
-plt.plot(range(2, 101), scores, "bo-")
-plt.xlabel("$k$", fontsize=14)
-plt.ylabel("Silhouette score", fontsize=14)
-plt.axis([1, 101, min(scores), max(scores)])
-plt.show()
 
+plot_and_save(inertias, "Inertia", fig_size=(8, 6))
+plot_and_save(scores, "Silhouette score", fig_size=(8, 3))
