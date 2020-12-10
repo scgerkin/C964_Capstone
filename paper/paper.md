@@ -54,6 +54,39 @@ references:
       year: 2017
       month: 12
       day: 18
+  - id: handsonML
+    container-title: "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems, 2nd Edition"
+    author:
+      - family: Géron
+        given: Aurélien
+    publisher: "O'Reilly Media Inc."
+    issued:
+      year: 2019
+      month: 10
+  - id: inceptionV3
+    title: "tf.keras.applications.InceptionV3"
+    container-title: TensorFlow Core v2.3.1 documentation
+    author:
+      - family: TensorFlow Documentation
+    URL: https://www.tensorflow.org/api_docs/python/tf/keras/applications/InceptionV3
+    issued:
+      year: 2020
+      month: 12
+  - id: inceptionv3paper
+    title: Rethinking the Inception Architecture for Computer Vision
+    author:
+      - family: Szegedy
+        given: Christian
+      - family: Vanhoucke
+        given: Vincent
+      - family: Ioffe
+        given: Sergey
+      - family: Shlens
+        given: Jonathon
+    publisher: arXiv.org
+    URL: https://arxiv.org/abs/1512.00567
+    issued:
+      year: 2015
 ---
 
 # Section A - Project Proposal/Recommendation
@@ -139,10 +172,12 @@ The developer has 8 years of experience in software engineering, specializing in
 # Section B - Business Requirements and Technical Summary
 
 ## Problem Statement
-//TODO problem statement
+Chest X-ray imaging is a very common, quick, and effective technique for diagnosing a wide variety of diseases related to the lungs and heart. The machines used for these scans can be easily deployed to a variety of settings including hospitals, small clinics and offices, and even disaster areas. However, the requirement for these scans to be read and interpreted by highly trained physicians limits the efficiency with which these scans can be utilized. Applying a machine learning methodology to analyze and predict probable diagnostic findings in a chest X-ray can save countless time, money, and resources to providing actionable diagnostic intelligence to physicians and clinicians in a matter of seconds. While some models do exist for binary classifications, such as a finding of pneumonia vs. no finding of pneumonia, no all encompassing methodology exists for a multi-label classification problem.
 
 ## Customer Summary
-//TODO customer summary
+`COMPANY_NAME` is an industry leader in medical imaging and interpretation. The company continues to grow at a record pace and is continually expanding its reach of off-site imaging systems and contracted image interpretation. As a result of this growth, `COMPANY_NAME` must keep pace with current technologies to continually improve and advance the medical imaging industry. With this in mind, `COMPANY_NAME` has decided to move forward with a prototyping a multi-label classification system for chest X-ray imaging.
+
+It is the hope that this prototype project will yield actionable information with regards to further expanding automated diagnostic classification within other imaging techniques, such as Computed Tomography (CT), Magnetic Resonance Imaging (MRI), and other high precision scanning techniques. Should a model prove effective on X-ray imaging, a technique that has significantly lower image and diagnostic precision overall than these more expensive scans, it is believed that this can be used to catapult `COMPANY_NAME` to significant advances in automated diagnostic medicine.
 
 ## System Analysis
 This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
@@ -160,12 +195,12 @@ The servers will be deployed in an auto-scaling group to maintain high availabil
 [^DockerCompose]: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
 
 ## Data Analysis
-The data used for training the predictive model has been published for use on Kaggle.com and can be located at https://www.kaggle.com/nih-chest-xrays/data. It consists of 112,120 distinct chest X-ray images taken both posterior-to-anterior (PA) and anterior-to-posterior (AP). Accompanying the images are comma-separated value files containing image metadata, patient diagnostic findings, follow-up information, and non-identifying patient ID numbers.
+The data used for training the predictive model has been published for use on Kaggle.com and can be located at [https://www.kaggle.com/nih-chest-xrays/data](https://www.kaggle.com/nih-chest-xrays/data). It consists of 112,120 distinct chest X-ray images taken both posterior-to-anterior (PA) and anterior-to-posterior (AP). Accompanying the images are comma-separated value files containing image metadata, patient diagnostic findings, follow-up information, and non-identifying patient ID numbers.
 
 This data will be analyzed for outliers, incomplete data, and otherwise unusable data. Any data that is determined to be unusable will be excluded from the overall process. Metadata will be reformatted and/or reshaped to provide ease of usability. Lastly, training a model on image data will require that images are converted to raw number values that can be fed into the model for training.
 
 ## Project Methodology
-This project will use the Sashimi Waterfall methodology for project development. Requirements are well understood and discussed throughout this document in detail. These factors make this project a prime candidate for the Waterfall methodology of project development. However, as development progresses and constraints are identified, feedback may require revisiting previous stages of development. The adoption of the Sashimi variation of Waterfall is therefore prudent during the development of this project. Further discussion regarding the individual stages of development follow.
+This project will use the Sashimi Waterfall methodology for project development. Requirements are well understood and discussed throughout this document in detail. These factors make this project a prime candidate for the Waterfall methodology of project development. However, as development continues to progress and constraints are identified, feedback may require revisiting previous stages of development. The adoption of the Sashimi variation of Waterfall is therefore prudent during the development of this project. Further discussion regarding the individual stages of development follow.
 
 ### Requirements Analysis
 The full requirements of this document will be analyzed for accuracy and understanding prior to any development of the project. This document will be modified or appended as necessary during this stage of development.
@@ -206,7 +241,7 @@ Project success is dependent on the following deliverables:
 - Python Flask middleware server script for converting image data and interacting with the aforementioned container.
 - Dockerfile for building the middleware server within a Docker container.
 - Docker Compose file for initiating and linking these containers.
-- Source code for the front-end, single-page web application build with the React[^reactCite] and Gatsby[^gatsbyCite] Javascript framework libraries.
+- Source code for the front-end, single-page web application build with the React.js[^reactCite] and Gatsby.js[^gatsbyCite] Javascript framework libraries.
 - A complete analysis of the data used for training, as well as the results of the trained model.
 - A zip file containing the subset of images used for training, validation, and testing.
 
@@ -216,10 +251,33 @@ Project success is dependent on the following deliverables:
 In addition to the above, the project will undergo full version-controlling using Git during development. This repository will be made available at [https://github.com/scgerkin/C964_Capstone](https://github.com/scgerkin/C964_Capstone).
 
 ## Implementation Plan
-//TODO impl plan
+The implementation plan for creating the predictive model and deploying it as consumable API will follow these steps:
+
+1. Data will be collected and collated for training the model. This will include a selection of chest X-ray images of similar dimensions and quality. The images will consist of a wide-range of diagnostic labels.
+2. The data will be explored and cleaned for outliers, unusable scans, and otherwise invalid data.
+3. A random sampling of each diagnostic label will be collated. Initial plans are to have an equal number of samples per label with a minimum number of 500 scans per diagnostic label. A portion of this data will be withheld for validation and testing purposes.
+4. The images will undergo standardization and normalization before being fed into machine learning models.
+5. KMeans clustering will be explored as a method for dimensionality reduction. Should this prove effective, it will be used to streamline the predictive model and provide less complex training data.
+6. A basic convolutional neural net[^handsonMLCite] (InceptionV3[^inceptionv3Cite]) will be fed the training data and evaluated for diagnostic accuracy.
+7. The trained model will be containerized using Docker and deployed to AWS EC2[^ec2Cite].
+8. A Flask REST middleware will be created for interacting with the aforementioned model and deployed alongside in a separate Docker container.
+9. A front-end, single-page application will be built using React.js and Gatsby.js to interact with the backend API.
+10. Data visualization regarding the training, validation, and testing data will be incorporated with the aforementioned application.
+11. The application will be compiled and deployed to Amazon S3[^s3Cite] for hosting.
+12. The full application will undergo acceptance testing and modification as needed.
+13. Ongoing maintenance and model updates will be performed as needed.
+
+[^handsonMLCite]: @handsonML pp. 447-478
+[^inceptionv3Cite]: TensorFlow InceptionV3 will be used for this application [for the documentation see @inceptionV3]
+[^ec2Cite]: [https://aws.amazon.com/ec2/](https://aws.amazon.com/ec2/)
+[^s3Cite]: [https://aws.amazon.com/s3/](https://aws.amazon.com/s3/)
 
 ## Evaluation Plan
-//TODO eval plan
+The application will be evaluated and verified for acceptance in a combination of methods.
+
+- The prediction model will be evaluated for classification accuracy from validation and testing data that has been separated from all training. This evaluation will involve plotting the confusion values of true positive rates vs the false positive rates for individual diagnostic labels.
+- The REST API will be tested and monitored for load by issuing expected traffic requests to the API. The results of these tests will be used to adjust the server instance, auto-scaling settings, and resiliency of the API.
+- The front-end application will undergo end-user acceptance testing to validate the application meets the specifications and requirements created by `COMPANY_NAME` for usability.
 
 ## Resources and Costs
 
@@ -241,23 +299,87 @@ Total upfront development for the project is estimated at 4 weeks at 40 hours pe
 Ongoing maintenance of the project is expected to take an average of 1 hour per week, assuming no additional development is required. This cost is prorated to \$55/hr, totalling \$2,860/yr.
 
 ## Timeline and Milestones
-//TODO timeline
+| Phase                       | Start      | Complete   | Duration |
+|-----------------------------|------------|------------|----------|
+| Requirements Analysis       | 11/01/2020 | 11/04/2020 | 3 Days   |
+| Data Collection             | 11/5/2020  | 11/7/2020  | 2 Days   |
+| Data Analysis               | 11/7/2020  | 11/11/2020 | 4 Days   |
+| Model Creation              | 11/12/2020 | 11/26/2020 | 14 Days  |
+| Deployment                  | 11/27/2020 | 12/4/2020  | 7 Days   |
+| Web Application Development | 12/5/2020  | 12/19/2020 | 14 Days  |
+| Testing                     | 12/20/2020 | 12/30/2020 | 10 Days  |
+| Maintenance                 | 1/1/2021   |  -         | Ongoing  |
 
 # Section C - Application Design and Development
 
 ## Data Methodologies
 
 ### Descriptive
-//TODO descriptive discussion
+KMeans clustering[^miniBatchNote] was explored as a means of dimensionality reduction for the training data before processing by the neural net. Using the training data selected to be fed into the neural net, the appropriate number of clusters was assumed to be 13 (the number of classification labels present on the trimmed data). However, this assumption was tested by testing a range of clusters from 2 to 100 and the respective inertia and silhouette score for each model created for these clusters was analyzed.
+
+[^miniBatchNote]: In order to speed up training analysis, MiniBatchKMeans was used. This method of KMeans shows significantly faster training with little to no difference in model accuracy compared to traditional methods [see @handsonML pp 224-245]
+
+The following code snippet[^kmeansFile] was used for the purposes of evaluating the number of clusters:
+
+```python
+models = []
+inertias = []
+scores = []
+
+for k in range(2, 101):
+    print(f"Creating KMeans for {k} clusters")
+    kmeans = MiniBatchKMeans(n_clusters=k, random_state=RND_SEED).fit(imgs)
+    models.append(kmeans)
+    score = silhouette_score(imgs, kmeans.labels_)
+    scores.append(score)
+    inertias.append(kmeans.inertia_)
+    pickle_model(kmeans, k, score)
+```
+
+[^kmeansFile]: The complete source code for this can be found at `ml/training/descriptive.py`.
+
+The results of this modeling and the validity of KMeans for dimensionality reduction is discussed in the [Accuracy Analysis](#accuracy-analysis) section.
 
 ### Prescriptive (NN)
-//TODO prescriptive discussion
+A convolutional neural net (CNN), more specifically InceptionV3[^inceptionV3paperCite], was used for the purposes of image classification and prediction. Inception, sometimes referred to as GoogLeNet[^googleNetCite], is a CNN created by Google and trained on the ImageNet database. It shows a significant accuracy rate on this database and has been used in several computer vision problems since. As such, it was selected to provide the predictive model for this application. The model used for this application was given the pre-trained weights created with ImageNet to potentially show greater accuracy in the overall model and provide a reasonable training time.
+
+[^inceptionV3paperCite]: @inceptionv3paper
+[^googleNetCite]: @handsonML pp 466-467
+
+The following code snippet[^dxInceptionFile] shows how the model was instantiated, compiled, and trained for use in the application:
+
+```python
+def init_model():
+    base = Sequential()
+    base.add(InceptionV3(input_shape=train_gen.image_shape,
+                         include_top=False,
+                         weights="imagenet"))
+    base.add(GlobalAveragePooling2D())
+    base.add(Dense(512))
+    base.add(Dense(len(sample_labels), activation='sigmoid'))
+    optimizer = tf.keras.optimizers.Nadam(learning_rate=0.001)
+    base.compile(optimizer=optimizer,
+                 loss="categorical_crossentropy",
+                 metrics=["accuracy", "mae"])
+    return base
+
+
+model = init_model()
+num_epochs = 100
+model_name = "dx-weighted-inception"
+model = train_checkpoint_save(model, train_gen, valid_gen,
+                              model_name, num_epochs=num_epochs, version="00")
+```
+
+The training information and accuracy analysis are discussed in the [Accuracy Analysis](#accuracy-analysis) section.
+
+[^dxInceptionFile]: The complete source code for this can be found at `ml/training/dx-weighted-inception.py`.
 
 ## Datasets Discussion
 As noted in the paper[^nihPaperCitation] about the data, provided by the NIH, the diagnostic findings for each image are gathered by an NLP program, parsing from the original radiology reports. Unfortunately, these reports are not available, and there are some noted errors found in some of the diagnostic labels, as referenced in the provided table from the paper. A selection of these scans has been reviewed for accuracy by a third party radiologist[^Oakden-RaynerCite] and his findings indicate the labels may have significant accuracies, although he notes that the original diagnostic labels by the originating radiologists most likely had additional clinical information to assist them in determining a diagnosis.
 
 [^nihPaperCitation]: @nihPaper
-[^Oakden-RayerCite]: @oakdenRayner
+[^Oakden-RaynerCite]: @oakdenRayner
 
 Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by `COMPANY_NAME` for the purposes of creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
 
@@ -323,10 +445,10 @@ img_metadata = drop_known_unusable(img_metadata, unusable_imgs)
 save_usable_to_csv(img_metadata)
 ```
 
-[^cleanDataFileLoc]: The full code for this cleaning can be found in `clean-data.py`.
+[^cleanDataFileLoc]: The full code for this cleaning can be found in `ml/training/clean-data.py`.
 
 ## Data Visualization
-//TODO davaviz
+//TODO You need at least three real-time (e.g. using the GUI/dashboard) formats to visualize the data in a graphic format. Look at things like charting, mapping, color theory,plots, diagrams, or other methods(tables must include heat mapping). These,in conjunction with or as a part of your GUI,would enable users to explore or inspect the data characteristics
 
 ## Real-Time Query
 The front-end application allows a user to upload a chest X-ray image directly to the prediction model through their browser with a simple form element:
@@ -341,50 +463,52 @@ During analysis, the original image will be displayed on screen. Once analysis i
 This portion of the web application functionality can be accessed at `//TODO: X-RAY_ANALYSIS_URL`.
 
 ## Adaptive Element
-//TODO adaptive element? what is this
+The included scripts and code for the prediction model have been included. These items can be used to create a data pipeline for continual improvement and adaptation to new information. Additionally, the simplicity of use inherent with TensorFlow/Serving as a means of serving the model as a REST API allows for versioning the system. The container for the model need only be rebuilt with updated training weights for the model and phased into the existing server architecture. This allows a seamless transition of models that can be deployed or rolled back as new models are trained and evaluated.
 
 ## Outcome Accuracy
-//TODO outcome accuracy discussionn
+//TODO provide functionalities that evaluate the accuracy of the information/outcomes given by the application. What are the parameters for valid output data and how will those be checked by the application?
 
 ## Security Measures
-//TODO security measures
+It is a simple fact that any information that is not stored is not subject to breach of confidentiality via intrusion or compromise of data stores. To whit, and in compliance with HIPAA and to protect patient health information, the application is built to require as little information as possible and absolutely no information is persisted following communication. As the only input that is necessary to feed into the model and receive a prediction is an X-ray image, it is the responsibility of the end-user to verify that these images do not contain any protected information. However, as a routine matter of course and to protect information from interception, the application communication channels are to be encrypted with modern TLS standards that include HTTPS protocols to maintain secure message passing.
 
 ## Product Health Monitoring
-//TODO product health monitoring
+The health of the servers can be monitored and automated using AWS CloudWatch logs. These logs can provide specific server metrics over 5 minute intervals including average CPU and RAM usage which can be used to validate the servers are not overloaded with too many network requests. The architecture of the auto-scaling group is meant to be self-correcting and will automatically terminate unhealthy servers and replace them with new servers.
+
+With regards to the prediction accuracy, this will have to be monitored separately from the application. The application does not save any image, prediction, or any other information locally or externally. Evaluations should be performed routinely by feeding images with known classification labels to receive prediction on this data. This can then be compared to the ground-truth of these images to evaluate the model on an ongoing basis. These images and labels can additionally be used in the future to provide ongoing training to the model.
 
 ## Dashboard
-//TODO dashboard
+//TODO include a user-friendly, functional dashboard that enables the query and display of the data,as well as other functionality described in this section. This could be stand-alone, Web-based, or a mobile application interface
 
 # Section D - Implementation Review Analysis
 
 ## Project Purpose
-//TODO project purpose? what is this
+//TODO reiterate the business or organization problem that this application solved. How did the application address the “vision” or expectations of the client?Summarizes the technical functionality and end-user requirements that were met
 
 ## Datasets
-//TODO datasets discussion?
+//TODO datasets discussion: here is good place to talk about trimming the data, display some example x-rays used, and talk about the normalization used (ImageDataGenerator)
 
 ## Data Product Code
-//TODO data product code discussion
+//TODO review the functionality of the code used to perform the analysis of the data and how it provided the necessary functionality of descriptive and predictive outputs. You will also need to submit the entire, functional source code.
 
 ## Hypothesis Verification
-//TODO hypothesis verification
+//TODO discuss if and why the initially established project hypothesis was accepted or rejected based on the use of the application. Did your assumptions about the phenomenon included (described) in the data prove true or not. Rejected hypothesis are okay but explain why that was so
 
 ## Visualizations and Reporting
-//TODO visualisations and reporting
+//TODO provide a description of how your visualizations and elements effectively told an accurate story about the data. This needs to include items such as how your application supported data preparation, data analysis, and data summary. It should also include how your display techniques clearly explained any phenomenon detection if appropriate
 
 ## Accuracy Analysis
-//TODO accuracy analysis
+//TODO assess how accurate your application is at presenting the data and providing predictive outcomes. Provide an example of what the data showed and explain why those offer representative artifacts of the application’s accuracy
 
 ## Application Testing
-//TODO application testing???
+//TODO clearly describe the different levels of testing you used to confirm the functionality of your application. These could include unit, integration, system, and acceptance. Also, did you conduct any beta tests or usability tests for your project?Summarize those tests and explain how results were used to modify/calibrate the product during its development.
 
 ## Application Files
-//TODO list files
+//TODO provide a comprehensive inventory of the files required to execute your application. Include a clear description of the interdependencies and file hierarchy. Describe how those files will be organized for submission. Include those files in the submission
 
 ## User's Guide
-//TODO installation guide?
+//TODO include a brief manual concerning the installation and use of your application. Be sure to describe all steps necessary to establish an environment capable of running your application. Provide clear, concise steps of how a user would execute the application and produce the results you’ve described in your documentation. Carefully consider and describe the procedural aspect of the application including know areas where certain crucial steps can affect the performance of the application. You must ensure that anybody can run the application. Please include details on the technology context that is required for your application to properly execute
 
 ## Summation of Learning Experience
-//TODO summation of learning
+//TODO describe how your prior experience assisted you with the capstone project then review the additional professional development you had to pursue to complete the capstone. What assistance did you seek out from other individuals? How has the experience contributed to your concept of life-long learning?
 
 # References
