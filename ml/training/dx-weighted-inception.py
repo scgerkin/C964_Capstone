@@ -112,7 +112,6 @@ def init_model():
                          weights="imagenet"))
     base.add(GlobalAveragePooling2D())
     base.add(Dense(512))
-    # base.add(Dropout(0.3))
     base.add(Dense(len(sample_labels), activation='sigmoid'))
     optimizer = tf.keras.optimizers.Nadam(learning_rate=0.001)
     base.compile(optimizer=optimizer,
@@ -123,7 +122,7 @@ def init_model():
 
 model = init_model()
 # %%
-num_epochs = 30
+num_epochs = 100
 model_name = "dx-weighted-inception"
 model = train_checkpoint_save(model, train_gen, valid_gen,
                               model_name, num_epochs=num_epochs, version="00")
