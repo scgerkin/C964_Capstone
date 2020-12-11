@@ -1,17 +1,18 @@
 # %%
 from pathlib import PurePath
-
-from keras_preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger
+from datetime import datetime
 from tensorflow.keras.models import load_model
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras import Sequential
 from training.utils import (get_dx_labels,
                             get_img_metadata,
-                            print_gpu_status,
-                            get_train_valid_test_split,
-                            train_checkpoint_save,
                             PROJECT_DIR,
+                            IMG_SIZE,
                             IMG_DIR,
+                            Y_COL_NAME,
+                            init_image_data_generator,
                             )
 import pandas as pd
 import tensorflow as tf
@@ -20,6 +21,47 @@ from numpy import expand_dims
 from tensorflow.keras.layers import (Dense,
                                      GlobalAveragePooling2D,
                                      )
+
+BATCH_SIZE = 32
+
+
+def get_train_valid_test_split(img_data):
+    train_df, test_df = train_test_split(img_data, test_size=0.10,
+                                         random_state=42)
+
+    training_data = get_data_batch(train_df, subset="training")
+    validation_data = get_data_batch(train_df, subset="validation")
+    test_gen = get_data_batch(test_df, subset=None)
+    return training_data, validation_data, test_gen
+
+
+def get_data_batch(img_metadata,
+                   batch_size=None,
+                   rnd_seed=None,
+                   subset=None):
+    if batch_size is None:
+        batch_size = BATCH_SIZE
+
+    valid_subset = subset == "training" or subset == "validation"
+    if subset is not None and not valid_subset:
+        raise ValueError(f"Invalid subset value: {subset}")
+
+    shuffle = subset == "training"
+
+    idg = init_image_data_generator(split=valid_subset)
+
+    return idg.flow_from_dataframe(img_metadata,
+                                   directory=str(PurePath(IMG_DIR)),
+                                   x_col="img_filename",
+                                   y_col=Y_COL_NAME,
+                                   target_size=(IMG_SIZE, IMG_SIZE),
+                                   color_mode="rgb",
+                                   class_mode="categorical",
+                                   batch_size=batch_size,
+                                   shuffle=shuffle,
+                                   seed=rnd_seed,
+                                   subset=subset)
+
 
 # Load only records with a single finding
 img_metadata = get_img_metadata()
@@ -85,7 +127,17 @@ target = target.sample(frac=1, random_state=RANDOM_SEED)
 print(target.describe())
 print(f"Total labels: {len(sample_counts)}\n{sample_counts}")
 
+
 # Prepare for training
+def print_gpu_status():
+    print(f"TensorFlow version: {tf.__version__}")
+    gpu_data = tf.config.list_physical_devices("GPU")
+    if gpu_data:
+        print(f"GPU is available for training.\nTotal GPUs: {len(gpu_data)}")
+    else:
+        print("WARNING: GPU is not available for training!")
+
+
 print_gpu_status()
 train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
 
@@ -120,6 +172,50 @@ def init_model():
     return base
 
 
+def train_checkpoint_save(model,
+                          train_gen,
+                          valid_gen,
+                          model_name,
+                          monitor="val_loss",
+                          num_epochs=10, version="01"):
+    def get_date_time_str():
+        return datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    def save_model(model, base_model_name):
+        date_time = get_date_time_str()
+        path = f"./models/{date_time}_{base_model_name}.h5"
+        model.save(path)
+
+    dt = get_date_time_str()
+    checkpoint_fp = f"./checkpoints/{dt}-{model_name}.h5"
+    checkpoint_cb = ModelCheckpoint(checkpoint_fp,
+                                    save_freq="epoch",
+                                    monitor=monitor,
+                                    save_best_only=True)
+
+    csv_fp = f"./logs/{dt}-{version}-{model_name}.csv"
+    csv_cb = CSVLogger(csv_fp)
+
+    callbacks = [checkpoint_cb, csv_cb]
+
+    STEP_SIZE_TRAIN = train_gen.n // train_gen.batch_size
+    STEP_SIZE_VALID = valid_gen.n // valid_gen.batch_size
+    model.fit_generator(generator=train_gen,
+                        steps_per_epoch=STEP_SIZE_TRAIN,
+                        validation_data=valid_gen,
+                        validation_steps=STEP_SIZE_VALID,
+                        epochs=num_epochs,
+                        callbacks=callbacks)
+
+    # Save the final trained model and the checkpoint with the best monitor
+    save_model(model, f'{model_name}-final')
+    early_stop_model = tf.keras.models.load_model(checkpoint_fp)
+    save_model(early_stop_model, f'{model_name}-bestcp')
+    weights_path = f"{PROJECT_DIR}models/save/{model_name}/{version}"
+    tf.saved_model.save(model, weights_path)
+    return model
+
+
 model = init_model()
 # %%
 num_epochs = 100
@@ -128,12 +224,10 @@ model = train_checkpoint_save(model, train_gen, valid_gen,
                               model_name, num_epochs=num_epochs, version="00")
 
 
-# %%
+# %% This cell and beyond requires reloading environment/model
+# and refreshing generators to clear GPU memory from training.
+# Then, all cells for initializing data must be run except training.
 def load_and_do_test_predictions():
-    """
-    Requires reloading environment/model and refreshing generators to
-    clear GPU memory from training, run all cells except training.
-    """
     mpath = PurePath(f"{PROJECT_DIR}models/save/wincep_train-overfit_s500/04")
     m = load_model(str(mpath))
     p = m.predict(test_gen)
@@ -143,11 +237,7 @@ def load_and_do_test_predictions():
 def load_single_image(filename):
     img_path = PurePath(f"{IMG_DIR}/{filename}")
     img = load_img(str(img_path), target_size=(256, 256), color_mode="rgb")
-    idg = ImageDataGenerator(
-            samplewise_center=True,
-            samplewise_std_normalization=True,
-            fill_mode='constant',
-            cval=1.0)
+    idg = init_image_data_generator()
     img = img_to_array(img)
     img = expand_dims(img, axis=0)
     img = idg.flow(img)
