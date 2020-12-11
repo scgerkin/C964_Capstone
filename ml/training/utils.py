@@ -274,20 +274,6 @@ def load_img_as_tensor(filename):
     return img
 
 
-def print_metrics(results):
-    exp, act = results["y_expected"], results["y_prediction"]
-
-    precision = round(precision_score(exp, act) * 100, 2)
-    recall = round(recall_score(exp, act) * 100, 2)
-    f1 = round(f1_score(exp, act) * 100, 2)
-    cf = confusion_matrix(exp, act)
-
-    print(f"Precision: {precision}\tRecall: {recall}\tF1: {f1}")
-    print("Confusion Matrix:")
-    print(f"TN: {cf[0][0]}\tFP: {cf[0][1]}")
-    print(f"FN: {cf[1][0]}\tTP: {cf[1][1]}")
-
-
 def load_imgs_for_kmeans():
     idg = init_image_data_generator()
     imgs = []

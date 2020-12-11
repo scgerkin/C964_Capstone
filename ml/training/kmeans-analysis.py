@@ -22,7 +22,6 @@ precision = round(precision_score(y, predictions, average="micro") * 100, 2)
 recall = round(recall_score(y, predictions, average="micro") * 100, 2)
 f1 = round(f1_score(y, predictions, average="micro") * 100, 2)
 cf = confusion_matrix(y, predictions)
-#%%
 
 metric_txt = f"Precision: {precision}%\nRecall: {recall}%\nF1: {f1}%"
 plt.figure(figsize=(15, 15))
