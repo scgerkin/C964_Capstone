@@ -530,7 +530,121 @@ Each point of the project was solved separately but combined to create the overa
 Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by `COMPANY_NAME` to be considered an effective aide for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
 
 ## Datasets
-//TODO datasets discussion: here is good place to talk about trimming the data, display some example x-rays used, and talk about the normalization used (ImageDataGenerator)
+Machine learning models require numerical data for analysis and prediction. Therefore, all images used for training, validation, testing, or otherwise must be converted to a numerical format in order to be fed into the models. This was accomplished using an image preprocessor from Keras, `ImageDataGenerator`[^idgCite]. This automatically reads in data in batches (or individually), converts the images to numerical arrays of 0 to 255 per each image channel (RGB), and can be used for normalization and standardization.
+
+[^idgCite]: For the documentation regarding this API see [https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator).
+
+The code for initializing the `ImageDataGenerator` follows:
+```python
+def init_image_data_generator(split=False):
+    split_value = SPLIT_VALUE if split else 0.0
+    return ImageDataGenerator(
+            samplewise_center=True,
+            samplewise_std_normalization=True,
+            fill_mode='constant',
+            cval=1.0,
+            validation_split=split_value)
+```
+
+The original dataset includes a significant amount of images. As the data fed into a model increases, so does the training time. Initial attempts to use the entire dataset resulted in epoch training times of well over 15 minutes each, leading a full training session of 100 epochs to effectively require over 10 hours of training time. As this was impractical for prototyping purposes, the dataset was trimmed to include only 500 images of single-label images. Using this threshold additionally limited the number of classification labels from 15 to 13 as not all single-label classifications had at least that many samples.
+
+The trimming of the data was accomplished using the following code (`#...` indicates truncation of uninteresting code or code used for sanity checks)[^trimDataCite]:
+```python
+# Load only records with a single finding
+img_metadata = get_img_metadata()
+single_finding_records = img_metadata[
+    img_metadata["findings_list"].apply(lambda val: len(val) == 1)]
+
+df = single_finding_records
+dx_labels = get_dx_labels()
+
+#...
+
+SAMPLE_THRESHOLD = 500
+# Remove any records with a finding below the threshold
+# also remove the column for that label
+removed_labels = set()
+for label, count in pre_drop_counts.items():
+    if count < SAMPLE_THRESHOLD:
+        indices = df[df[label] > 0.5].index
+        df = df.drop(indices)
+        df = df.drop(labels=[label], axis=1)
+        removed_labels.add(label)
+
+#...
+
+# Get equal number of samples of each finding label
+RANDOM_SEED = 42
+
+target = pd.DataFrame()
+sample_counts = {}
+for label in sample_labels:
+    sample = df[df[label] > 0.5].sample(n=SAMPLE_THRESHOLD,
+                                        replace=False,
+                                        random_state=RANDOM_SEED,
+                                        axis=0)
+    sample_counts[label] = len(sample.index)
+    target = pd.concat([target, sample])
+
+# Shuffle the dataset
+target = target.sample(frac=1, random_state=RANDOM_SEED)
+```
+
+[^trimDataCite]: The full source code for this can be found at `ml/training/dx-weighted-inception.py`.
+
+This DataFrame was then used for creating the data batches used for training the model, allowing for a much more manageable dataset during training and reducing each epoch training time to 1 to 2 minutes. This trimming of data theoretically does not contribute to the overall accuracy of the model, as will be discussed further in the [Accuracy Analysis](#accuracy-analysis) section. While increasing the size of the dataset can increase overall accuracy, other factors were likely at play with regards to the validation accuracy failing to improve over time.
+
+Once the target DataFrame was created, this was fed into the `ImageDataGenerator` to create the data batches. This was accomplished with a few functions, as follows:
+
+```python
+IMG_SIZE = 256
+BATCH_SIZE = 32
+
+def get_train_valid_test_split(img_data):
+    train_df, test_df = train_test_split(img_data, test_size=0.10,
+                                         random_state=42)
+
+    training_data = get_data_batch(train_df, subset="training")
+    validation_data = get_data_batch(train_df, subset="validation")
+    test_gen = get_data_batch(test_df, subset=None)
+    return training_data, validation_data, test_gen
+
+
+def get_data_batch(img_metadata,
+                   batch_size=None,
+                   rnd_seed=None,
+                   subset=None):
+    if batch_size is None:
+        batch_size = BATCH_SIZE
+
+    valid_subset = subset == "training" or subset == "validation"
+    if subset is not None and not valid_subset:
+        raise ValueError(f"Invalid subset value: {subset}")
+
+    shuffle = subset == "training"
+
+    idg = init_image_data_generator(split=valid_subset)
+
+    return idg.flow_from_dataframe(img_metadata,
+                                   directory=str(PurePath(IMG_DIR)),
+                                   x_col="img_filename",
+                                   y_col=Y_COL_NAME,
+                                   target_size=(IMG_SIZE, IMG_SIZE),
+                                   color_mode="rgb",
+                                   class_mode="categorical",
+                                   batch_size=batch_size,
+                                   shuffle=shuffle,
+                                   seed=rnd_seed,
+                                   subset=subset)
+
+#...
+
+train_gen, valid_gen, test_gen = get_train_valid_test_split(target)
+```
+
+In the functions above, the DataFrame is split into training, validation, and testing subsets for training and evaluating the neural net. Despite the images being grayscale, the images are converted to a faux-RGB by copying the single color channel across all color channels. This was to allow the model to use the pre-trained weights of ImageNet without major modification to the underlying model. Again, this likely did not contribute to the inaccuracy of the model, but instead likely increased the training time of the model with duplicated data. This trade-off was evaluated against having to reconstruct all weights from an initial state and increase the number of training epochs required by a significant amount. It was determined that this trade-off decreased overall training time as a result.
+
+Lastly, each image was resized from the original 1024x1024 down to 256x256 to fit with InceptionV3 (and to decrease the training time).
 
 ## Data Product Code
 //TODO review the functionality of the code used to perform the analysis of the data and how it provided the necessary functionality of descriptive and predictive outputs. You will also need to submit the entire, functional source code.
