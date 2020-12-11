@@ -172,12 +172,12 @@ The developer has 8 years of experience in software engineering, specializing in
 # Section B - Business Requirements and Technical Summary
 
 ## Problem Statement
-Chest X-ray imaging is a very common, quick, and effective technique for diagnosing a wide variety of diseases related to the lungs and heart. The machines used for these scans can be easily deployed to a variety of settings including hospitals, small clinics and offices, and even disaster areas. However, the requirement for these scans to be read and interpreted by highly trained physicians limits the efficiency with which these scans can be utilized. Applying a machine learning methodology to analyze and predict probable diagnostic findings in a chest X-ray can save countless time, money, and resources to providing actionable diagnostic intelligence to physicians and clinicians in a matter of seconds. While some models do exist for binary classifications, such as a finding of pneumonia vs. no finding of pneumonia, no all encompassing methodology exists for a multi-label classification problem.
+Chest X-ray imaging is a very common, quick, and effective technique for diagnosing a wide variety of diseases related to the lungs and heart. The machines used for these scans can be easily deployed to a variety of settings including hospitals, small clinics and offices, and even disaster areas. However, the requirement for these scans to be read and interpreted by highly trained physicians limits the efficiency with which these scans can be utilized. Applying a machine learning methodology to analyze and predict probable diagnostic findings in a chest X-ray can save countless time, money, and resources to providing actionable diagnostic intelligence to physicians and clinicians in a matter of seconds. While some models do exist for binary classifications, such as a finding of pneumonia vs. no finding of pneumonia, no all-encompassing methodology exists for a multi-label classification problem.
 
 ## Customer Summary
-`COMPANY_NAME` is an industry leader in medical imaging and interpretation. The company continues to grow at a record pace and is continually expanding its reach of off-site imaging systems and contracted image interpretation. As a result of this growth, `COMPANY_NAME` must keep pace with current technologies to continually improve and advance the medical imaging industry. With this in mind, `COMPANY_NAME` has decided to move forward with a prototyping a multi-label classification system for chest X-ray imaging.
+`COMPANY_NAME` is an industry leader in medical imaging and interpretation. The company continues to grow at a record pace and is continually expanding its reach of off-site imaging systems and contracted image interpretation. As a result of this growth, `COMPANY_NAME` must keep pace with current technologies to continually improve and advance the medical imaging industry. With this in mind, `COMPANY_NAME` has decided to move forward with a prototype of a multi-label classification system for chest X-ray imaging.
 
-It is the hope that this prototype project will yield actionable information with regards to further expanding automated diagnostic classification within other imaging techniques, such as Computed Tomography (CT), Magnetic Resonance Imaging (MRI), and other high precision scanning techniques. Should a model prove effective on X-ray imaging, a technique that has significantly lower image and diagnostic precision overall than these more expensive scans, it is believed that this can be used to catapult `COMPANY_NAME` to significant advances in automated diagnostic medicine.
+It is the hope that this prototype project will yield actionable information with regards to further expanding automated diagnostic classification within other imaging techniques, such as Computed Tomography (CT), Magnetic Resonance Imaging (MRI), and other high precision scanning techniques. Should a model prove effective on X-ray imaging, a technique that has a significantly lower image and diagnostic precision overall than these more expensive scans, it is believed that this can be used to catapult `COMPANY_NAME` to significant advances in automated diagnostic medicine.
 
 ## System Analysis
 This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
@@ -215,7 +215,7 @@ This phase of development will be broken down into three distinct pieces, each c
 A complete understanding of the given data will be performed. During this time, any augmentation, additional collection, trimming of outliers, and collating into manageable chunks will result in visualizations for use describing the data. This is key to creating the predictive model.
 
 #### Predictive Modeling
-The keystone of the overall application, the predictive model, will be created, tested, and evaluated. As this is the most important part of the project, the majority of time spent will be during this development phase.
+The keystone of the overall application, the predictive model, will be created, tested, and evaluated. As this is the most important part of the project, the majority of development time spent will be during this phase.
 
 #### API Development
 The completed (or prototypical) predictive model will be containerized. Following this, the middleware server API will be created to allow interaction with the predictive model.
@@ -251,7 +251,7 @@ Project success is dependent on the following deliverables:
 In addition to the above, the project will undergo full version-controlling using Git during development. This repository will be made available at [https://github.com/scgerkin/C964_Capstone](https://github.com/scgerkin/C964_Capstone).
 
 ## Implementation Plan
-The implementation plan for creating the predictive model and deploying it as consumable API will follow these steps:
+The implementation plan for creating the predictive model and deploying it as a consumable API will follow these steps:
 
 1. Data will be collected and collated for training the model. This will include a selection of chest X-ray images of similar dimensions and quality. The images will consist of a wide-range of diagnostic labels.
 2. The data will be explored and cleaned for outliers, unusable scans, and otherwise invalid data.
@@ -275,21 +275,21 @@ The implementation plan for creating the predictive model and deploying it as co
 ## Evaluation Plan
 The application will be evaluated and verified for acceptance in a combination of methods.
 
-- The prediction model will be evaluated for classification accuracy from validation and testing data that has been separated from all training. This evaluation will involve plotting the confusion values of true positive rates vs the false positive rates for individual diagnostic labels.
+- The prediction model will be evaluated for classification accuracy from validation and testing data that has been separated from all training. This evaluation will involve plotting the confusion values of true-positive rates vs the false-positive rates for individual diagnostic labels.
 - The REST API will be tested and monitored for load by issuing expected traffic requests to the API. The results of these tests will be used to adjust the server instance, auto-scaling settings, and resiliency of the API.
 - The front-end application will undergo end-user acceptance testing to validate the application meets the specifications and requirements created by `COMPANY_NAME` for usability.
 
 ## Resources and Costs
 
 ### Programming Environment
-The following environments are to be used for development and deployment of the final project. This is not meant to be a complete list and a full environment list will be available in the final source code. All tools listed below are open-source software. Licensing fees may apply, but are the responsibility of `COMPANY_NAME`.
+The following environments are to be used for the development and deployment of the final project. This is not meant to be a complete list and a full environment list will be available in the final source code. All tools listed below are open-source software. Licensing fees may apply, but are the responsibility of `COMPANY_NAME`.
 - Python 3.7.9
 - Anaconda 4.9.1
 - Docker 19.03.13
 - Node.js 12.16.3
 
 ### Environment Costs
-Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding an additional \$160 to \$480 year.
+Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding an additional \$160 to \$480 per year.
 
 This makes the combined environment cost for maintenance approximately \$2,000 to $2,300 per year.
 
@@ -315,11 +315,11 @@ Ongoing maintenance of the project is expected to take an average of 1 hour per 
 ## Data Methodologies
 
 ### Descriptive
-KMeans clustering[^miniBatchNote] was explored as a means of dimensionality reduction for the training data before processing by the neural net. Using the training data selected to be fed into the neural net, the appropriate number of clusters was assumed to be 13 (the number of classification labels present on the trimmed data). However, this assumption was tested by testing a range of clusters from 2 to 100 and the respective inertia and silhouette score for each model created for these clusters was analyzed.
+KMeans clustering[^miniBatchNote] was explored as a means of dimensionality reduction for the training data before processing by the neural net. Using the training data selected to be fed into the neural net, the appropriate number of clusters was assumed to be 13 (the number of classification labels present on the trimmed data). However, this assumption was tested by testing a range of clusters from 2 to 100 and the respective inertias and silhouette scores for each model created for these clusters were analyzed.
 
-[^miniBatchNote]: In order to speed up training analysis, MiniBatchKMeans was used. This method of KMeans shows significantly faster training with little to no difference in model accuracy compared to traditional methods [see @handsonML pp 224-245]
+[^miniBatchNote]: To speed up training analysis, MiniBatchKMeans was used. This method of KMeans shows significantly faster training with little to no difference in model accuracy compared to traditional methods [see @handsonML pp 224-245]
 
-The following code snippet[^kmeansFile] was used for the purposes of evaluating the number of clusters:
+The following code snippet[^kmeansFile] was used for evaluating the number of clusters:
 
 ```python
 models = []
@@ -341,7 +341,7 @@ for k in range(2, 101):
 The results of this modeling and the validity of KMeans for dimensionality reduction is discussed in the [Accuracy Analysis](#accuracy-analysis) section.
 
 ### Prescriptive (NN)
-A convolutional neural net (CNN), more specifically InceptionV3[^inceptionV3paperCite], was used for the purposes of image classification and prediction. Inception, sometimes referred to as GoogLeNet[^googleNetCite], is a CNN created by Google and trained on the ImageNet database. It shows a significant accuracy rate on this database and has been used in several computer vision problems since. As such, it was selected to provide the predictive model for this application. The model used for this application was given the pre-trained weights created with ImageNet to potentially show greater accuracy in the overall model and provide a reasonable training time.
+A convolutional neural net (CNN), more specifically InceptionV3[^inceptionV3paperCite], was used for image classification and prediction. Inception, sometimes referred to as GoogLeNet[^googleNetCite], is a CNN created by Google and trained on the ImageNet database. It shows a significant accuracy rate on this database and has been used in several computer vision problems since. As such, it was selected to provide the predictive model for this application. The model used for this application was given the pre-trained weights created with ImageNet to potentially show greater accuracy in the overall model and provide a reasonable training time.
 
 [^inceptionV3paperCite]: @inceptionv3paper
 [^googleNetCite]: @handsonML pp 466-467
@@ -381,7 +381,7 @@ As noted in the paper[^nihPaperCitation] about the data, provided by the NIH, th
 [^nihPaperCitation]: @nihPaper
 [^Oakden-RaynerCite]: @oakdenRayner
 
-Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by `COMPANY_NAME` for the purposes of creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
+Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by `COMPANY_NAME` for creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
 
 Lastly, the metadata about each image possibly contains several errors in reporting. For instance, the "age" column for images range from 1 to 414 with no associated units. As such, it is impossible to use this information for any significant information when analyzing or using for predictive modeling. The assumption has been made that this column is meant to indicate years. As such, any image with an age of greater than or equal to 100 has been trimmed from the prospective data.
 
@@ -457,24 +457,24 @@ The front-end application allows a user to upload a chest X-ray image directly t
 Clicking on this form element will bring up a File Selector:
 ![File Selection](./assets/analyze-xray/1.png)
 
-During analysis, the original image will be displayed on screen. Once analysis is complete, a graph will display the indicated classification probabilities:
+During analysis, the original image will be displayed on-screen. Once the analysis is complete, a graph will display the indicated classification probabilities:
 ![Diagnostic Classification Results](./assets/analyze-xray/5.png)
 
 This portion of the web application functionality can be accessed at `//TODO: X-RAY_ANALYSIS_URL`.
 
 ## Adaptive Element
-The included scripts and code for the prediction model have been included. These items can be used to create a data pipeline for continual improvement and adaptation to new information. Additionally, the simplicity of use inherent with TensorFlow/Serving as a means of serving the model as a REST API allows for versioning the system. The container for the model need only be rebuilt with updated training weights for the model and phased into the existing server architecture. This allows a seamless transition of models that can be deployed or rolled back as new models are trained and evaluated.
+The included scripts and code for the prediction model have been included. These items can be used to create a data pipeline for continual improvement and adaptation to new information. Additionally, the simplicity of use inherent with TensorFlow/Serving as a means of serving the model as a REST API allows for versioning the system. The container for the model only needs to be rebuilt with updated training weights for the model and phased into the existing server architecture. This allows a seamless transition of models that can be deployed or rolled back as new models are trained and evaluated.
 
 ## Outcome Accuracy
 //TODO provide functionalities that evaluate the accuracy of the information/outcomes given by the application. What are the parameters for valid output data and how will those be checked by the application?
 
 ## Security Measures
-It is a simple fact that any information that is not stored is not subject to breach of confidentiality via intrusion or compromise of data stores. To whit, and in compliance with HIPAA and to protect patient health information, the application is built to require as little information as possible and absolutely no information is persisted following communication. As the only input that is necessary to feed into the model and receive a prediction is an X-ray image, it is the responsibility of the end-user to verify that these images do not contain any protected information. However, as a routine matter of course and to protect information from interception, the application communication channels are to be encrypted with modern TLS standards that include HTTPS protocols to maintain secure message passing.
+It is a simple fact that any information that is not stored is not subject to a breach of confidentiality via intrusion or compromise of data stores. To whit, and in compliance with HIPAA and to protect patient health information, the application is built to require as little information as possible, and absolutely no information is persisted following communication. As the only input that is necessary to feed into the model and receive a prediction is an X-ray image, it is the responsibility of the end-user to verify that these images do not contain any protected information. However, as a routine matter of course and to protect information from interception, the application communication channels are to be encrypted with modern TLS standards that include HTTPS protocols to maintain secure message passing.
 
 ## Product Health Monitoring
-The health of the servers can be monitored and automated using AWS CloudWatch logs. These logs can provide specific server metrics over 5 minute intervals including average CPU and RAM usage which can be used to validate the servers are not overloaded with too many network requests. The architecture of the auto-scaling group is meant to be self-correcting and will automatically terminate unhealthy servers and replace them with new servers.
+The health of the servers can be monitored and automated using AWS CloudWatch logs. These logs can provide specific server metrics over 5-minute intervals including average CPU and RAM usage which can be used to validate the servers are not overloaded with too many network requests. The architecture of the auto-scaling group is meant to be self-correcting and will automatically terminate unhealthy servers and replace them with new servers.
 
-With regards to the prediction accuracy, this will have to be monitored separately from the application. The application does not save any image, prediction, or any other information locally or externally. Evaluations should be performed routinely by feeding images with known classification labels to receive prediction on this data. This can then be compared to the ground-truth of these images to evaluate the model on an ongoing basis. These images and labels can additionally be used in the future to provide ongoing training to the model.
+With regards to the prediction accuracy, this will have to be monitored separately from the application. The application does not save any image, prediction, or any other information locally or externally. Evaluations should be performed routinely by feeding images with known classification labels to receive predictions on this data. This can then be compared to the ground-truth of these images to evaluate the model on an ongoing basis. These images and labels can additionally be used in the future to provide ongoing training to the model.
 
 ## Dashboard
 //TODO include a user-friendly, functional dashboard that enables the query and display of the data,as well as other functionality described in this section. This could be stand-alone, Web-based, or a mobile application interface
@@ -509,7 +509,7 @@ With regards to the prediction accuracy, this will have to be monitored separate
 //TODO include a brief manual concerning the installation and use of your application. Be sure to describe all steps necessary to establish an environment capable of running your application. Provide clear, concise steps of how a user would execute the application and produce the results you’ve described in your documentation. Carefully consider and describe the procedural aspect of the application including know areas where certain crucial steps can affect the performance of the application. You must ensure that anybody can run the application. Please include details on the technology context that is required for your application to properly execute
 
 ## Summation of Learning Experience
-Prior to starting the capstone, I had no experience with data science or machine learning. This required a very fast education in a variety of subjects and libraries, from the basics of how machine learning is implemented to individual Python libraries such as NumPy and Pandas. This learning was accomplished from a variety of mediums, including a Udemy course[^udemyCite], the _Hands-on Machine Learning_[^handsonCite], and a vast swath of blog posts, documentation, and other resources gathered via Google searches. My previous experience learning programming and learning what to search for proved invaluable in finding these resources and providing a framework for understanding how to implement the requirements of this project. Lastly, I learned that machine learning is not as easy as it might appear from the amazing amount of abstraction provided by the various Python libraries. Although these libraries have been designed for ease of use, an understanding of how they work is very much a requirement for creating a working model. In retrospect, I should have found a subject matter much simpler than computer vision for my brief foray into this subject.
+Before starting the capstone, I had no experience with data science or machine learning. This required a very fast education in a variety of subjects and libraries, from the basics of how machine learning is implemented to individual Python libraries such as NumPy and Pandas. This learning was accomplished from a variety of mediums, including a Udemy course[^udemyCite], the _Hands-on Machine Learning_[^handsonCite], and a vast swath of blog posts, documentation, and other resources gathered via Google searches. My previous experience learning programming and learning what to search for proved invaluable in finding these resources and providing a framework for understanding how to implement the requirements of this project. Lastly, I learned that machine learning is not as easy as it might appear from the amazing amount of abstraction provided by the various Python libraries. Although these libraries have been designed for ease of use, an understanding of how they work is very much a requirement for creating a working model. In retrospect, I should have found a subject matter much simpler than computer vision for my brief foray into this subject.
 
 [^udemyCite]: Zero to Mastery: Complete Machine Learning & Data Science Bootcamp 2021 [https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/](https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/)
 [^handsonCite]: @handsonML
