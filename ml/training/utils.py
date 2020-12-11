@@ -290,7 +290,7 @@ def print_metrics(results):
 def load_imgs_for_kmeans():
     idg = init_image_data_generator()
     imgs = []
-    with open("analysis/trainfiles.txt", "r") as f:
+    with open("analysis/train_files.txt", "r") as f:
         for i, filename in enumerate(f.read().split("\n")):
             if i % 100 == 0:
                 print(f"{i}")
