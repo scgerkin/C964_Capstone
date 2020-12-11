@@ -98,7 +98,7 @@ def get_data_batch(img_metadata,
 
     shuffle = subset == "training"
 
-    idg = init_image_data_generator(split=valid_subset, augment=shuffle)
+    idg = init_image_data_generator(split=valid_subset)
 
     return idg.flow_from_dataframe(img_metadata,
                                    directory=str(PurePath(IMG_DIR)),
@@ -106,7 +106,6 @@ def get_data_batch(img_metadata,
                                    y_col=Y_COL_NAME,
                                    target_size=(IMG_SIZE, IMG_SIZE),
                                    color_mode="rgb",
-                                   # classes=get_dx_labels(),
                                    class_mode="categorical",
                                    batch_size=batch_size,
                                    shuffle=shuffle,
@@ -114,29 +113,14 @@ def get_data_batch(img_metadata,
                                    subset=subset)
 
 
-def init_image_data_generator(split=False, augment=False):
+def init_image_data_generator(split=False):
     split_value = SPLIT_VALUE if split else 0.0
-    # if not augment:
     return ImageDataGenerator(
             samplewise_center=True,
             samplewise_std_normalization=True,
             fill_mode='constant',
             cval=1.0,
             validation_split=split_value)
-    #
-    # return ImageDataGenerator(
-    #         samplewise_center=True,
-    #         samplewise_std_normalization=True,
-    #         horizontal_flip=True,
-    #         vertical_flip=False,
-    #         height_shift_range=0.05,
-    #         width_shift_range=0.1,
-    #         rotation_range=5,
-    #         shear_range=0.1,
-    #         fill_mode='constant',
-    #         zoom_range=0.15,
-    #         cval=1.0,
-    #         validation_split=split_value)
 
 
 def create_model(in_shape, out_shape):
@@ -301,3 +285,22 @@ def print_metrics(results):
     print("Confusion Matrix:")
     print(f"TN: {cf[0][0]}\tFP: {cf[0][1]}")
     print(f"FN: {cf[1][0]}\tTP: {cf[1][1]}")
+
+
+def load_imgs_for_kmeans():
+    idg = init_image_data_generator()
+    imgs = []
+    with open("analysis/trainfiles.txt", "r") as f:
+        for i, filename in enumerate(f.read().split("\n")):
+            if i % 100 == 0:
+                print(f"{i}")
+            filepath = os.path.join(IMG_DIR, filename)
+            img = load_img(filepath, target_size=(256, 256),
+                           color_mode='grayscale')
+            img = img_to_array(img)
+            img = expand_dims(img, axis=0)
+            img = idg.flow(img)
+            img = next(img)
+            img = img.flatten()
+            imgs.append(img)
+    return imgs

@@ -1,10 +1,6 @@
 # %%
-from training.utils import RND_SEED, IMG_DIR, PROJECT_DIR
-import os
+from training.utils import RND_SEED, PROJECT_DIR, load_imgs_for_kmeans
 import pickle
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
-from numpy import expand_dims
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
@@ -22,25 +18,7 @@ def pickle_model(model, n_clusters, s_score):
         file.write(f"{n_clusters},{model.inertia_},{s_score}\n")
 
 
-idg = ImageDataGenerator(
-        samplewise_center=True,
-        samplewise_std_normalization=True,
-        fill_mode='constant',
-        cval=1.0)
-
-imgs = []
-with open("analysis/trainfiles.txt", "r") as f:
-    for i, filename in enumerate(f.read().split("\n")):
-        if i % 100 == 0:
-            print(f"{i}")
-        filepath = os.path.join(IMG_DIR, filename)
-        img = load_img(filepath, target_size=(256, 256), color_mode='grayscale')
-        img = img_to_array(img)
-        img = expand_dims(img, axis=0)
-        img = idg.flow(img)
-        img = next(img)
-        img = img.flatten()
-        imgs.append(img)
+imgs = load_imgs_for_kmeans()
 
 models = []
 inertias = []
