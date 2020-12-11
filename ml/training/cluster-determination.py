@@ -18,7 +18,7 @@ def pickle_model(model, n_clusters, s_score):
         file.write(f"{n_clusters},{model.inertia_},{s_score}\n")
 
 
-imgs = load_imgs_for_kmeans()
+imgs, _, _ = load_imgs_for_kmeans()
 
 models = []
 inertias = []

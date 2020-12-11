@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 import tensorflow as tf
 from pathlib import PurePath
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -290,17 +291,30 @@ def print_metrics(results):
 def load_imgs_for_kmeans():
     idg = init_image_data_generator()
     imgs = []
-    with open("analysis/train_files.txt", "r") as f:
-        for i, filename in enumerate(f.read().split("\n")):
-            if i % 100 == 0:
-                print(f"{i}")
-            filepath = os.path.join(IMG_DIR, filename)
-            img = load_img(filepath, target_size=(256, 256),
-                           color_mode='grayscale')
-            img = img_to_array(img)
-            img = expand_dims(img, axis=0)
-            img = idg.flow(img)
-            img = next(img)
-            img = img.flatten()
-            imgs.append(img)
-    return imgs
+    img_data = pd.read_csv("training/train_data.csv")
+    img_data = img_data[img_data["split_set"] == "training"]
+    num_imgs = len(img_data.index)
+    for i, filename in enumerate(img_data["img_filename"]):
+        if i % 100 == 0:
+            print(f"Loading {i} of {num_imgs}")
+        filepath = os.path.join(IMG_DIR, filename)
+        img = load_img(filepath, target_size=(256, 256),
+                       color_mode='grayscale')
+        img = img_to_array(img)
+        img = expand_dims(img, axis=0)
+        img = idg.flow(img)
+        img = next(img)
+        img = img.flatten()
+        imgs.append(img)
+
+    lbls = deepcopy(get_dx_labels())
+    lbls.remove("hernia")
+    lbls.remove("pneumonia")
+
+    def lbl_index(row):
+        for index, lbl in enumerate(lbls):
+            if row[lbl] > 0.5:
+                return index
+        raise Exception(f"Could not determine row label index for {row}")
+
+    return imgs, img_data.apply(lbl_index, axis=1).to_numpy(), lbls
