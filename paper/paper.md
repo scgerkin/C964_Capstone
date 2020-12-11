@@ -348,7 +348,7 @@ Ongoing maintenance of the project is expected to take an average of 1 hour per 
 
 ## Data Methodologies
 
-### Descriptive
+### Descriptive (KMeans Clustering)
 KMeans clustering[^miniBatchNote] was explored as a means of dimensionality reduction for the training data before processing by the neural net. Using the training data selected to be fed into the neural net, the appropriate number of clusters was assumed to be 13 (the number of classification labels present on the trimmed data). However, this assumption was tested by testing a range of clusters from 2 to 100 and the respective inertias and silhouette scores for each model created for these clusters were analyzed.
 
 [^miniBatchNote]: To speed up training analysis, MiniBatchKMeans was used. This method of KMeans shows significantly faster training with little to no difference in model accuracy compared to traditional methods [see @handsonML pp 224-245]
@@ -374,7 +374,7 @@ for k in range(2, 101):
 
 The results of this modeling and the validity of KMeans for dimensionality reduction is discussed in the [Accuracy Analysis](#accuracy-analysis) section.
 
-### Prescriptive (NN)
+### Predictive (Neural Net)
 A convolutional neural net (CNN), more specifically InceptionV3[^inceptionV3paperCite], was used for image classification and prediction. Inception, sometimes referred to as GoogLeNet[^googleNetCite], is a CNN created by Google and trained on the ImageNet database. It shows a significant accuracy rate on this database and has been used in several computer vision problems since. As such, it was selected to provide the predictive model for this application. The model used for this application was given the pre-trained weights created with ImageNet to potentially show greater accuracy in the overall model and provide a reasonable training time.
 
 [^inceptionV3paperCite]: @inceptionv3paper
