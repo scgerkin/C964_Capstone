@@ -87,6 +87,40 @@ references:
     URL: https://arxiv.org/abs/1512.00567
     issued:
       year: 2015
+  - id: understandingCCE
+    title: "Understanding Categorical Cross-Entropy Loss, Binary Cross-Entropy Loss, Softmax Loss, Logistic Loss, Focal Loss and all those confusing names"
+    author:
+      - family: Gómez
+        given: Raúl
+    container-title: Raúl Gómez blog
+    URL: https://gombru.github.io/2018/05/23/cross_entropy_loss/
+    issued:
+      year: 2018
+      month: 5
+      day: 23
+  - id: rocCurve
+    title: "What Is an ROC Curve?"
+    author:
+      - family: Grace-Martin
+        given: Karen
+    container-title: The Analysis Factor
+    URL: https://www.theanalysisfactor.com/what-is-an-roc-curve/
+    issued:
+      year: 2020
+  - id: ztmML
+    title: "Zero to Mastery: Complete Machine Learning & Data Science Bootcamp 2021"
+    author:
+      - family: Neagoie
+        given: Andrei
+      - family: Bourke
+        given: Daniel
+    publisher: Udemy.com
+    URL: https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/
+    accessed:
+      year: 2020
+      month: 9
+      day: 22
+
 ---
 
 # Section A - Project Proposal/Recommendation
@@ -466,7 +500,10 @@ This portion of the web application functionality can be accessed at `//TODO: X-
 The included scripts and code for the prediction model have been included. These items can be used to create a data pipeline for continual improvement and adaptation to new information. Additionally, the simplicity of use inherent with TensorFlow/Serving as a means of serving the model as a REST API allows for versioning the system. The container for the model only needs to be rebuilt with updated training weights for the model and phased into the existing server architecture. This allows a seamless transition of models that can be deployed or rolled back as new models are trained and evaluated.
 
 ## Outcome Accuracy
-//TODO provide functionalities that evaluate the accuracy of the information/outcomes given by the application. What are the parameters for valid output data and how will those be checked by the application?
+The model will be evaluated on several metrics during the iterative training sessions, or epochs. Categorical cross-entropy[^cceCite] will be used as the main loss function and targeted for improvement by the neural net during training. This measures the model on its ability overall to classify the input for a multi-label classification problem. A lower score for this metric indicates a better model. Additional metrics will also be collected during training, including overall model accuracy, and mean absolute error. However, it should be noted that with a multi-label classification problem, while attempting to determine the probabilities of classification, accuracy is not necessarily a metric generally indicative of individual label classification accuracy. As such, upon a full training session of the model, it will be evaluated on a per-label basis to measure the true-positive rate (the sensitivity of classification) against the false-positive rate (the specificity of classification) the Receiver Operating Characteristic (ROC Curve)[^rocCurveCite]. This will then be plotted and analyzed for the Area Under the Curve (AUC) to determine the viability of each label classification.
+
+[^cceCite]: For more information about this, see @understandingCCE
+[^rocCurveCite]: For more information about this, see @rocCurve
 
 ## Security Measures
 It is a simple fact that any information that is not stored is not subject to a breach of confidentiality via intrusion or compromise of data stores. To whit, and in compliance with HIPAA and to protect patient health information, the application is built to require as little information as possible, and absolutely no information is persisted following communication. As the only input that is necessary to feed into the model and receive a prediction is an X-ray image, it is the responsibility of the end-user to verify that these images do not contain any protected information. However, as a routine matter of course and to protect information from interception, the application communication channels are to be encrypted with modern TLS standards that include HTTPS protocols to maintain secure message passing.
@@ -482,7 +519,15 @@ With regards to the prediction accuracy, this will have to be monitored separate
 # Section D - Implementation Review Analysis
 
 ## Project Purpose
-//TODO reiterate the business or organization problem that this application solved. How did the application address the “vision” or expectations of the client?Summarizes the technical functionality and end-user requirements that were met
+The purpose of this project is three-fold:
+
+1. To take given data containing chest X-ray images and diagnostic labels regarding those images and create a dashboard for exploring the data.
+2. To create a predictive classification model for determining the diagnostic labels for images new to the model and evaluate the model for efficacy and accuracy.
+3. To deploy the model as a RESTful service for consumption by `COMPANY_NAME` and its contracted clients.
+
+Each point of the project was solved separately but combined to create the overall product. The first and third objectives were able to be met satisfactorily and can be explored at `APPLICATION_URL` for verification.
+
+Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by `COMPANY_NAME` to be considered an effective aide for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
 
 ## Datasets
 //TODO datasets discussion: here is good place to talk about trimming the data, display some example x-rays used, and talk about the normalization used (ImageDataGenerator)
@@ -491,7 +536,13 @@ With regards to the prediction accuracy, this will have to be monitored separate
 //TODO review the functionality of the code used to perform the analysis of the data and how it provided the necessary functionality of descriptive and predictive outputs. You will also need to submit the entire, functional source code.
 
 ## Hypothesis Verification
-//TODO discuss if and why the initially established project hypothesis was accepted or rejected based on the use of the application. Did your assumptions about the phenomenon included (described) in the data prove true or not. Rejected hypothesis are okay but explain why that was so
+The initial hypothesis, that a predictive model to classify chest X-ray images with diagnostic labels, could be created is tentatively accepted. Despite the fact that the created model was unable to reach an appropriate level of accuracy on validation and testing data, the model did show the ability to have a high degree of accuracy during training. This is indicative of data _overfitting_, or a propensity to accurately predict on the training data with failure to generalize to new, unknown data[^overfitCite].
+
+[^overfitCite]: @handsonML p. 27
+
+//TODO Add graph of training vs validation loss/accuracy
+
+This can be mitigated in future iterations of the project with a variety of methods, such as longer training sessions or increasing the dataset, but were unable to be explored due to the time constraints of this project. However, it should be noted that, with the model successfully deployed within simple Docker container, future iterations of training and prediction will be trivial to implement due to the modular design of the application overall.
 
 ## Visualizations and Reporting
 //TODO provide a description of how your visualizations and elements effectively told an accurate story about the data. This needs to include items such as how your application supported data preparation, data analysis, and data summary. It should also include how your display techniques clearly explained any phenomenon detection if appropriate
@@ -500,7 +551,9 @@ With regards to the prediction accuracy, this will have to be monitored separate
 //TODO assess how accurate your application is at presenting the data and providing predictive outcomes. Provide an example of what the data showed and explain why those offer representative artifacts of the application’s accuracy
 
 ## Application Testing
-//TODO clearly describe the different levels of testing you used to confirm the functionality of your application. These could include unit, integration, system, and acceptance. Also, did you conduct any beta tests or usability tests for your project?Summarize those tests and explain how results were used to modify/calibrate the product during its development.
+Throughout development, the application was tested at a modular level manually. The REST API was tested using Postman[^postmanCite] to validate that the API could receive image POST requests and return an expected JSON response to be utilized by the end-user. This testing involved very simple, happy path testing and was not exhaustive by any means. Similarly, the front-end application was tested manually throughout development. Due to the overall simplicity of the project, extensive unit testing was determined to be counter-productive to overall creating of a prototype project. Once all components were successfully created and deployed, manual testing was again utilized to verify each component could integrate successfully and provide a functioning application.
+
+[^postmanCite]: [https://www.postman.com/](https://www.postman.com/)
 
 ## Application Files
 //TODO provide a comprehensive inventory of the files required to execute your application. Include a clear description of the interdependencies and file hierarchy. Describe how those files will be organized for submission. Include those files in the submission
@@ -509,9 +562,9 @@ With regards to the prediction accuracy, this will have to be monitored separate
 //TODO include a brief manual concerning the installation and use of your application. Be sure to describe all steps necessary to establish an environment capable of running your application. Provide clear, concise steps of how a user would execute the application and produce the results you’ve described in your documentation. Carefully consider and describe the procedural aspect of the application including know areas where certain crucial steps can affect the performance of the application. You must ensure that anybody can run the application. Please include details on the technology context that is required for your application to properly execute
 
 ## Summation of Learning Experience
-Before starting the capstone, I had no experience with data science or machine learning. This required a very fast education in a variety of subjects and libraries, from the basics of how machine learning is implemented to individual Python libraries such as NumPy and Pandas. This learning was accomplished from a variety of mediums, including a Udemy course[^udemyCite], the _Hands-on Machine Learning_[^handsonCite], and a vast swath of blog posts, documentation, and other resources gathered via Google searches. My previous experience learning programming and learning what to search for proved invaluable in finding these resources and providing a framework for understanding how to implement the requirements of this project. Lastly, I learned that machine learning is not as easy as it might appear from the amazing amount of abstraction provided by the various Python libraries. Although these libraries have been designed for ease of use, an understanding of how they work is very much a requirement for creating a working model. In retrospect, I should have found a subject matter much simpler than computer vision for my brief foray into this subject.
+Before starting the capstone, I had no experience with data science or machine learning. This required a very fast education in a variety of subjects and libraries, from the basics of how machine learning is implemented to individual Python libraries such as NumPy and Pandas. This learning was accomplished from a variety of mediums, including a Udemy course[^udemyCite], the _Hands-on Machine Learning_[^handsonCite] book and associated resources, and a vast swath of blog posts, documentation, and other resources gathered via Google searches. My previous experience learning programming and learning what to search for proved invaluable in finding these resources and providing a framework for understanding how to implement the requirements of this project. Lastly, I learned that machine learning is not as easy as it might appear from the amazing amount of abstraction provided by the various Python libraries. Although these libraries have been designed for ease of use, an understanding of how they work is very much a requirement for creating a working model. In retrospect, I should have found a subject matter much simpler than computer vision for my brief foray into this subject.
 
-[^udemyCite]: Zero to Mastery: Complete Machine Learning & Data Science Bootcamp 2021 [https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/](https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/)
+[^udemyCite]: @ztmML
 [^handsonCite]: @handsonML
 
 # References
