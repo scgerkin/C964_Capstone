@@ -370,7 +370,7 @@ for k in range(2, 101):
     pickle_model(kmeans, k, score)
 ```
 
-[^kmeansFile]: The complete source code for this can be found at `ml/training/descriptive.py`.
+[^kmeansFile]: The complete source code for this can be found at `ml/training/cluster-determination.py`.
 
 The results of this modeling and the validity of KMeans for dimensionality reduction is discussed in the [Accuracy Analysis](#accuracy-analysis) section.
 
