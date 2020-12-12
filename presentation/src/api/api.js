@@ -28,7 +28,6 @@ async function analyzeRandom(image) {
   return new Promise((res, rej) => {
     setTimeout(() => {
       const response = {
-        "finding": Math.random() >= 0.5,
         "labels": [
           { label: "atelectasis", probability: Math.random() },
           { label: "cardiomegaly", probability: Math.random() },
@@ -54,5 +53,5 @@ async function analyzeRandom(image) {
 async function analyzeActual(image) {
   const request = new FormData()
   request.append("image", image, image.fileName)
-  return await Axios.post("http://localhost:5000", request)
+  return await Axios.post("http://localhost:80", request)
 }
