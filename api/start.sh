@@ -1,8 +1,8 @@
 #/bin/bash
 
 # Download the server script and model
-curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/ml/api/server.py > /svr/server.py
-curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/ml/api/finding_predictor.pkl > /svr/finding_predictor.pkl
+curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/api/server.py > /svr/server.py
+curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/api/finding_predictor.pkl > /svr/finding_predictor.pkl
 
 # set env vars
 export UPLOAD_PATH=/tmp
