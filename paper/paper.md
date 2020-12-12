@@ -323,14 +323,14 @@ The following environments are to be used for the development and deployment of 
 - Node.js 12.16.3
 
 ### Environment Costs
-Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding an additional \$160 to \$480 per year.
+Each instance of the full server application will reside on an AWS EC2 a1.xlarge instance. On-demand pricing in the US-EAST1 region is \$0.102 per hour. 2 servers are to be online at all times to maintain availability, costing a total of \$1787.04 per year. This can be discounted by 60% by purchasing reserved instances for these servers, bringing the yearly cost for both servers down to \$714.82. Additional costs will be incurred for additional on-demand servers during peak traffic hours. This is expected to be an average of 30 hours per week, adding \$160 to \$480 per year.
 
 This makes the combined environment cost for maintenance approximately \$2,000 to $2,300 per year.
 
 ### Human Resource Requirements
 Total upfront development for the project is estimated at 4 weeks at 40 hours per week. The contracted cost of the project developer is \$62/hr. This comes to a total of \$9,920 total cost for development.
 
-Ongoing maintenance of the project is expected to take an average of 1 hour per week, assuming no additional development is required. This cost is prorated to \$55/hr, totalling \$2,860/yr.
+Ongoing maintenance of the project is expected to take an average of 1 hour per week, assuming no additional development is required. This cost is prorated to \$55/hr, totaling \$2,860/yr.
 
 ## Timeline and Milestones
 | Phase                       | Start      | Complete   | Duration |
@@ -527,10 +527,10 @@ The purpose of this project is three-fold:
 
 Each point of the project was solved separately but combined to create the overall product. The first and third objectives were able to be met satisfactorily and can be explored at `APPLICATION_URL` for verification.
 
-Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by `COMPANY_NAME` to be considered an effective aide for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
+Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by `COMPANY_NAME` to be considered an effective aid for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
 
 ## Datasets
-Machine learning models require numerical data for analysis and prediction. Therefore, all images used for training, validation, testing, or otherwise must be converted to a numerical format in order to be fed into the models. This was accomplished using an image preprocessor from Keras, `ImageDataGenerator`[^idgCite]. This automatically reads in data in batches (or individually), converts the images to numerical arrays of 0 to 255 per each image channel (RGB), and can be used for normalization and standardization.
+Machine learning models require numerical data for analysis and prediction. Therefore, all images used for training, validation, testing, or otherwise must be converted to a numerical format to be fed into the models. This was accomplished using an image preprocessor from Keras, `ImageDataGenerator`[^idgCite]. This automatically reads in data in batches (or individually), converts the images to numerical arrays of 0 to 255 per each image channel (RGB), and can be used for normalization and standardization.
 
 [^idgCite]: For the documentation regarding this API see [https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator).
 
@@ -656,7 +656,7 @@ The initial hypothesis, that a predictive model to classify chest X-ray images w
 
 //TODO Add graph of training vs validation loss/accuracy
 
-This can be mitigated in future iterations of the project with a variety of methods, such as longer training sessions or increasing the dataset, but were unable to be explored due to the time constraints of this project. However, it should be noted that, with the model successfully deployed within simple Docker container, future iterations of training and prediction will be trivial to implement due to the modular design of the application overall.
+This can be mitigated in future iterations of the project with a variety of methods, such as longer training sessions or increasing the dataset, but were unable to be explored due to the time constraints of this project. However, it should be noted that, with the model successfully deployed within a simple Docker container, future iterations of training and prediction will be trivial to implement due to the modular design of the application overall.
 
 ## Visualizations and Reporting
 //TODO provide a description of how your visualizations and elements effectively told an accurate story about the data. This needs to include items such as how your application supported data preparation, data analysis, and data summary. It should also include how your display techniques clearly explained any phenomenon detection if appropriate
@@ -665,7 +665,7 @@ This can be mitigated in future iterations of the project with a variety of meth
 //TODO assess how accurate your application is at presenting the data and providing predictive outcomes. Provide an example of what the data showed and explain why those offer representative artifacts of the application’s accuracy
 
 ## Application Testing
-Throughout development, the application was tested at a modular level manually. The REST API was tested using Postman[^postmanCite] to validate that the API could receive image POST requests and return an expected JSON response to be utilized by the end-user. This testing involved very simple, happy path testing and was not exhaustive by any means. Similarly, the front-end application was tested manually throughout development. Due to the overall simplicity of the project, extensive unit testing was determined to be counter-productive to overall creating of a prototype project. Once all components were successfully created and deployed, manual testing was again utilized to verify each component could integrate successfully and provide a functioning application.
+Throughout development, the application was tested at a modular level manually. The REST API was tested using Postman[^postmanCite] to validate that the API could receive image POST requests and return an expected JSON response to be utilized by the end-user. This testing involved a very simple, happy path testing and was not exhaustive by any means. Similarly, the front-end application was tested manually throughout development. Due to the overall simplicity of the project, extensive unit testing was determined to be counter-productive to the overall creation of a prototype project. Once all components were successfully created and deployed, manual testing was again utilized to verify each component could integrate successfully and provide a functioning application.
 
 [^postmanCite]: [https://www.postman.com/](https://www.postman.com/)
 
