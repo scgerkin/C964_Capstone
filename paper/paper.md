@@ -372,6 +372,20 @@ for k in range(2, 101):
 
 [^kmeansFile]: The complete source code for this can be found at `ml/training/cluster-determination.py`.
 
+The results of this cluster determination were inconclusive, showing no particular number of clusters as an appropriate means of evaluating the data. The inertia of each model continued on a downward trend, save a few unusual findings in the 20-30 range, and again from 70-80.
+
+![KMeans Inertia Scores](./assets/training-analysis/KMeans-Inertia.png)
+
+The inertia of a model is also not as indicative of the appropriate cluster range as the silhouette score, or the number of samples appearing accurately within a cluster. These scores are plotted below:
+
+![KMeans Silhouette Scores](./assets/training-analysis/KMeans-Silhouette-score.png)
+
+With the highest silhouette score at 2 clusters of 0.10, the indication is clear that no number of clusters accurately represents the data fed into the model. As such, and because the number of labels we wish to analyze is known, the number of clusters chosen for the model is 13. But, as discussed, it is not clear that this number of clusters is an appropriate value for the model. Below, the scores for each are shown more clearly on the graphs and annotated for clarity:
+
+![KMeans Inertia Scores with annotation](./assets/training-analysis/KMeans-Inertia-annotated.png)
+
+![KMeans Silhouette Scores with annotation](./assets/training-analysis/KMeans-Silhouette-score-annotated.png)
+
 The results of this modeling and the validity of KMeans for dimensionality reduction is discussed in the [Accuracy Analysis](#accuracy-analysis) section.
 
 ### Predictive (Neural Net)
@@ -662,7 +676,46 @@ This can be mitigated in future iterations of the project with a variety of meth
 //TODO provide a description of how your visualizations and elements effectively told an accurate story about the data. This needs to include items such as how your application supported data preparation, data analysis, and data summary. It should also include how your display techniques clearly explained any phenomenon detection if appropriate
 
 ## Accuracy Analysis
-//TODO assess how accurate your application is at presenting the data and providing predictive outcomes. Provide an example of what the data showed and explain why those offer representative artifacts of the application’s accuracy
+The accuracy of the application overall is broken down between the descriptive analysis of the KMeans clustering for dimensionality reduction and the accuracy of the neural net for classification.
+
+### KMeans Clustering Accuracy Analysis
+For analysis of the KMeans clustering, the model and predictions for testing data, along with the accuracy metrics, were created using the following code[^kmeansAnalysisCode]:
+```python
+N_CLUSTERS = 13
+
+x, y, lbls = load_imgs_for_kmeans()
+
+kmeans = KMeans(n_clusters=N_CLUSTERS)
+print("Fitting and predicting...")
+predictions = kmeans.fit_predict(x)
+
+precision = round(precision_score(y, predictions, average="micro") * 100, 2)
+recall = round(recall_score(y, predictions, average="micro") * 100, 2)
+f1 = round(f1_score(y, predictions, average="micro") * 100, 2)
+cf = confusion_matrix(y, predictions)
+```
+
+[^kmeansAnalysisCode]: The full source code is available at `ml/training/kmeans-analysis.py`.
+
+The results of the confusion matrix can be best viewed with the following graph:
+
+![KMeans Confusion Matrix](./assets/training-analysis/kmeans-cf-matrix-diag.png)
+
+As shown on these results, the precision, recall, and F1 scores are all 7.66%, indicating a significantly inaccurate result. The heat-map shows the true labels of an image on the y-axis, with the predicted label on the x-axis. The diagonal (highlighted with the green line) are frequencies of accurate predictions. As can be seen from the scores and this heat-map, the model is fully inadequate at providing a reasonable classification of the images via 13 clusters for KMeans. As a result, this method of dimensionality reduction was abandoned.
+
+### Neural Net Accuracy Analysis
+The accuracy of the neural net was evaluated in a combination of methods. As previously discussed in the [Hypothesis Verification](#hypothesis-verification) section, the validation data used during training of the model indicated a poor adaption to the data, showing very poor scores for categorical cross-entropy as a loss function and accuracy overall. However, when plotting the true-positive rate and false-positive rate for the model to create the ROC curves, this paints a completely different picture[^rocCurveURL].
+
+[^rocCurveURL]: An interactive version of this graph is available at `//TODO ROC CURVE URL`.
+
+![ROC Curves for Validation Data](./assets/training-analysis/validation.png)
+
+The area under the curve for each classification label shows a wide range of values, from 0.5405 for _Mass_ vs. up to 0.8466 for _Consolidation_. A score of near 0.5 for this value indicates that the model was no better at determining a matching label than flipping a coin. For _Mass_, it is clear that the model was unable to match well to this diagnostic label. This may have skewed the overall combined accuracy of the model, as well as other low scoring classification labels. Additionally, as categorical cross-entropy is a measure of the overall probability matches, this may cloud the findings of individual diagnostic classifications. This indicates that the model may adapt well to some labels but not others. However, it should be noted that this is an unusual finding overall and may be due to an error in the overall evaluation process.
+
+### Accuracy Conclusion
+Based on the results of the above evaluations and metrics and the unusual nature of the findings above, it is concluded that the model overall failed to meet the expectations of `COMPANY_NAME` for accuracy. However, individual diagnostic labels show some promise overall, indicating that the model may be adapted for binary classification of _Finding_ vs. _No Finding_ should the training data and model be modified to fit this classification model.
+
+Lastly, it is worth mentioning that increasing the size of the dataset and the training sessions may have produced a more favorable outcome. The training data may have also been improved by providing random transformations to individual images, such as rotations, inversions, shifting horizontally or vertically, or other such image transformations. However, due to the time constraints of this project, this could not be explored in more detail.
 
 ## Application Testing
 Throughout development, the application was tested at a modular level manually. The REST API was tested using Postman[^postmanCite] to validate that the API could receive image POST requests and return an expected JSON response to be utilized by the end-user. This testing involved a very simple, happy path testing and was not exhaustive by any means. Similarly, the front-end application was tested manually throughout development. Due to the overall simplicity of the project, extensive unit testing was determined to be counter-productive to the overall creation of a prototype project. Once all components were successfully created and deployed, manual testing was again utilized to verify each component could integrate successfully and provide a functioning application.
