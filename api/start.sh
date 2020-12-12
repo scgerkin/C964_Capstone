@@ -2,11 +2,9 @@
 
 # Download the server script and model
 curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/api/server.py > /svr/server.py
-curl https://raw.githubusercontent.com/scgerkin/C964_Capstone/main/api/finding_predictor.pkl > /svr/finding_predictor.pkl
 
 # set env vars
 export UPLOAD_PATH=/tmp
-export MODEL_PATH=/svr/finding_predictor.pkl
 export LOCAL_HOST=false
 export DEBUG_MODE=false
 

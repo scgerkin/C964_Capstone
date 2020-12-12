@@ -8,14 +8,12 @@ from numpy import expand_dims
 from flask import Flask, request, make_response
 from flask_restful import Api, Resource, abort
 from flask_cors import CORS
-import pickle
 
 UPLOAD_PATH = os.getenv("UPLOAD_PATH")
-MODEL_PATH = os.getenv("MODEL_PATH")
 TF_SERVE_URL = os.getenv("TF_SERVE_URL")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
-image_data_generator = idg = ImageDataGenerator(
+idg = ImageDataGenerator(
         samplewise_center=True,
         samplewise_std_normalization=True,
         fill_mode='constant',
@@ -32,44 +30,20 @@ CORS(app)
 api = Api(app)
 
 
-def load_finding_model():
-    with open(MODEL_PATH, "rb") as f:
-        f_predictor = pickle.load(f)
-    return f_predictor
-
-
-finding_predictor = load_finding_model()
-
-
-def load_img_as_array(filepath):
+def load_img_as_tensor(filepath):
     img = load_img(filepath, target_size=(256, 256), color_mode="rgb")
     img = img_to_array(img)
-    return img
+    tensor = expand_dims(img, axis=0)
+    tensor = idg.flow(tensor)
+    return next(tensor)
 
 
 def make_predictions(img):
-    finding_label = get_finding_prediction(img)
     labelled_predictions = get_label_prediction(img)
-    return {"finding": finding_label, "labels": labelled_predictions}
+    return {"labels": labelled_predictions}
 
 
-def get_finding_prediction(img):
-    img = img.flatten()
-    img = img.reshape(1, -1)
-
-    finding_prediction = finding_predictor.predict(img)
-    finding_prediction = finding_prediction[0]
-
-    # if prediction is 0, then there is a finding
-    # this also converts the numpy object into a Python boolean which can be
-    # serialized
-    return True if finding_prediction < 0.5 else False
-
-
-def get_label_prediction(img):
-    tensor = expand_dims(img, axis=0)
-    tensor = image_data_generator.flow(tensor)
-
+def get_label_prediction(tensor):
     classifier_request = json.dumps({
         "signature_name": "serving_default",
         "instances"     : tensor.tolist()
@@ -82,11 +56,9 @@ def get_label_prediction(img):
     predictions.round(2)
     predictions = predictions.tolist()
 
-    # FIXME: labels are no longer correct for the new model that will
-    #  be deployed
     labels = ["atelectasis", "cardiomegaly", "consolidation", "edema",
-              "effusion", "emphysema", "fibrosis", "hernia", "infiltration",
-              "mass", "nodule", "pleural_thickening", "pneumonia",
+              "effusion", "emphysema", "fibrosis", "infiltration",
+              "mass", "no_finding", "nodule", "pleural_thickening",
               "pneumothorax"]
 
     labelled_predictions = []
@@ -123,7 +95,7 @@ class Predictor(Resource):
                   message=f"Image filetype must be in {ALLOWED_EXTENSIONS}")
 
         filepath = f"{UPLOAD_PATH}/{image.filename}"
-        image = load_img_as_array(filepath)
+        image = load_img_as_tensor(filepath)
         predictions = make_predictions(image)
 
         os.remove(filepath)
