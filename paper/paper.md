@@ -116,6 +116,8 @@ references:
         given: Daniel
     publisher: Udemy.com
     URL: https://www.udemy.com/course/complete-machine-learning-and-data-science-zero-to-mastery/
+    issued:
+      year: 2020
     accessed:
       year: 2020
       month: 9
