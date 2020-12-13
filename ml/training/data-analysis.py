@@ -74,7 +74,6 @@ ax2.set(xlabel="Count", ylabel="")
 save_show("classification-by-sex")
 
 # %%
-
 markers = ["o", "v", "^", "<", ">", "1", "2", "3", "4", "*", "x", "p", "h", "D"]
 fig, ax = plt.subplots(figsize=(8, 8))
 lbls = [lbl for lbl in dx_labels if lbl != "no_finding"]
@@ -114,3 +113,16 @@ fig.suptitle("Individual Diagnostic Frequencies by Age")
 fig.text(0.5, 0.04, "Age", ha="center", va="center")
 fig.text(0.05, 0.5, "Frequency", ha="center", va="center", rotation="vertical")
 save_show("indiv-dx-by-age")
+
+# %%
+plt.clf()
+plt.figure(figsize=(15,10))
+lbls = [lbl for lbl in dx_labels if lbl != "no_finding"]
+correlation = original[lbls].corr()
+correlation = correlation.mask(lambda x: x == 1)
+# correlation.style.set_precision(2)
+g = sns.heatmap(correlation, annot=True, linewidths=0.25,
+                cmap="coolwarm")
+g.set_title("Diagnosis Correlation Matrix")
+g.set_xticklabels(lbls, rotation=30, ha="right")
+save_show("dx-corr-matrix")
