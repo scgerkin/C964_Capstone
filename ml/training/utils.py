@@ -1,11 +1,3 @@
-import os
-from copy import deepcopy
-from pathlib import PurePath
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import pandas as pd
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
-from numpy import expand_dims
-
 DUMMY_IMG = "00000001_000.png"
 PROJECT_DIR = "W:/WGU/C964_Capstone/project/ml/"
 DATASET_DIR = PROJECT_DIR + "dataset/"
@@ -20,6 +12,8 @@ SPLIT_VALUE = 0.15
 
 
 def get_img_metadata():
+    import pandas as pd
+    from pathlib import PurePath
     path = PurePath(DATASET_DIR + "usable_img_metadata.csv")
     data = pd.read_csv(str(path))
     dx_labels = get_dx_labels()
@@ -37,6 +31,7 @@ def create_classification_list(row):
 
 
 def get_dx_labels():
+    from pathlib import PurePath
     path = PurePath(DATASET_DIR + "dx_labels.csv")
     with open(path, 'r') as f:
         lines = f.readlines()[1:]
@@ -44,6 +39,7 @@ def get_dx_labels():
 
 
 def init_image_data_generator(split=False):
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
     split_value = SPLIT_VALUE if split else 0.0
     return ImageDataGenerator(
             samplewise_center=True,
@@ -54,6 +50,11 @@ def init_image_data_generator(split=False):
 
 
 def load_imgs_for_kmeans():
+    from tensorflow.keras.preprocessing.image import img_to_array, load_img
+    import pandas as pd
+    from numpy import expand_dims
+    from copy import deepcopy
+    import os
     idg = init_image_data_generator()
     imgs = []
     img_data = pd.read_csv("training/train_data.csv")
