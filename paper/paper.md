@@ -498,7 +498,29 @@ save_usable_to_csv(img_metadata)
 [^cleanDataFileLoc]: The full code for this cleaning can be found in `ml/training/clean-data.py`.
 
 ## Data Visualization
-//TODO You need at least three real-time (e.g. using the GUI/dashboard) formats to visualize the data in a graphic format. Look at things like charting, mapping, color theory,plots, diagrams, or other methods(tables must include heat mapping). These,in conjunction with or as a part of your GUI,would enable users to explore or inspect the data characteristics
+Data exploration is accomplished by visualizing the diagnostic labels associated with each image. This information helped to understand the given dataset and determine the course for standardizing the eventual training data to be fed to the model.
+
+In the following graph, we can visualize the number of diagnostic labels per image, separated by patient sex to understand the potential bias of the data sampling, in order to better understand the weights of each image sample. Images with "No Finding" are separated as this accounts for nearly half of the data and does not give a complete picture of the label classifications.
+
+![Diagnostic Classification Frequency](./assets/data/classification-by-sex.png)
+
+The numbers above show an imbalance of the data, favoring infiltration and effusion above other diagnostic markers. Additionally, there are fewer samples for hernia and pneumonia diagnosis, indicating that there may not be enough samples of this data for training and it should be trimmed from the dataset before training. Patient sex also indicates a higher number of scans for men; however, without further information about these findings and their respective prevalence among the population, it is difficult to determine if this will introduce a significant bias in our model. Theoretically, the images themselves should not affect the model training, but this does not account for the potential physiological differences between men and women vis a vis breast tissue.
+
+Next, the label frequency is plotted against the age of each patient. The combined scatter plot below paints a similar picture to the markers above, showing a higher number of scans for infiltration.
+
+![Diagnostic frequency by age](./assets/data/dx-freq-by-age.png)
+
+With 14 potential labels, the image above is a bit cluttered and it is hard to make any determinations from this alone. Therefore, each individual diagnostic label is plotted below to show the frequencies by age for each.
+
+![Diagnostic frequency by age, separated by label](./assets/data/indiv-dx-by-age.png)
+
+These individual plots show an overall normal distribution for the data, with the median value for most around the same area (between 50-60 years old). However, hernia again stands as an outlier, showing an unusual distribution that does not fit into a typical bell-curve. This also indicates that it is likely this should be trimmed from the data before training.
+
+Lastly, the correlation of diagnoses shows the potential comorbidities for each label with the following correlation matrix:
+
+![Diagnostic Correlation Matrix](./assets/data/dx-corr-matrix.png)
+
+With this matrix, we can see that there is a correlation for atelectasis and effusion, as well as edema and pneumonia. These correlations are worth noting for training the model, as it is possible that this may confuse the model during training and lead to a lower degree of accuracy with differentiating between these labels.
 
 ## Real-Time Query
 The front-end application allows a user to upload a chest X-ray image directly to the prediction model through their browser with a simple form element:
@@ -670,9 +692,21 @@ The initial hypothesis, that a predictive model to classify chest X-ray images w
 
 [^overfitCite]: @handsonML p. 27
 
-//TODO Add graph of training vs validation loss/accuracy
+The overfitting of the model is best demonstrated in the training accuracy per epoch in the following graph:
 
-This can be mitigated in future iterations of the project with a variety of methods, such as longer training sessions or increasing the dataset, but were unable to be explored due to the time constraints of this project. However, it should be noted that, with the model successfully deployed within a simple Docker container, future iterations of training and prediction will be trivial to implement due to the modular design of the application overall.
+![Model Accuracy per Epoch](./assets/training-analysis/model-acc.png)
+
+As the model received more and more training information, the overall accuracy adapted to the data; however, this was not present in the validation phase of training. When compared to the loss function of the model, this is again evident as the training loss decreases, while the validation loss increases, indicating poor generalization of the model:
+
+![Model Loss per Epoch](./assets/training-analysis/model-loss.png)
+
+Interestingly, the model did see a marked improvement in the mean absolute error over training periods:
+
+![Model Mean Absolute Error per Epoch](./assets/training-analysis/model-mae.png)
+
+These findings indicate that, while the model overall may not generalize to new data, the error rate of the model overall improves and can likely be used for classification in low-risk situations where precision is not a requirement.
+
+The failure to generalize can be mitigated in future iterations of the project with a variety of methods, such as longer training sessions or increasing the dataset, but were unable to be explored due to the time constraints of this project. However, it should be noted that, with the model successfully deployed within a simple Docker container, future iterations of training and prediction will be trivial to implement due to the modular design of the application overall.
 
 ## Visualizations and Reporting
 //TODO provide a description of how your visualizations and elements effectively told an accurate story about the data. This needs to include items such as how your application supported data preparation, data analysis, and data summary. It should also include how your display techniques clearly explained any phenomenon detection if appropriate
