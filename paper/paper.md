@@ -532,7 +532,7 @@ Clicking on this form element will bring up a File Selector:
 During analysis, the original image will be displayed on-screen. Once the analysis is complete, a graph will display the indicated classification probabilities:
 ![Diagnostic Classification Results](./assets/analyze-xray/5.png)
 
-This portion of the web application functionality can be accessed at `//TODO: X-RAY_ANALYSIS_URL`.
+This portion of the web application functionality can be accessed at [http://cxr-dx.scgrk.com/analyze](http://cxr-dx.scgrk.com/analyze).
 
 ## Adaptive Element
 The included scripts and code for the prediction model have been included. These items can be used to create a data pipeline for continual improvement and adaptation to new information. Additionally, the simplicity of use inherent with TensorFlow/Serving as a means of serving the model as a REST API allows for versioning the system. The container for the model only needs to be rebuilt with updated training weights for the model and phased into the existing server architecture. This allows a seamless transition of models that can be deployed or rolled back as new models are trained and evaluated.
@@ -552,7 +552,19 @@ The health of the servers can be monitored and automated using AWS CloudWatch lo
 With regards to the prediction accuracy, this will have to be monitored separately from the application. The application does not save any image, prediction, or any other information locally or externally. Evaluations should be performed routinely by feeding images with known classification labels to receive predictions on this data. This can then be compared to the ground-truth of these images to evaluate the model on an ongoing basis. These images and labels can additionally be used in the future to provide ongoing training to the model.
 
 ## Dashboard
-//TODO include a user-friendly, functional dashboard that enables the query and display of the data,as well as other functionality described in this section. This could be stand-alone, Web-based, or a mobile application interface
+The dashboard is available online at [http://cxr-dx.scgrk.com](http://cxr-dx.scgrk.com).
+
+From this site, a user can view the data analysis information:
+
+![Data Analysis Dashboard](./assets/dashboard/01.png)
+
+They can also see the training methodology and analysis:
+
+![Training Analysis Dashboard](./assets/dashboard/02.png)
+
+Finally, they can interact with the prediction application:
+
+![X-Ray Prediction Dashboard](./assets/dashboard/03.png)
 
 # Section D - Implementation Review Analysis
 
@@ -684,9 +696,6 @@ In the functions above, the DataFrame is split into training, validation, and te
 
 Lastly, each image was resized from the original 1024x1024 down to 256x256 to fit with InceptionV3 (and to decrease the training time).
 
-## Data Product Code
-//TODO review the functionality of the code used to perform the analysis of the data and how it provided the necessary functionality of descriptive and predictive outputs. You will also need to submit the entire, functional source code.
-
 ## Hypothesis Verification
 The initial hypothesis, that a predictive model to classify chest X-ray images with diagnostic labels, could be created is tentatively accepted. Despite the fact that the created model was unable to reach an appropriate level of accuracy on validation and testing data, the model did show the ability to have a high degree of accuracy during training. This is indicative of data _overfitting_, or a propensity to accurately predict on the training data with failure to generalize to new, unknown data[^overfitCite].
 
@@ -744,7 +753,7 @@ As shown on these results, the precision, recall, and F1 scores are all 7.66%, i
 ### Neural Net Accuracy Analysis
 The accuracy of the neural net was evaluated in a combination of methods. As previously discussed in the [Hypothesis Verification](#hypothesis-verification) section, the validation data used during training of the model indicated a poor adaption to the data, showing very poor scores for categorical cross-entropy as a loss function and accuracy overall. However, when plotting the true-positive rate and false-positive rate for the model to create the ROC curves, this paints a completely different picture[^rocCurveURL].
 
-[^rocCurveURL]: An interactive version of this graph is available at `//TODO ROC CURVE URL`.
+[^rocCurveURL]: An interactive version of this graph is available at [http://cxr-dx.scgrk.com/training/](http://cxr-dx.scgrk.com/training/).
 
 ![ROC Curves for Validation Data](./assets/training-analysis/validation.png)
 
@@ -761,10 +770,46 @@ Throughout development, the application was tested at a modular level manually. 
 [^postmanCite]: [https://www.postman.com/](https://www.postman.com/)
 
 ## Application Files
-//TODO provide a comprehensive inventory of the files required to execute your application. Include a clear description of the interdependencies and file hierarchy. Describe how those files will be organized for submission. Include those files in the submission
+The complete source code required for this project can be found on GitHub at [https://github.com/scgerkin/C964_Capstone](https://github.com/scgerkin/C964_Capstone). The repository contains three modules, `api`, `ml`, and `presentation`, as well as a directory for this document.
+
+- `api` This module contains the source code for the prediction model and REST server to interact with the model. The following is a hierarchy of the files and their purpose:
+- `ml` This module contains the source for creating the model and all data analysis as well as the dataset. The original dataset is not included in the repository as it is significantly larger than allowed by GitHub.
+- `presentation` This module contains the frontend React application for interacting with the project and back-end application.
+- `paper` This directory contains the original source for this paper as well as all image assets used within. The paper has been written in MarkDown and automatically parsed to a Word Document by [Pandoc](https://pandoc.org/) for additional formatting before converting to a PDF. In the repository, only the original MarkDown is included.
 
 ## User's Guide
-//TODO include a brief manual concerning the installation and use of your application. Be sure to describe all steps necessary to establish an environment capable of running your application. Provide clear, concise steps of how a user would execute the application and produce the results you’ve described in your documentation. Carefully consider and describe the procedural aspect of the application including know areas where certain crucial steps can affect the performance of the application. You must ensure that anybody can run the application. Please include details on the technology context that is required for your application to properly execute
+The full application requires the use of [Docker](https://docker.com), [Docker Compose](https://docs.docker.com/compose/) and the [Gatsby.js](https://www.gatsbyjs.com/) CLI tool.
+
+To run the application locally, the full source code can be downloaded from GitHub. Both Docker containers must be built and run with Docker Compose.
+
+The following script contains the complete instructions to accomplish this:
+```shell
+git clone https://github.com/scgerkin/C964_Capstone.git
+
+# Build the prediction model
+cd C964_Capstone/api/tf
+docker build -t c964/dx .
+
+# Build the API to interact with the prediction model
+cd ..
+docker build -t c964/svr .
+docker-compose up
+
+# Launch Gatsby developer mode to interact with the frontend.
+cd ../presentation
+gatsby develop
+```
+
+The frontend application will then be available at `http://localhost:8000`. To interact with the locally deployed containers, the API communication must be modified to use the local host. This is located in `presentation/src/api/api.js`.
+
+Modify the following function as indicated below:
+```js
+async function analyzeActual(image) {
+  const request = new FormData()
+  request.append("image", image, image.fileName)
+  return await Axios.post("http://localhost:80", request) // Modify this line
+}
+```
 
 ## Summation of Learning Experience
 Before starting the capstone, I had no experience with data science or machine learning. This required a very fast education in a variety of subjects and libraries, from the basics of how machine learning is implemented to individual Python libraries such as NumPy and Pandas. This learning was accomplished from a variety of mediums, including a Udemy course[^udemyCite], the _Hands-on Machine Learning_[^handsonCite] book and associated resources, and a vast swath of blog posts, documentation, and other resources gathered via Google searches. My previous experience learning programming and learning what to search for proved invaluable in finding these resources and providing a framework for understanding how to implement the requirements of this project. Lastly, I learned that machine learning is not as easy as it might appear from the amazing amount of abstraction provided by the various Python libraries. Although these libraries have been designed for ease of use, an understanding of how they work is very much a requirement for creating a working model. In retrospect, I should have found a subject matter much simpler than computer vision for my brief foray into this subject.
