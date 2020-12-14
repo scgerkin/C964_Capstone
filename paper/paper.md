@@ -128,7 +128,7 @@ references:
 # Section A - Project Proposal/Recommendation
 
 ## Problem Summary
-Arrow Medical Imagingis a medical imaging company that provides on-going or on-call as needed radiologic image readings for physicians and clinicians in various settings ranging from urgent care facilities to general practitioners and family medicine. Clinicians rely on fast and accurate diagnostic readings of a wide range of imaging techniques but chief among these are chest X-ray images. Chest X-ray imaging is inexpensive, fast, and has a low radiologic risk to patients and as such is often the first-line diagnostic tool for disease diagnosis and patient treatment planning.
+Arrow Medical Imaging is a medical imaging company that provides on-going or on-call as needed radiologic image readings for physicians and clinicians in various settings ranging from urgent care facilities to general practitioners and family medicine. Clinicians rely on fast and accurate diagnostic readings of a wide range of imaging techniques but chief among these are chest X-ray images. Chest X-ray imaging is inexpensive, fast, and has a low radiologic risk to patients and as such is often the first-line diagnostic tool for disease diagnosis and patient treatment planning.
 
 As Arrow Medical Imaging expands, more and more facilities and practitioners are contracting the expertise of Arrow Medical Imaging's expertise in providing results in a timely fashion. This influx of clientele has stretched the existing resources beyond their current capabilities. As such, Arrow Medical Imaging has expressed a desire to create a pilot program for automating the diagnostic process with chest X-ray imaging with machine learning models to assist the existing radiologist staff with improving the turn-around time for diagnostic results in this high volume service.
 
@@ -185,7 +185,7 @@ With the initial prototype development consisting of a single developer, the Sas
 
 1. __Requirements gathering and analysis.__ The requirements have been well defined throughout this document and are unlikely to change during development.
 2. __Data collection.__ As discussed previously, data for training the application prediction model has been gathered and will be further analyzed during the lifecycle of the project.
-3. __Data analysis.__ The data will be analyzed for outliers, suitability for training, trimmed down to manageable batches, and explored for best results. This analysis is discussed further in the [Data Analysis section](#data-analysis) section below.
+3. __Data analysis.__ The data will be analyzed for outliers, suitability for training, trimmed down to manageable batches, and explored for best results. This analysis is discussed further in the [Data Analysis section](#data-analysis) below.
 4. __Model creation, training, and evaluation.__ A predictive machine learning model will be created, trained, and evaluated on a variety of metrics to determine suitability for deployment and use for generalizing to new data. This is an iterative process and will persist until either a suitable model is created or it is determined that a model cannot be created with the given data or constraints.
 5. __Deployment.__ The model will be deployed to a cloud service provider as a web service API for use in predicting and generalizing to testing data not presented during the training phase.
 6. __Web Application Development.__ The data collected during data analysis and model training will be collated and made presentable as a web application. This application will then be wired to the deployed predictive model for demonstration purposes.
@@ -272,6 +272,7 @@ The full project will undergo routine health checks, monitored via log output to
 
 ## Project Deliverables
 Project success is dependent on the following deliverables:
+
 - Python script for instantiating, training, and saving a predictive model.
 - Dockerfile for building a trained and saved model within a Docker container.
 - Python Flask middleware server script for converting image data and interacting with the aforementioned container.
