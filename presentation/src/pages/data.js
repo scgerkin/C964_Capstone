@@ -8,8 +8,8 @@ const BASE_PATH = "https://scgrk.com/c964"
 class Data extends Component {
   render() {
     return <Layout>
-      <h1>Data Analysis</h1>
       <Container>
+        <h1>Data Analysis and Exploration</h1>
         <p>Data exploration is accomplished by visualizing the diagnostic labels
           associated with each image. This information helped to understand the
           given dataset and determine the course for standardizing the eventual
@@ -24,7 +24,7 @@ class Data extends Component {
           picture of the label classifications.
         </p>
         <Image src={BASE_PATH + "/assets/data/classification-by-sex.png"}
-               fluid/>
+               fluid alt={"Diagnostic Classification Frequency by Sex"}/>
         <p>The numbers above show an imbalance of the data, favoring
           infiltration and effusion above other diagnostic markers.
           Additionally, there are fewer samples for hernia and pneumonia
@@ -43,14 +43,16 @@ class Data extends Component {
           The combined scatter plot below paints a similar picture to the
           markers above, showing a higher number of scans for infiltration.
         </p>
-        <Image src={BASE_PATH + "/assets/data/dx-freq-by-age.png"} fluid/>
+        <Image src={BASE_PATH + "/assets/data/dx-freq-by-age.png"} fluid
+               alt={"Diagnostic Classification Frequency by Age"}/>
         <p>
           With 14 potential labels, the image above is a bit cluttered and it is
           hard to make any determinations from this alone. Therefore, each
           individual diagnostic label is plotted below to show the frequencies
           by age for each.
         </p>
-        <Image src={BASE_PATH + "/assets/data/indiv-dx-by-age.png"} fluid/>
+        <Image src={BASE_PATH + "/assets/data/indiv-dx-by-age.png"} fluid
+               alt={"Diagnostic Frequency by Age, (separated by label)"}/>
         <p>
           These individual plots show an overall normal distribution for the
           data, with the median value for most around the same area (between
@@ -63,7 +65,8 @@ class Data extends Component {
           Lastly, the correlation of diagnoses shows the potential comorbidities
           for each label with the following correlation matrix:
         </p>
-        <Image src={BASE_PATH + "/assets/data/dx-corr-matrix.png"} fluid/>
+        <Image src={BASE_PATH + "/assets/data/dx-corr-matrix.png"} fluid
+               alt={"Diagnostic Correlation Matrix"}/>
         <p>
           With this matrix, we can see that there is a correlation for
           atelectasis and effusion, as well as edema and pneumonia. These
