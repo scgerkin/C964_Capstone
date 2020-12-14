@@ -201,3 +201,4 @@ class Training extends Component {
   }
 }
 
+export default Training
