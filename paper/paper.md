@@ -128,12 +128,12 @@ references:
 # Section A - Project Proposal/Recommendation
 
 ## Problem Summary
-`COMPANY_NAME`is a medical imaging company that provides on-going or on-call as needed radiologic image readings for physicians and clinicians in various settings ranging from urgent care facilities to general practitioners and family medicine. Clinicians rely on fast and accurate diagnostic readings of a wide range of imaging techniques but chief among these are chest X-ray images. Chest X-ray imaging is inexpensive, fast, and has a low radiologic risk to patients and as such is often the first-line diagnostic tool for disease diagnosis and patient treatment planning.
+Arrow Medical Imagingis a medical imaging company that provides on-going or on-call as needed radiologic image readings for physicians and clinicians in various settings ranging from urgent care facilities to general practitioners and family medicine. Clinicians rely on fast and accurate diagnostic readings of a wide range of imaging techniques but chief among these are chest X-ray images. Chest X-ray imaging is inexpensive, fast, and has a low radiologic risk to patients and as such is often the first-line diagnostic tool for disease diagnosis and patient treatment planning.
 
-As `COMPANY_NAME` expands, more and more facilities and practitioners are contracting the expertise of `COMPANY_NAME`'s expertise in providing results in a timely fashion. This influx of clientele has stretched the existing resources beyond their current capabilities. As such, `COMPANY_NAME` has expressed a desire to create a pilot program for automating the diagnostic process with chest X-ray imaging with machine learning models to assist the existing radiologist staff with improving the turn-around time for diagnostic results in this high volume service.
+As Arrow Medical Imaging expands, more and more facilities and practitioners are contracting the expertise of Arrow Medical Imaging's expertise in providing results in a timely fashion. This influx of clientele has stretched the existing resources beyond their current capabilities. As such, Arrow Medical Imaging has expressed a desire to create a pilot program for automating the diagnostic process with chest X-ray imaging with machine learning models to assist the existing radiologist staff with improving the turn-around time for diagnostic results in this high volume service.
 
 ## Application Benefits
-The proposed solution is to create a predictive model that can receive a chest X-ray image and determine the probabilities of specific diagnostic labels being applied to the image. With a sufficiently accurate model, an automated system can be created to provide immediate results rather than necessitating manual review that can take several minutes or hours. These results can then be forwarded to radiologists for confirmation of the findings and aid them in looking for specific diagnostic markers that indicate the specified findings. Additionally, this service can be provided to existing clients of `COMPANY_NAME` to provide immediate results in urgent care situations.
+The proposed solution is to create a predictive model that can receive a chest X-ray image and determine the probabilities of specific diagnostic labels being applied to the image. With a sufficiently accurate model, an automated system can be created to provide immediate results rather than necessitating manual review that can take several minutes or hours. These results can then be forwarded to radiologists for confirmation of the findings and aid them in looking for specific diagnostic markers that indicate the specified findings. Additionally, this service can be provided to existing clients of Arrow Medical Imaging to provide immediate results in urgent care situations.
 
 ## Application Description
 The application will be segmented into four distinct parts:
@@ -174,8 +174,8 @@ Further discussion regarding these data can be found in the [Data Analysis](#dat
 Three broad objectives have been identified to designate this project as a success. The objectives are the following:
 
 1. Create a predictive model with a minimum 90% accuracy rate on label classification for new chest X-ray images.
-2. Deploy this model as a web application that can be utilized by `COMPANY_NAME` and contracted clients.
-3. Provide prospective `COMPANY_NAME` clients with an informative dashboard that can discuss the model, model accuracy, and training process as promotional material for drawing in additional business.
+2. Deploy this model as a web application that can be utilized by Arrow Medical Imaging and contracted clients.
+3. Provide prospective Arrow Medical Imaging clients with an informative dashboard that can discuss the model, model accuracy, and training process as promotional material for drawing in additional business.
 
 ## Hypothesis
 Through the use of a KMeans Clustering model, Convolutional Neural Network, or a combination of both, a predictive model can be trained and generalized to provide an accurate diagnostic classification system per the objective listed above. This model will be able to be deployed as a standalone web service and receive new imaging data and return the predicted label classifications.
@@ -195,7 +195,7 @@ With the initial prototype development consisting of a single developer, the Sas
 Total funding for project development and implementation is estimated at \$9,920 with an ongoing, yearly maintenance cost of approximately \$4,800 to \$5,100 for maintaining the cloud server environment on which the component services will live. A full cost breakdown of these costs is provided in the [Resources and Costs](#resources-and-costs) section.
 
 ## Stakeholders Impact
-The stakeholders for this project include `COMPANY_NAME` and their clients. The predictive model created will enable `COMPANY_NAME` to provide greater efficiency in evaluating chest X-ray images for diagnostic classification and can potentially be offered as an additional service to its clients that require immediate diagnostic classification of chest X-rays but do not require the full usage of services from `COMPANY_NAME` radiology specialists.
+The stakeholders for this project include Arrow Medical Imaging and their clients. The predictive model created will enable Arrow Medical Imaging to provide greater efficiency in evaluating chest X-ray images for diagnostic classification and can potentially be offered as an additional service to its clients that require immediate diagnostic classification of chest X-rays but do not require the full usage of services from Arrow Medical Imaging radiology specialists.
 
 ## Data Precautions
 The data used to train the prediction model complies with all HIPAA regulations and contains no protected health information (PHI) or personally identifiable information (PII). The data has been issued a CC0 1.0 Universal License[^CC0] and dedicated to the public domain. Furthermore, any new data that is to be gathered and consumed by the resultant web service will consist only of chest X-ray images with no identification information and no images will be retained by the web service. Finally, TLS/SSL encryption protocols will be enacted to only allow communication with the web service via HTTPS protocols.
@@ -203,7 +203,7 @@ The data used to train the prediction model complies with all HIPAA regulations 
 [^CC0]: See [CC0 1.0 Universal https://creativecommons.org/publicdomain/zero/1.0/legalcode](https://creativecommons.org/publicdomain/zero/1.0/legalcode) for the full information regarding this license.
 
 ## Developer Expertise
-The developer has 8 years of experience in software engineering, specializing in web applications and web service deployments. Additionally, the developer has 3 years of experience in architecting artificial intelligence systems and machine learning models for predictive analysis. Consultation with regards to radiologic expertise will be made available by `COMPANY_NAME` as needed for understanding the data during development.
+The developer has 8 years of experience in software engineering, specializing in web applications and web service deployments. Additionally, the developer has 3 years of experience in architecting artificial intelligence systems and machine learning models for predictive analysis. Consultation with regards to radiologic expertise will be made available by Arrow Medical Imaging as needed for understanding the data during development.
 
 # Section B - Business Requirements and Technical Summary
 
@@ -211,12 +211,12 @@ The developer has 8 years of experience in software engineering, specializing in
 Chest X-ray imaging is a very common, quick, and effective technique for diagnosing a wide variety of diseases related to the lungs and heart. The machines used for these scans can be easily deployed to a variety of settings including hospitals, small clinics and offices, and even disaster areas. However, the requirement for these scans to be read and interpreted by highly trained physicians limits the efficiency with which these scans can be utilized. Applying a machine learning methodology to analyze and predict probable diagnostic findings in a chest X-ray can save countless time, money, and resources to providing actionable diagnostic intelligence to physicians and clinicians in a matter of seconds. While some models do exist for binary classifications, such as a finding of pneumonia vs. no finding of pneumonia, no all-encompassing methodology exists for a multi-label classification problem.
 
 ## Customer Summary
-`COMPANY_NAME` is an industry leader in medical imaging and interpretation. The company continues to grow at a record pace and is continually expanding its reach of off-site imaging systems and contracted image interpretation. As a result of this growth, `COMPANY_NAME` must keep pace with current technologies to continually improve and advance the medical imaging industry. With this in mind, `COMPANY_NAME` has decided to move forward with a prototype of a multi-label classification system for chest X-ray imaging.
+Arrow Medical Imaging is an industry leader in medical imaging and interpretation. The company continues to grow at a record pace and is continually expanding its reach of off-site imaging systems and contracted image interpretation. As a result of this growth, Arrow Medical Imaging must keep pace with current technologies to continually improve and advance the medical imaging industry. With this in mind, Arrow Medical Imaging has decided to move forward with a prototype of a multi-label classification system for chest X-ray imaging.
 
-It is the hope that this prototype project will yield actionable information with regards to further expanding automated diagnostic classification within other imaging techniques, such as Computed Tomography (CT), Magnetic Resonance Imaging (MRI), and other high precision scanning techniques. Should a model prove effective on X-ray imaging, a technique that has a significantly lower image and diagnostic precision overall than these more expensive scans, it is believed that this can be used to catapult `COMPANY_NAME` to significant advances in automated diagnostic medicine.
+It is the hope that this prototype project will yield actionable information with regards to further expanding automated diagnostic classification within other imaging techniques, such as Computed Tomography (CT), Magnetic Resonance Imaging (MRI), and other high precision scanning techniques. Should a model prove effective on X-ray imaging, a technique that has a significantly lower image and diagnostic precision overall than these more expensive scans, it is believed that this can be used to catapult Arrow Medical Imaging to significant advances in automated diagnostic medicine.
 
 ## System Analysis
-This project is considered a pilot program for `COMPANY_NAME` and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for `COMPANY_NAME`.
+This project is considered a pilot program for Arrow Medical Imaging and currently no infrastructure exists to support the development or deployment of the predictive model as a web service. Fortunately, the systems requirements for deployment are uncomplicated and can be easily provisioned in the cloud. Amazon Web Services has been selected as the cloud provider for this project as they provide the greatest number of resources for future scaling of the business needs for Arrow Medical Imaging.
 
 The deployed web service will exist as two applications on a single server: a REST endpoint for receiving images and converting them to data that can be used by the prediction model and the prediction model itself. The forward endpoint will be served as a Flask[^Flask] RESTful service contained in a Docker image. This application will then communicate directly with the REST endpoint created by TensorFlow Serving[^TFServing] Docker container, receive the results, and then return them to the originating end-user. Both containers will be run in tandem using Docker Compose[^DockerCompose] on a single server.
 
@@ -313,12 +313,12 @@ The application will be evaluated and verified for acceptance in a combination o
 
 - The prediction model will be evaluated for classification accuracy from validation and testing data that has been separated from all training. This evaluation will involve plotting the confusion values of true-positive rates vs the false-positive rates for individual diagnostic labels.
 - The REST API will be tested and monitored for load by issuing expected traffic requests to the API. The results of these tests will be used to adjust the server instance, auto-scaling settings, and resiliency of the API.
-- The front-end application will undergo end-user acceptance testing to validate the application meets the specifications and requirements created by `COMPANY_NAME` for usability.
+- The front-end application will undergo end-user acceptance testing to validate the application meets the specifications and requirements created by Arrow Medical Imaging for usability.
 
 ## Resources and Costs
 
 ### Programming Environment
-The following environments are to be used for the development and deployment of the final project. This is not meant to be a complete list and a full environment list will be available in the final source code. All tools listed below are open-source software. Licensing fees may apply, but are the responsibility of `COMPANY_NAME`.
+The following environments are to be used for the development and deployment of the final project. This is not meant to be a complete list and a full environment list will be available in the final source code. All tools listed below are open-source software. Licensing fees may apply, but are the responsibility of Arrow Medical Imaging.
 - Python 3.7.9
 - Anaconda 4.9.1
 - Docker 19.03.13
@@ -431,7 +431,7 @@ As noted in the paper[^nihPaperCitation] about the data, provided by the NIH, th
 [^nihPaperCitation]: @nihPaper
 [^Oakden-RaynerCite]: @oakdenRayner
 
-Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by `COMPANY_NAME` for creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
+Unfortunately, without a complete review of each scan by a trained radiologist, it is not possible to limit the data used for training the predictive model to only use particularly indicative images. This may lead to difficulty in creating a sufficiently accurate predictive model and, even if one should be created, it is unlikely that the resultant model is likely to generalize well to new information. However, at this time no additional data has been provided by Arrow Medical Imaging for creating a predictive model, and as such, best efforts will be made given these constraints with the ability to retrain the model on new or improved data when it is available.
 
 Lastly, the metadata about each image possibly contains several errors in reporting. For instance, the "age" column for images range from 1 to 414 with no associated units. As such, it is impossible to use this information for any significant information when analyzing or using for predictive modeling. The assumption has been made that this column is meant to indicate years. As such, any image with an age of greater than or equal to 100 has been trimmed from the prospective data.
 
@@ -502,17 +502,17 @@ Data exploration is accomplished by visualizing the diagnostic labels associated
 
 In the following graph, we can visualize the number of diagnostic labels per image, separated by patient sex to understand the potential bias of the data sampling, in order to better understand the weights of each image sample. Images with "No Finding" are separated as this accounts for nearly half of the data and does not give a complete picture of the label classifications.
 
-![Diagnostic Classification Frequency](./assets/data/classification-by-sex.png)
+![Diagnostic Classification Frequency by Sex](./assets/data/classification-by-sex.png)
 
 The numbers above show an imbalance of the data, favoring infiltration and effusion above other diagnostic markers. Additionally, there are fewer samples for hernia and pneumonia diagnosis, indicating that there may not be enough samples of this data for training and it should be trimmed from the dataset before training. Patient sex also indicates a higher number of scans for men; however, without further information about these findings and their respective prevalence among the population, it is difficult to determine if this will introduce a significant bias in our model. Theoretically, the images themselves should not affect the model training, but this does not account for the potential physiological differences between men and women vis a vis breast tissue.
 
 Next, the label frequency is plotted against the age of each patient. The combined scatter plot below paints a similar picture to the markers above, showing a higher number of scans for infiltration.
 
-![Diagnostic frequency by age](./assets/data/dx-freq-by-age.png)
+![Diagnostic Classification Frequency by Age](./assets/data/dx-freq-by-age.png)
 
 With 14 potential labels, the image above is a bit cluttered and it is hard to make any determinations from this alone. Therefore, each individual diagnostic label is plotted below to show the frequencies by age for each.
 
-![Diagnostic frequency by age, separated by label](./assets/data/indiv-dx-by-age.png)
+![Diagnostic Frequency by Age, (separated by label)](./assets/data/indiv-dx-by-age.png)
 
 These individual plots show an overall normal distribution for the data, with the median value for most around the same area (between 50-60 years old). However, hernia again stands as an outlier, showing an unusual distribution that does not fit into a typical bell-curve. This also indicates that it is likely this should be trimmed from the data before training.
 
@@ -561,11 +561,11 @@ The purpose of this project is three-fold:
 
 1. To take given data containing chest X-ray images and diagnostic labels regarding those images and create a dashboard for exploring the data.
 2. To create a predictive classification model for determining the diagnostic labels for images new to the model and evaluate the model for efficacy and accuracy.
-3. To deploy the model as a RESTful service for consumption by `COMPANY_NAME` and its contracted clients.
+3. To deploy the model as a RESTful service for consumption by Arrow Medical Imaging and its contracted clients.
 
 Each point of the project was solved separately but combined to create the overall product. The first and third objectives were able to be met satisfactorily and can be explored at `APPLICATION_URL` for verification.
 
-Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by `COMPANY_NAME` to be considered an effective aid for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
+Unfortunately, while it was possible to create a _working_ model for the second objective, the accuracy of the model created was not able to meet the standards set by Arrow Medical Imaging to be considered an effective aid for automated diagnosis at this time. A full review of the model, datasets and issues within, and conclusions regarding the prediction model can be found in the following sections.
 
 ## Datasets
 Machine learning models require numerical data for analysis and prediction. Therefore, all images used for training, validation, testing, or otherwise must be converted to a numerical format to be fed into the models. This was accomplished using an image preprocessor from Keras, `ImageDataGenerator`[^idgCite]. This automatically reads in data in batches (or individually), converts the images to numerical arrays of 0 to 255 per each image channel (RGB), and can be used for normalization and standardization.
@@ -751,7 +751,7 @@ The accuracy of the neural net was evaluated in a combination of methods. As pre
 The area under the curve for each classification label shows a wide range of values, from 0.5405 for _Mass_ vs. up to 0.8466 for _Consolidation_. A score of near 0.5 for this value indicates that the model was no better at determining a matching label than flipping a coin. For _Mass_, it is clear that the model was unable to match well to this diagnostic label. This may have skewed the overall combined accuracy of the model, as well as other low scoring classification labels. Additionally, as categorical cross-entropy is a measure of the overall probability matches, this may cloud the findings of individual diagnostic classifications. This indicates that the model may adapt well to some labels but not others. However, it should be noted that this is an unusual finding overall and may be due to an error in the overall evaluation process.
 
 ### Accuracy Conclusion
-Based on the results of the above evaluations and metrics and the unusual nature of the findings above, it is concluded that the model overall failed to meet the expectations of `COMPANY_NAME` for accuracy. However, individual diagnostic labels show some promise overall, indicating that the model may be adapted for binary classification of _Finding_ vs. _No Finding_ should the training data and model be modified to fit this classification model.
+Based on the results of the above evaluations and metrics and the unusual nature of the findings above, it is concluded that the model overall failed to meet the expectations of Arrow Medical Imaging for accuracy. However, individual diagnostic labels show some promise overall, indicating that the model may be adapted for binary classification of _Finding_ vs. _No Finding_ should the training data and model be modified to fit this classification model.
 
 Lastly, it is worth mentioning that increasing the size of the dataset and the training sessions may have produced a more favorable outcome. The training data may have also been improved by providing random transformations to individual images, such as rotations, inversions, shifting horizontally or vertically, or other such image transformations. However, due to the time constraints of this project, this could not be explored in more detail.
 
