@@ -2,18 +2,8 @@ import FormData from "form-data"
 import Axios from "axios"
 
 export async function analyzeXray(image) {
-  return await analyzeRandom(null)
-  // return analyzeActual(image)
+  return analyzeActual(image)
 }
-
-// export async function epochTraining() {
-//   return new Promise(res => {
-//     setTimeout(() => {
-//       const data = require("../../static/dx-weighted-inception.json")
-//       res(data)
-//     }, 0)
-//   })
-// }
 
 export async function rocCurve(setType) {
   return new Promise((res, rej) => {
@@ -53,5 +43,5 @@ async function analyzeRandom(image) {
 async function analyzeActual(image) {
   const request = new FormData()
   request.append("image", image, image.fileName)
-  return await Axios.post("http://localhost:80", request)
+  return await Axios.post("http://ec2-3-93-24-102.compute-1.amazonaws.com", request)
 }

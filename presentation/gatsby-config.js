@@ -11,5 +11,12 @@ module.exports = {
     description: "An ML app that predicts CXR diagnoses",
     author: "Stephen Gerkin",
   },
-  plugins: [],
+  plugins: [
+    {
+      resolve: `gatsby-plugin-s3`,
+      options: {
+        bucketName: "cxr-dx.scgrk.com"
+      }
+    }
+    ],
 }
