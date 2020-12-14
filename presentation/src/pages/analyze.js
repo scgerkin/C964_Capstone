@@ -83,9 +83,9 @@ class Analyze extends Component {
     const { preview, predictions, status, touched } = this.state
     return (
       <Layout>
-        <h1>Analyze an X-ray</h1>
 
         <Container>
+          <h1>Analyze an X-ray</h1>
           <Row>
             <Col>
               <Form onChange={this.onSelectFile} as={"div"} className={"mb-3"}>
